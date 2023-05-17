@@ -253,9 +253,9 @@ auto for_continue_inner() -> void
 {
     std::vector vi {0, 1, 2}; 
     auto counter {0}; 
-    for ( auto const& cpp2_range = vi;  auto const& i : cpp2_range )  { do {
+    for ( auto const& i : vi )  { do {
         std::vector vj {0, 1, 2}; 
-        for ( auto const& cpp2_range = vj;  auto const& j : cpp2_range ) {
+        for ( auto const& j : vj ) {
 #line 166 "pure2-break-continue.cpp2"
         {
             std::cout << i << j << " ";
@@ -274,11 +274,11 @@ auto for_continue_outer() -> void
 {
     std::vector vi {0, 1, 2}; 
     auto counter {0}; 
-    for ( auto const& cpp2_range = vi;  auto const& i : cpp2_range ) {
+    for ( auto const& i : vi ) {
 #line 182 "pure2-break-continue.cpp2"
      { do {
         std::vector vj {0, 1, 2}; 
-        for ( auto const& cpp2_range = vj;  auto const& j : cpp2_range ) {
+        for ( auto const& j : vj ) {
             std::cout << i << j << " ";
             if (j==1) {
                 goto CONTINUE_182_5;
@@ -295,9 +295,9 @@ auto for_break_inner() -> void
 {
     std::vector vi {0, 1, 2}; 
     auto counter {0}; 
-    for ( auto const& cpp2_range = vi;  auto const& i : cpp2_range )  { do {
+    for ( auto const& i : vi )  { do {
         std::vector vj {0, 1, 2}; 
-        for ( auto const& cpp2_range = vj;  auto const& j : cpp2_range ) {
+        for ( auto const& j : vj ) {
 #line 202 "pure2-break-continue.cpp2"
         {
             std::cout << i << j << " ";
@@ -316,11 +316,11 @@ auto for_break_outer() -> void
 {
     std::vector vi {0, 1, 2}; 
     auto counter {0}; 
-    for ( auto const& cpp2_range = vi;  auto const& i : cpp2_range ) {
+    for ( auto const& i : vi ) {
 #line 218 "pure2-break-continue.cpp2"
      { do {
         std::vector vj {0, 1, 2}; 
-        for ( auto const& cpp2_range = vj;  auto const& j : cpp2_range ) {
+        for ( auto const& j : vj ) {
             std::cout << i << j << " ";
             if (j==1) {
                 goto BREAK_218_5;

@@ -35,7 +35,7 @@
     auto callback {[](auto& x) -> void { x += "-ish";  }}; 
     std::ranges::for_each(view, std::move(callback));
 
-    for ( auto const& cpp2_range = view;  auto const& str : cpp2_range ) 
+    for ( auto const& str : view ) 
         std::cout << str << "\n";
 }
 

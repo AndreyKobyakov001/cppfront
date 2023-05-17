@@ -61,7 +61,7 @@ auto myfunc() -> void{
 
     auto const& v2 = std::move(v);
 
-    for ( auto const& cpp2_range = v2;  auto const& s : cpp2_range ) 
+    for ( auto const& s : v2 ) 
         std::cout << cpp2::to_string(s) + "\n";
 }
 

@@ -1614,6 +1614,15 @@ public:
             && !in_non_rvalue_context.back();
 
         if (
+            add_move
+            && *(n.identifier - 1) == "return"
+            && *(n.identifier + 1) == ";"
+            )
+        {
+            add_move = false;
+        }
+    
+        if (
             emitting_move_that_function
             && *n.identifier == "that"
             )
@@ -2116,16 +2125,15 @@ public:
                 && n.body
             );
 
-            if (n.for_with_in) {
-                printer.print_cpp2("for ( auto const& cpp2_range = ", n.position());
-            }
-            else {
-                printer.print_cpp2("for ( auto&& cpp2_range = ", n.position());
-            }
-            emit(*n.range);
-            printer.print_cpp2(";  ", n.position());
+            //  Note: This used to emit cpp2_range as a range-for-loop scope variable,
+            //        but some major compilers seem to have random troubles with that;
+            //        the workaround to avoid their bugs for now is to emit a { } block
+            //        around the Cpp1 range-for and make the scope variable a normal local
+            printer.print_cpp2("for ( ", n.position());
             emit(*n.parameter);
-            printer.print_cpp2(" : cpp2_range ) ", n.position());
+            printer.print_cpp2(" : ", n.position());
+            emit(*n.range);
+            printer.print_cpp2(" ) ", n.position());
             if (!labelname.empty()) {
                 printer.print_extra("{");
             }
@@ -4123,12 +4131,15 @@ public:
             emit(*n.parameters);
         }
 
-        //  Add implicit noexcept when we implement proper EH
-        //  to handle calling Cpp1 code that throws
-        //if (!n.throws) {
-        //    printer.add_pad_in_this_line(-25);
-        //    printer.print_cpp2( " noexcept", n.position() );
-        //}
+        //  For now, adding implicit noexcept only for move and swap functions
+        if (
+            n.is_move()
+            || n.is_swap()
+            || generating_move_from == n.my_decl
+            )
+        {
+            printer.print_cpp2( " noexcept", n.position() );
+        }
 
         printer.print_cpp2( suffix1, n.position() );
 
@@ -4491,17 +4502,24 @@ public:
 
                 //  Otherwise, use a default... for a non-copy/move that's the member initializer
                 //  (for which we don't need to emit anything special because it will get used),
-                //  and for a copy/move function we default to "= that.same_member"
+                //  and for a copy/move function we default to "= that.same_member" (or, if this
+                //  is a base type, just "= that")
                 if (!found_explicit_init)
                 {
                     if (emitting_move_that_function)
                     {
-                        initializer = "std::move(that)." + object_name;
+                        initializer = "std::move(that)";
+                        if (!(*object)->has_name("this")) {
+                            initializer += "." + object_name;
+                        }
                         found_default_init = true;
                     }
                     else if (emitting_that_function)
                     {
-                        initializer = "that." + object_name;
+                        initializer = "that";
+                        if (!(*object)->has_name("this")) {
+                            initializer += "." + object_name;
+                        }
                         found_default_init = true;
                     }
                     else if ((*object)->initializer)
@@ -5247,8 +5265,8 @@ public:
                         break;default:
                             if (
                                 func->is_constructor()
+                                && (func->is_default_constructor() || func->parameters->ssize() == 2)
                                 && !func->is_constructor_with_that()
-                                && func->parameters->ssize() == 2
                                 && generating_assignment_from != &n
                                 )
                             {
@@ -5410,7 +5428,7 @@ public:
                 {
                     printer.print_cpp2( prefix, n.position() );
                     printer.print_cpp2( "auto " + type_qualification_if_any_for(n), n.position() );
-                    printer.print_cpp2( *n.name(), n.identifier->position() );
+                    emit( *n.name() );
                     emit( *func, n.name(), is_main, false, suffix1 );
                     printer.print_cpp2( suffix2, n.position() );
                 }

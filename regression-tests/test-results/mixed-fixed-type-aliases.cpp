@@ -44,7 +44,7 @@ auto test(auto const& x) -> void{
     cpp2::u16 z {42}; 
     test(std::move(z));
 
-    for ( auto const& cpp2_range = args;  auto const& arg : cpp2_range ) 
+    for ( auto const& arg : args ) 
         std::cout << arg << "\n";
 }
 

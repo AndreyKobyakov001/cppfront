@@ -52,7 +52,7 @@ auto decorate_and_print(auto& thing) -> void{
     } while ( cpp2::cmp_greater(*cpp2::assert_not_null(i),1) && [&]{ --*cpp2::assert_not_null(i) ; return true; }() );
 
     std::cout << "\n";
-    for ( auto&& cpp2_range = words;  auto& word : cpp2_range ) 
+    for ( auto& word : words ) 
         decorate_and_print(word);
 
     print(std::string{"end of program"});

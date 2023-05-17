@@ -27,7 +27,7 @@
 {
     std::vector<int> v {1, 2, 3, 4, 5}; 
     auto counter {42}; 
-    for ( auto const& cpp2_range = v;  auto const& i : cpp2_range )  { do {
+    for (                         auto const& i : v )  { do {
         std::cout << i << " " << counter << "\n";
     } while (false); counter *= 2; }
 }

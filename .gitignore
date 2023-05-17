@@ -14,7 +14,6 @@
 *.db
 *.ipch
 *.sln
-*.exe
 *.txt
 *.db-shm
 *.db-wal
@@ -25,3 +24,5 @@
 *.xml
 *.sarif
 *.bin
+*.exe
+source/gen_version.bat

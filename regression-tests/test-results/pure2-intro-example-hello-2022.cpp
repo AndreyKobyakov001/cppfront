@@ -30,7 +30,7 @@ auto println(auto const& x, auto const& len) -> void;
             "hello", "2022"}; 
     std::span view {vec}; 
 
-    for ( auto&& cpp2_range = view;  auto& str : cpp2_range ) {
+    for ( auto& str : view ) {
         auto len {decorate(str)}; 
         println(str, len);
     }
