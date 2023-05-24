@@ -15,7 +15,7 @@
 #pragma warning(disable: 4456)
 #endif
 
-#include "cpp2util.h"
+#include "include/cpp2util.h"
 
 
 //===========================================================================
@@ -771,7 +771,7 @@ public:
     {
         help_requested = true;
         print("\ncppfront compiler v0.2.1   Build "
-            #include "build.info"
+            // #include "build.info"
         );
         print("\nCopyright(c) Herb Sutter   All rights reserved\n");
         print("\nSPDX-License-Identifier: CC-BY-NC-ND-4.0");
