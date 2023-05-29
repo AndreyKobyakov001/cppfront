@@ -2,6 +2,455 @@ syntax = "proto3";
 
 package cpp2.fuzzing;
 
+message token { 
+    optional string text = 1;
+}
+
+message source_position { 
+    optional int32 lineno = 1;
+    optional int32 colno = 2;
+}
+
+// from common? 
+
+message primary_expression_node { 
+    oneof expr {
+        token identifier = 1;
+        expression_list_node expression_list = 2;
+        id_expression_node id_expression = 3;
+        declaration_node declaration = 4;
+        inspect_expression_node inspect = 5;
+        literal_node literal = 6;
+      }
+}
+
+message literal_node {
+    optional token literal = 1;
+    optional token suffix = 2;
+}
+
+message prefix_expression_node { 
+    repeated token ops = 1;
+    optional postfix_expression_node expr = 2;
+}
+
+message is_as_expression_node {
+    optional prefix_expression_node expr = 1;
+    
+    message term { 
+        optional token op = 1;
+        optional type_id_node type = 2;
+        optional expression_node expr = 3;
+    }
+    repeated term ops = 2;
+}
+
+message multiplicative_expression_node {
+    optional is_as_expression_node expr = 1;
+    
+    message term { 
+        optional token op = 1;
+        optional is_as_expression_node expr = 2;
+    }
+    repeated term terms = 2;
+}
+
+message additive_expression_node { 
+    optional multiplicative_expression_node expr = 1;
+    
+    message term { 
+        optional token op = 1;
+        optional multiplicative_expression_node expr = 2;
+    }
+    repeated term terms = 2;
+}
+
+message shift_expression_node {
+    optional additive_expression_node expr = 1;
+    
+    message term { 
+        optional token op = 1;
+        optional additive_expression_node expr = 2;
+    }
+    repeated term terms = 2;
+}
+
+message compare_expression_node {
+    optional shift_expression_node expr = 1;
+    
+    message term { 
+        optional token op = 1;
+        optional shift_expression_node expr = 2;
+    }
+    repeated term terms = 2;
+}
+
+message relational_expression_node {
+    optional compare_expression_node expr = 1;
+    
+    message term { 
+        optional token op = 1;
+        optional compare_expression_node expr = 2;
+    }
+    repeated term terms = 2;
+}
+
+message equality_expression_node {
+    optional relational_expression_node expr = 1;
+    
+    message term { 
+        optional token op = 1;
+        optional relational_expression_node expr = 2;
+    }
+    repeated term terms = 2;
+}
+
+message bit_and_expression_node {
+    optional equality_expression_node expr = 1;
+    
+    message term { 
+        optional token op = 1;
+        optional equality_expression_node expr = 2;
+    }
+    repeated term terms = 2;
+}
+
+message bit_xor_expression_node {
+    optional bit_and_expression_node expr = 1;
+    
+    message term { 
+        optional token op = 1;
+        optional bit_and_expression_node expr = 2;
+    }
+    repeated term terms = 2;
+}
+
+message bit_or_expression_node {
+    optional bit_xor_expression_node expr = 1;
+    
+    message term { 
+        optional token op = 1;
+        optional bit_xor_expression_node expr = 2;
+    }
+    repeated term terms = 2;
+}
+
+message logical_and_expression_node {
+    optional bit_or_expression_node expr = 1;
+    
+    message term { 
+        optional token op = 1;
+        optional bit_or_expression_node expr = 2;
+    }
+    repeated term terms = 2;
+}
+
+message logical_or_expression_node {
+    optional logical_and_expression_node expr = 1;
+    
+    message term { 
+        optional token op = 1;
+        optional logical_and_expression_node expr = 2;
+    }
+    repeated term terms = 2;
+}
+
+message assignment_expression_node {
+    optional logical_or_expression_node expr = 1;
+    
+    message term { 
+        optional token op = 1;
+        optional logical_or_expression_node expr = 2;
+    }
+    repeated term terms = 2;
+}
+
+message expression_node { 
+    optional assignment_expression_node expr = 1;
+}
+
+message expression_list_node {
+    optional token open_paren = 1;
+    optional token close_paren = 2; 
+    optional bool inside_initializer = 3; 
+    message term {
+        optional passing_style pass = 1;
+        optional expression_node expr = 2;
+    }
+    repeated term expresssions = 4;
+}
+
+//25/5/2023
+
+message expression_statement_node { 
+    optional expression_list_node expr = 1;
+    optional bool has_semicolon = 2; 
+}
+
+message capture { 
+    optional postfix_expression_node capture_expr = 1;
+    optional string cap_sym = 2;
+    optional string str = 3;
+    optional string str_suppressed_move = 4;
+}
+
+message capture_group { 
+    repeated capture members = 1;
+}
+
+message postfix_expression_node { 
+    optional primary_expression_node expr = 1;
+    message term {
+        optional token op = 1;
+        optional id_expression_node id_expr = 2;
+        optional expression_list_node expr_list = 3;
+        optional token op_close = 4;
+    }
+    repeated term ops = 2;
+    optional capture_group cap_grp = 3;
+}
+
+//lines 583 - 663 omitted; auto functions not struct nodes
+
+// message type_id_node 664?
+// message template_args_tag 665? 
+
+message unqualified_id_node { 
+    optional token identifier = 1;
+    // source positions l676
+    message term {
+        optional source_position comma = 1;
+        oneof arg {
+            expression_node expression = 2;
+            type_id_node type_id = 3;
+        } 
+    }
+    repeated term template_args = 4;
+}
+
+message qualified_id_node { 
+    message term {
+        optional token scope_op = 1;
+        optional unqualified_id_node id = 2;
+    }
+    repeated term ids = 1;
+}
+
+message type_id_node { 
+    optional source_position pos = 1;
+    repeated token pc_qualifiers = 2;
+    optional token address_of = 3;
+    optional token dereference_of = 4;
+    optional int32 dereference_cnt = 5;
+    optional token suspicious_initialization = 6;
+    oneof id { 
+        qualified_id_node qualified = 7;
+        unqualified_id_node unqualified = 8;
+        token keyword = 9; 
+    }
+}
+
+// message is_as_expression_node { 
+//     optional prefix_expression_node prefix_expr = 1;
+//     message term {
+//         optional token op = 1;
+//         optional type_id_node type = 2;
+//         optional expression_node expr = 3;
+//     }
+//     repeated term term_ops = 2;
+// }
+
+message id_expression_node {
+    optional source_position pos = 1; 
+    oneof id { 
+        qualified_id_node qualified = 2;
+        unqualified_id_node unqualified = 3;
+    }
+}
+
+// message statement_node {
+// 
+// } 
+
+message compound_statement_node { 
+    optional source_position open_brace = 1;
+    optional source_position close_brace = 2;
+    repeated statement_node statements = 3;
+    optional int32 body_indent = 4;
+}
+
+message selection_statement_node { 
+    optional bool is_constexpr = 1;
+    optional token identifier = 2;
+    optional source_position else_pos = 3;
+    optional logical_or_expression_node expression = 4;
+    optional compound_statement_node true_branch = 5;
+    optional compare_expression_node false_branch = 6;
+    optional bool has_source_false_branch = 7;
+}
+
+// message parameter_declaration_node {
+// 
+// } 
+
+message iteration_statement_node { 
+    optional token label = 1;
+    optional token identifier = 2;
+    optional assignment_expression_node next_expression = 3;
+    optional logical_or_expression_node condition = 4;
+    optional compound_statement_node statements = 5;
+    optional expression_node range = 6; 
+    optional parameter_declaration_node parameter = 7; 
+    optional statement_node body = 8; 
+    optional bool for_with_in = 9;
+}
+
+message return_statement_node {
+    optional token identifier = 1;
+    optional expression_node expression = 2;
+}
+
+message alternative_node { 
+    optional unqualified_id_node name = 1;
+    optional token is_as_keyword = 2;
+    optional type_id_node type_id = 3;
+    optional postfix_expression_node value = 4;
+    optional source_position equal_sign = 5;
+    optional statement_node statement = 6;
+}
+
+message inspect_expression_node { 
+    optional bool is_constexpr = 1;
+    optional token identifier = 2;
+    optional expression_node expression = 3;
+    optional type_id_node result_type = 4;
+    optional source_position open_brace = 5;
+    optional source_position close_brace = 6; 
+    repeated alternative_node alternatives = 7;
+    //above is on 1282, check
+}
+
+message contract_node { 
+    optional capture_group captures = 1;
+    optional source_position open_bracket = 2;
+    optional token kind = 3;
+    optional id_expression_node group = 4; 
+    optional logical_or_expression_node condition = 5;
+    optional token message = 6;
+}
+
+message jump_statement_node {
+    optional token keyword = 1;
+    optional token label = 2;
+}
+
+// message parameter_declaration_list_node {
+// 
+// } 
+
+message statement_node { 
+    optional parameter_declaration_list_node parameters = 1;
+    oneof statement { 
+        expression_statement_node expression = 2;
+        compound_statement_node compound = 3;
+        selection_statement_node selection = 4;
+        declaration_node declaration = 5;
+        return_statement_node return_ = 6;
+        iteration_statement_node iteration = 7;
+        contract_node contract = 8;
+        inspect_expression_node inspect = 9;
+        jump_statement_node jump = 10;
+    }
+    optional bool emitted = 11;
+    //a long API follows starting on l1400
+}
+
+message parameter_declaration_node { 
+    optional source_position pos = 1;
+    optional passing_style pass = 2;
+    enum modifier { 
+        none = 0;
+        implicit = 1;
+        virtual_ = 2;
+        override_ = 3;
+        final_ = 4;
+    }
+    optional declaration_node declaration = 3; 
+}
+
+message parameter_declaration_list_node {
+    optional token open_paren = 1;
+    optional token close_paren = 2;
+    repeated parameter_declaration_node parameters = 3;
+}
+
+message function_type_node { 
+    optional declaration_node my_decl = 1;
+    optional parameter_declaration_list_node parameters = 2;
+    optional bool throws = 3;
+    message single_type_id { 
+        optional type_id_node type = 1;
+        optional passing_style pass = 2;
+    } 
+    oneof returns { 
+        single_type_id id = 4;
+        parameter_declaration_list_node list = 5;
+    }
+    repeated contract_node contracts = 6;
+}
+
+message type_node { 
+    optional token type = 1;
+    optional bool final = 2;
+}
+
+message namespace_node { 
+    optional token namespace_ = 1;
+}
+
+message alias_node { 
+    optional token type = 1;
+    oneof initializer { 
+        type_id_node a_type = 2;
+        id_expression_node a_namespace = 3;
+        expression_node an_object = 4;
+    }
+}
+
+message declaration_node { 
+    optional capture_group captures = 1;
+    optional source_position pos = 2;
+    optional unqualified_id_node identifier = 3;
+    oneof type { 
+        function_type_node a_function = 4;
+        type_id_node an_object = 5;
+        type_node a_type = 6;
+        namespace_node a_namespace = 7;
+        alias_node an_alias = 8;
+    }
+    repeated id_expression_node meta_functions = 9;
+    optional parameter_declaration_list_node template_parameters = 10;
+    optional source_position requires_pos = 11;
+    optional expression_node requires_clause_expression = 12;
+    optional source_position equal_sign = 13;
+    optional statement_node initializer = 14;
+    optional declaration_node parent_declaration = 15;
+}
+
+message translation_unit_node { 
+    repeated declaration_node declarations = 1;
+}
+
+enum passing_style { 
+    in=0; 
+    copy=1;
+    inout=2;
+    out=3;
+    move=4;
+    forward=5; 
+    invalid=6;
+}
+
 message Cpp2FuzzerInput { 
 
 }
