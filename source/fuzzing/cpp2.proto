@@ -3,7 +3,7 @@ syntax = "proto3";
 package cpp2.fuzzing;
 
 message token { 
-    optional string text = 1;
+    optional string value = 1;
 }
 
 message source_position { 

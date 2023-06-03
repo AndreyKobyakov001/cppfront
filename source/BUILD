@@ -1,3 +1,6 @@
+package(
+    default_visibility = ["//visibility:public"]
+)
 cc_library(
     name = "cppfront_lib",  
     srcs = ["cppfront.h"],
@@ -8,6 +11,7 @@ cc_library(
 cc_binary(
     name = "cppfront",
     srcs = ["main.cpp"],
-    deps = [":cppfront_lib"],   
+    deps = [":cppfront_lib"],  
+    # visibility = ["//visibility:public"], 
 )
 

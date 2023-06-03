@@ -1,0 +1,531 @@
+ // token t; //initialize
+    // t.string = 'xx';
+    // fuzzing::token token_to_proto = fuzzing::TokenToProto(token);
+    // EXPECT_THAT(token_proto, EqualsProto(string:"xx"));
+    
+// Visitor interface
+// class Visitor {
+// public:
+//     virtual void visitTranslationUnit(const translation_unit_node& node) = 0;
+// };
+
+// class translation_unit_node {
+// public:
+//     // ...
+
+//     virtual void accept(Visitor& visitor) {
+//         visitor.visitTranslationUnit(*this);
+//     }
+
+//     // ...
+// };
+
+// // Concrete visitor class for printing the translation unit
+// class PrintVisitor : public Visitor {
+// public:
+//     void visitTranslationUnit(const translation_unit_node& node) override {
+//         std::cout << "Translation Unit" << std::endl;
+//         // Perform any additional printing or processing specific to the translation unit
+//     }
+// };
+
+// auto start(translation_unit_node const& node, int indent) -> void {
+//     PrintVisitor visitor;
+//     node.accept(visitor);
+// }
+
+
+class Visitor {
+public:
+    virtual void visit(token const&) = 0;
+    virtual void visit(literal_node const&) = 0;
+    // Define visit functions for other node types...
+};
+
+class token {
+public:
+    // ...
+    virtual void accept(Visitor& visitor) const {
+        visitor.visit(*this);
+    }
+};
+
+class literal_node {
+public:
+    // ...
+    virtual void accept(Visitor& visitor) const {
+        visitor.visit(*this);
+    }
+};
+
+// Implement accept functions for other node types...
+
+class ParseTreePrinter : public Visitor {
+public:
+    void visit(token const& n) override {
+        // Handle token visitation
+        // Print information about the token
+    }
+
+    void visit(literal_node const& n) override {
+        // Handle literal_node visitation
+        // Print information about the literal_node
+    }
+
+    // Implement visit functions for other node types...
+};
+
+// Create the ParseTreePrinter visitor
+ParseTreePrinter printer;
+
+// Traverse the parse tree and perform visitation
+translation_unit_node root;  // Assuming this is your root node
+root.accept(printer);
+
+
+#ifndef __CPP2_FUZZING_AST_TO_PROTO
+#define __CPP2_FUZZING_AST_TO_PROTO
+
+#include <stdio.h>
+#include "source/cppfront.h"
+#include "/source/parse.h"
+#include <iostream>
+#include <string>
+#include <variant>
+#include <memory>
+
+namespace cpp2::fuzzing {
+
+// Builds a protobuf representation of `ast`.
+auto AstToProto(const translation_unit_node& parse_tree) -> fuzzing::translation_unit_node;
+    //Do something :)
+}  // namespace cpp2::fuzzing
+
+
+//Chad G. Pete
+
+enum class passing_style {
+    in,
+    copy,
+    inout,
+    out,
+    move,
+    forward
+};
+
+class token {
+public:
+    std::string to_string() const {
+        return "token";
+    }
+};
+
+class literal_node {
+};
+
+class expression_node {
+};
+
+class expression_list_node {
+public:
+    struct term {
+        passing_style pass;
+    };
+};
+
+class primary_expression_node {
+};
+
+class prefix_expression_node {
+};
+
+class is_as_expression_node {
+};
+
+template <typename Name, typename Term>
+class binary_expression_node {
+};
+
+class expression_statement_node {
+};
+
+class postfix_expression_node {
+};
+
+class unqualified_id_node {
+};
+
+class qualified_id_node {
+};
+
+class type_id_node {
+};
+
+class id_expression_node {
+};
+
+class statement_node {
+};
+
+class compound_statement_node {
+};
+
+class selection_statement_node {
+public:
+    bool is_constexpr;
+};
+
+class alternative_node {
+};
+
+class jump_statement_node {
+};
+
+class inspect_expression_node {
+public:
+    bool is_constexpr;
+};
+
+class return_statement_node {
+};
+
+class iteration_statement_node {
+public:
+    std::string_view identifier;
+};
+
+class contract_node {
+public:
+    std::string_view kind;
+    std::string_view message;
+};
+
+class type_node {
+};
+
+class namespace_node {
+};
+
+class function_type_node {
+public:
+    std::string throws;
+    using returns_t = std::variant<function_returns_tag, id_expression_node>;
+    returns_t returns;
+};
+
+class function_returns_tag {
+};
+
+class template_args_tag {
+};
+
+class declaration_node {
+public:
+    enum class variant {
+        a_function,
+        an_object,
+        a_type,
+        a_namespace,
+        an_alias
+    } type;
+
+    int access;
+    std::string captures;
+};
+
+class parameter_declaration_node {
+public:
+    passing_style pass;
+    enum class modifier {
+        implicit,
+        virtual_,
+        override_,
+        final
+    } mod;
+
+    std::unique_ptr<declaration_node> declaration;
+};
+
+class parameter_declaration_list_node {
+};
+
+class translation_unit_node {
+public:
+    void accept(class Visitor& visitor) const;
+};
+
+class Visitor {
+public:
+    virtual void visit(token const&) = 0;
+    virtual void visit(literal_node const&) = 0;
+    virtual void visit(expression_node const&) = 0;
+    virtual void visit(expression_list_node::term const&, int indent) = 0;
+    virtual void visit(expression_list_node const&, int indent) = 0;
+    virtual void visit(primary_expression_node const&, int indent) = 0;
+    virtual void visit(prefix_expression_node const&, int indent) = 0;
+    virtual void visit(is_as_expression_node const&, int indent) = 0;
+    virtual void visit(binary_expression_node<Name, Term> const&, int indent) = 0;
+    virtual void visit(expression_statement_node const&, int indent) = 0;
+    virtual void visit(postfix_expression_node const&, int indent) = 0;
+    virtual void visit(unqualified_id_node const&, int indent) = 0;
+    virtual void visit(qualified_id_node const&, int indent) = 0;
+    virtual void visit(type_id_node const&, int indent) = 0;
+    virtual void visit(id_expression_node const&, int indent) = 0;
+    virtual void visit(statement_node const&, int indent) = 0;
+    virtual void visit(compound_statement_node const&, int indent) = 0;
+    virtual void visit(selection_statement_node const& n, int indent) = 0;
+    virtual void visit(alternative_node const&, int indent) = 0;
+    virtual void visit(jump_statement_node const&, int indent) = 0;
+    virtual void visit(inspect_expression_node const& n, int indent) = 0;
+    virtual void visit(return_statement_node const&, int indent) = 0;
+    virtual void visit(iteration_statement_node const& n, int indent) = 0;
+    virtual void visit(contract_node const& n, int indent) = 0;
+    virtual void visit(type_node const&, int indent) = 0;
+    virtual void visit(namespace_node const&, int indent) = 0;
+    virtual void visit(function_type_node const& n, int indent) = 0;
+    virtual void visit(function_returns_tag const&, int indent) = 0;
+    virtual void visit(template_args_tag const&, int indent) = 0;
+    virtual void visit(declaration_node const& n, int indent) = 0;
+    virtual void visit(parameter_declaration_node const& n, int indent) = 0;
+    virtual void visit(parameter_declaration_list_node const&, int indent) = 0;
+    virtual void visit(translation_unit_node const&, int indent) = 0;
+};
+
+void translation_unit_node::accept(Visitor& visitor) const {
+    visitor.visit(*this);
+
+    // Invoke accept for other child nodes
+}
+
+class ParseTreePrinter : public Visitor {
+private:
+    std::ostream& o;
+    int indent_level;
+
+public:
+    ParseTreePrinter(std::ostream& output)
+        : o(output), indent_level(0) {
+    }
+
+    std::string pre(int indent) {
+        return std::string(indent, '\t');
+    }
+
+    void visit(token const& n) override {
+        o << pre(indent_level) << n.to_string() << "\n";
+    }
+
+    void visit(literal_node const&) override {
+        o << pre(indent_level) << "literal" << "\n";
+    }
+
+    void visit(expression_node const&, int indent) override {
+        o << pre(indent_level) << "expression\n";
+    }
+
+    void visit(expression_list_node::term const&, int indent) override {
+        o << pre(indent_level) << "expression-list term\n";
+        if (n.pass == passing_style::out) {
+            o << pre(indent_level + 1) << "out\n";
+        }
+    }
+
+    void visit(expression_list_node const&, int indent) override {
+        o << pre(indent_level) << "expression-list\n";
+    }
+
+    void visit(primary_expression_node const&, int indent) override {
+        o << pre(indent_level) << "primary-expression\n";
+    }
+
+    void visit(prefix_expression_node const&, int indent) override {
+        o << pre(indent_level) << "prefix-expression\n";
+    }
+
+    void visit(is_as_expression_node const&, int indent) override {
+        o << pre(indent_level) << "is-as-expression\n";
+    }
+
+    template <class Name, typename Term>
+    void visit(binary_expression_node<Name, Term> const&, int indent) override {
+        o << pre(indent_level) << Name.value << "-expression\n";
+    }
+
+    void visit(expression_statement_node const&, int indent) override {
+        o << pre(indent_level) << "expression-statement\n";
+    }
+
+    void visit(postfix_expression_node const&, int indent) override {
+        o << pre(indent_level) << "postfix-expression\n";
+    }
+
+    void visit(unqualified_id_node const&, int indent) override {
+        o << pre(indent_level) << "unqualified-id\n";
+    }
+
+    void visit(qualified_id_node const&, int indent) override {
+        o << pre(indent_level) << "qualified-id\n";
+    }
+
+    void visit(type_id_node const&, int indent) override {
+        o << pre(indent_level) << "type-id\n";
+    }
+
+    void visit(id_expression_node const&, int indent) override {
+        o << pre(indent_level) << "id-expression\n";
+    }
+
+    void visit(statement_node const&, int indent) override {
+        o << pre(indent_level) << "statement\n";
+    }
+
+    void visit(compound_statement_node const&, int indent) override {
+        o << pre(indent_level) << "compound-statement\n";
+    }
+
+    void visit(selection_statement_node const& n, int indent) override {
+        o << pre(indent_level) << "selection-statement\n";
+        if (n.is_constexpr) {
+            o << pre(indent_level + 1) << "constexpr\n";
+        }
+    }
+
+    void visit(alternative_node const&, int indent) override {
+        o << pre(indent_level) << "alternative\n";
+    }
+
+    void visit(jump_statement_node const& n, int indent) override {
+        o << pre(indent_level) << "jump-statement\n";
+    }
+
+    void visit(inspect_expression_node const& n, int indent) override {
+        o << pre(indent_level) << "inspect-expression\n";
+        if (n.is_constexpr) {
+            o << pre(indent_level + 1) << "constexpr\n";
+        }
+    }
+
+    void visit(return_statement_node const&, int indent) override {
+        o << pre(indent_level) << "return-statement\n";
+    }
+
+    void visit(iteration_statement_node const& n, int indent) override {
+        o << pre(indent_level) << "iteration-statement\n";
+        o << pre(indent_level + 1) << "identifier: " << n.identifier << "\n";
+    }
+
+    void visit(contract_node const& n, int indent) override {
+        o << pre(indent_level) << "contract\n";
+        o << pre(indent_level + 1) << "kind: " << n.kind << "\n";
+        o << pre(indent_level + 1) << "message: " << n.message << "\n";
+    }
+
+    void visit(type_node const&, int indent) override {
+        o << pre(indent_level) << "type\n";
+    }
+
+    void visit(namespace_node const&, int indent) override {
+        o << pre(indent_level) << "namespace\n";
+    }
+
+    void visit(function_type_node const& n, int indent) override {
+        o << pre(indent_level) << "function-type\n";
+        o << pre(indent_level + 1) << "throws: " << n.throws << "\n";
+        if (std::holds_alternative<id_expression_node>(n.returns)) {
+            o << pre(indent_level + 1) << "returns: id-expression\n";
+        } else {
+            o << pre(indent_level + 1) << "returns: function_returns_tag\n";
+        }
+    }
+
+    void visit(function_returns_tag const&, int indent) override {
+        o << pre(indent_level) << "function-returns-tag\n";
+    }
+
+    void visit(template_args_tag const&, int indent) override {
+        o << pre(indent_level) << "template-args-tag\n";
+    }
+
+    void visit(declaration_node const& n, int indent) override {
+        o << pre(indent_level) << "declaration\n";
+        switch (n.type) {
+            case declaration_node::variant::a_function:
+                o << pre(indent_level + 1) << "type: a_function\n";
+                break;
+            case declaration_node::variant::an_object:
+                o << pre(indent_level + 1) << "type: an_object\n";
+                break;
+            case declaration_node::variant::a_type:
+                o << pre(indent_level + 1) << "type: a_type\n";
+                break;
+            case declaration_node::variant::a_namespace:
+                o << pre(indent_level + 1) << "type: a_namespace\n";
+                break;
+            case declaration_node::variant::an_alias:
+                o << pre(indent_level + 1) << "type: an_alias\n";
+                break;
+        }
+        o << pre(indent_level + 1) << "access: " << n.access << "\n";
+        o << pre(indent_level + 1) << "captures: " << n.captures << "\n";
+    }
+
+    void visit(parameter_declaration_node const& n, int indent) override {
+        o << pre(indent_level) << "parameter-declaration\n";
+        o << pre(indent_level + 1) << "pass: ";
+        switch (n.pass) {
+            case passing_style::in:
+                o << "in\n";
+                break;
+            case passing_style::copy:
+                o << "copy\n";
+                break;
+            case passing_style::inout:
+                o << "inout\n";
+                break;
+            case passing_style::out:
+                o << "out\n";
+                break;
+            case passing_style::move:
+                o << "move\n";
+                break;
+            case passing_style::forward:
+                o << "forward\n";
+                break;
+        }
+        o << pre(indent_level + 1) << "mod: ";
+        switch (n.mod) {
+            case parameter_declaration_node::modifier::implicit:
+                o << "implicit\n";
+                break;
+            case parameter_declaration_node::modifier::virtual_:
+                o << "virtual\n";
+                break;
+            case parameter_declaration_node::modifier::override_:
+                o << "override\n";
+                break;
+            case parameter_declaration_node::modifier::final:
+                o << "final\n";
+                break;
+        }
+    }
+
+    void visit(parameter_declaration_list_node const&, int indent) override {
+        o << pre(indent_level) << "parameter-declaration-list\n";
+    }
+
+    void visit(translation_unit_node const&, int indent) override {
+        o << pre(indent_level) << "translation-unit\n";
+    }
+};
+
+int main() {
+    translation_unit_node tree;
+
+    ParseTreePrinter printer(std::cout);
+    tree.accept(printer);
+
+    return 0;
+}
+
+
+#endif  // __CPP2_FUZZING_AST_TO_PROTO
