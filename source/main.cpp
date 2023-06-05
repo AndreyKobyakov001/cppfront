@@ -24,21 +24,21 @@ auto main(
 )
     -> int
 {
-    cmdline.set_args(argc, argv);
-    cmdline.process_flags();
+    cmdline().set_args(argc, argv);
+    cmdline().process_flags();
 
-    if (cmdline.help_was_requested()) {
+    if (cmdline().help_was_requested()) {
         return EXIT_SUCCESS;
     }
 
-    if (cmdline.arguments().empty()) {
+    if (cmdline().arguments().empty()) {
         std::cerr << "cppfront: error: no input files (try -help)\n";
         return EXIT_FAILURE;
     }
 
     //  For each Cpp2 source file
     int exit_status = EXIT_SUCCESS;
-    for (auto const& arg : cmdline.arguments())
+    for (auto const& arg : cmdline().arguments())
     {
         std::cout << arg.text << "...";
 

@@ -16,7 +16,7 @@ cc_library(
     name = "ast_to_proto",
     srcs = ["ast_to_proto.cpp"],
     hdrs = ["ast_to_proto.h"],
-    deps = ["//source:cppfront", 
+    deps = ["//source:cppfront_lib", 
             ":cpp2_cc_proto"]
     # visibility = ["//visibility:public"],
 )

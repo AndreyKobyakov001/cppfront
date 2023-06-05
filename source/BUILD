@@ -3,7 +3,7 @@ package(
 )
 cc_library(
     name = "cppfront_lib",  
-    srcs = ["cppfront.h"],
+    srcs = ["cppfront.cpp"],
     hdrs = ["common.h", "io.h", "lex.h", "parse.h", "reflect.h", "sema.h", "cppfront.h", "build.info"],
     deps = ["//include:cpp2util"],
 ) 

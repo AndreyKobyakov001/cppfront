@@ -781,7 +781,10 @@ public:
         print("\nAbsolutely no warranty - try at your own risk\n");
     }
 
-} cmdline;
+// } cmdline;
+};
+
+cmdline_processor& cmdline();
 
 cmdline_processor::register_flag::register_flag(
     int              group,
@@ -793,14 +796,14 @@ cmdline_processor::register_flag::register_flag(
     bool             opt_out
 )
 {
-    cmdline.add_flag( group, name, description, handler0, handler1, synonym, opt_out );
+    cmdline().add_flag( group, name, description, handler0, handler1, synonym, opt_out );
 }
 
 static cmdline_processor::register_flag cmd_help   (
     0,
     "help",
     "Print help",
-    []{ cmdline.print_help(); },
+    []{ cmdline().print_help(); },
     nullptr,
     "?"
 );
@@ -809,14 +812,14 @@ static cmdline_processor::register_flag cmd_version(
     0,
     "version",
     "Print version information",
-    []{ cmdline.print_version(); }
+    []{ cmdline().print_version(); }
 );
 
 static cmdline_processor::register_flag cmd_gen_version(
     0,
     "_gen_version",
     "Generate version information",
-    []{ cmdline.gen_version(); }
+    []{ cmdline().gen_version(); }
 );
 
 }
