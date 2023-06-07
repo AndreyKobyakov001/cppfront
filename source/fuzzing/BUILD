@@ -21,6 +21,14 @@ cc_library(
     # visibility = ["//visibility:public"],
 )
 
+cc_library(
+    name = "proto_to_cpp2",
+    srcs = ["proto_to_cpp2.cpp"],
+    hdrs = ["proto_to_cpp2.h"],
+    deps = ["//source:cppfront_lib", 
+            ":cpp2_cc_proto"]
+)
+
 cc_test(
   name = "ast_to_proto_test",
   size = "small",
@@ -28,5 +36,13 @@ cc_test(
   deps = ["@com_google_googletest//:gtest_main", 
           ":ast_to_proto", 
           ":cpp2_cc_proto"],
-#   hdrs = ["ast_to_proto.h"],
+)
+
+cc_test(
+    name = "proto_to_cpp2_test",
+    size = "small",
+    srcs = ["proto_to_cpp2_test.cpp"],
+    deps = ["@com_google_googletest//:gtest_main", 
+          ":proto_to_cpp2", 
+          ":cpp2_cc_proto"],
 )
