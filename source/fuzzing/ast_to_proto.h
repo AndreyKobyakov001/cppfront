@@ -15,7 +15,7 @@ auto LiteralToProto(const literal_node& lit) -> fuzzing::literal_node;
 
 auto TypeToProto(const type_node& type) -> fuzzing::type_node;
 
-// auto NamespaceToProto(const namespace_node& namespace_) -> fuzzing::namespace_node;
+auto NamespaceToProto(const namespace_node& namespace_) -> fuzzing::namespace_node;
 
 }// namespace cpp2
 

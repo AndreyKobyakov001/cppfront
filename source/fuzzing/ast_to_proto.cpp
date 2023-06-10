@@ -28,13 +28,13 @@ auto TypeToProto(const type_node& type) -> fuzzing::type_node {
     return type_proto;
 }
 
-// auto NamespaceToProto(const namespace_node& namespace_) -> fuzzing::namespace_node { 
-//     fuzzing::namespace_node namespace_proto;
-//     if (namespace_node.namespace_ != nullptr) {
-//         *namespace_proto.mutable_namespace_() = TokenToProto(*namespace_node.namespace_);
-//     }
-//     return namespace_proto;
-// }
+auto NamespaceToProto(const namespace_node& namespace_) -> fuzzing::namespace_node { 
+    fuzzing::namespace_node namespace_proto;
+    if (namespace_.namespace_ != nullptr) {
+        *namespace_proto.mutable_namespace_() = TokenToProto(*namespace_.namespace_);
+    }
+    return namespace_proto;
+}
 
 } // namespace cpp2
 

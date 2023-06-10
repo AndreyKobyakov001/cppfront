@@ -59,13 +59,12 @@ TEST(AstToProtoTest, TypeToProto) {
                                            final: false)"));
 }
 
-// TEST(AstToProtoTest, NamespaceToProto) { 
-//     token namespace = MakeToken("name");
-//     namespace_node namespace_node { .namespace_ = &namespace_token };
-
-//     fuzzing::namespace_node namespace_proto = NamespaceToProto(namespace_node);
-//     EXPECT_TRUE(EqualsProto(namespace_proto, R"(namespace_: { value: "name" })"));
-// }
+TEST(AstToProtoTest, NamespaceToProto) { 
+    token namespace_token = MakeToken("name");
+    namespace_node namespace_node(&namespace_token);
+    fuzzing::namespace_node namespace_proto = NamespaceToProto(namespace_node);
+    EXPECT_TRUE(EqualsProto(namespace_proto, R"(namespace_: { value: "Identifier: name" })"));
+}
 
 } //namespace
 } //namespace cpp2
