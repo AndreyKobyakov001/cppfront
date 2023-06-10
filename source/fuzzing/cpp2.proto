@@ -6,10 +6,10 @@ message token {
     optional string value = 1;
 }
 
-message source_position { 
-    optional int32 lineno = 1;
-    optional int32 colno = 2;
-}
+// message source_position { 
+//     optional int32 lineno = 1;
+//     optional int32 colno = 2;
+// }
 
 // from common? 
 
@@ -219,7 +219,7 @@ message unqualified_id_node {
     optional token identifier = 1;
     // source positions l676
     message term {
-        optional source_position comma = 1;
+        // optional source_position comma = 1;
         oneof arg {
             expression_node expression = 2;
             type_id_node type_id = 3;
@@ -237,7 +237,7 @@ message qualified_id_node {
 }
 
 message type_id_node { 
-    optional source_position pos = 1;
+    // optional source_position pos = 1;
     repeated token pc_qualifiers = 2;
     optional token address_of = 3;
     optional token dereference_of = 4;
@@ -261,7 +261,7 @@ message type_id_node {
 // }
 
 message id_expression_node {
-    optional source_position pos = 1; 
+    // optional source_position pos = 1; 
     oneof id { 
         qualified_id_node qualified = 2;
         unqualified_id_node unqualified = 3;
@@ -273,8 +273,8 @@ message id_expression_node {
 // } 
 
 message compound_statement_node { 
-    optional source_position open_brace = 1;
-    optional source_position close_brace = 2;
+    // optional source_position open_brace = 1;
+    // optional source_position close_brace = 2;
     repeated statement_node statements = 3;
     optional int32 body_indent = 4;
 }
@@ -282,7 +282,7 @@ message compound_statement_node {
 message selection_statement_node { 
     optional bool is_constexpr = 1;
     optional token identifier = 2;
-    optional source_position else_pos = 3;
+    // optional source_position else_pos = 3;
     optional logical_or_expression_node expression = 4;
     optional compound_statement_node true_branch = 5;
     optional compare_expression_node false_branch = 6;
@@ -315,7 +315,7 @@ message alternative_node {
     optional token is_as_keyword = 2;
     optional type_id_node type_id = 3;
     optional postfix_expression_node value = 4;
-    optional source_position equal_sign = 5;
+    // optional source_position equal_sign = 5;
     optional statement_node statement = 6;
 }
 
@@ -324,15 +324,15 @@ message inspect_expression_node {
     optional token identifier = 2;
     optional expression_node expression = 3;
     optional type_id_node result_type = 4;
-    optional source_position open_brace = 5;
-    optional source_position close_brace = 6; 
+    // optional source_position open_brace = 5;
+    // optional source_position close_brace = 6; 
     repeated alternative_node alternatives = 7;
     //above is on 1282, check
 }
 
 message contract_node { 
     optional capture_group captures = 1;
-    optional source_position open_bracket = 2;
+    // optional source_position open_bracket = 2;
     optional token kind = 3;
     optional id_expression_node group = 4; 
     optional logical_or_expression_node condition = 5;
@@ -366,7 +366,7 @@ message statement_node {
 }
 
 message parameter_declaration_node { 
-    optional source_position pos = 1;
+    // optional source_position pos = 1;
     optional passing_style pass = 2;
     enum modifier { 
         none = 0;
@@ -419,7 +419,7 @@ message alias_node {
 
 message declaration_node { 
     optional capture_group captures = 1;
-    optional source_position pos = 2;
+    // optional source_position pos = 2;
     optional unqualified_id_node identifier = 3;
     oneof type { 
         function_type_node a_function = 4;
@@ -430,9 +430,9 @@ message declaration_node {
     }
     repeated id_expression_node meta_functions = 9;
     optional parameter_declaration_list_node template_parameters = 10;
-    optional source_position requires_pos = 11;
+    // optional source_position requires_pos = 11;
     optional expression_node requires_clause_expression = 12;
-    optional source_position equal_sign = 13;
+    // optional source_position equal_sign = 13;
     optional statement_node initializer = 14;
     optional declaration_node parent_declaration = 15;
 }

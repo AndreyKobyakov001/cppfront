@@ -11,5 +11,30 @@ auto TokenToProto(const token& token) -> fuzzing::token {
     return token_proto;
 }
 
+auto LiteralToProto(const literal_node& lit) -> fuzzing::literal_node { 
+    fuzzing::literal_node lit_proto;
+    if (lit.literal != nullptr) { 
+        *lit_proto.mutable_literal() = TokenToProto(*lit.literal);
+    }
+    return lit_proto;
+}
+
+auto TypeToProto(const type_node& type) -> fuzzing::type_node {
+    fuzzing::type_node type_proto;
+    if (type.type != nullptr) {
+        *type_proto.mutable_type() = TokenToProto(*type.type);
+    }
+    type_proto.set_final(type.final);
+    return type_proto;
+}
+
+// auto NamespaceToProto(const namespace_node& namespace_) -> fuzzing::namespace_node { 
+//     fuzzing::namespace_node namespace_proto;
+//     if (namespace_node.namespace_ != nullptr) {
+//         *namespace_proto.mutable_namespace_() = TokenToProto(*namespace_node.namespace_);
+//     }
+//     return namespace_proto;
+// }
+
 } // namespace cpp2
 

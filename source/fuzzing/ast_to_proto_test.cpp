@@ -22,18 +22,50 @@ bool EqualsProto(const google::protobuf::Message& actual, const std::string &exp
     // return google::protobuf::util::MessageDifferencer::Equals(actual, *expected_proto);
     if (!equals){ 
         std::cerr << "Diffs: " << diffs << "\n";
+        // std::cout << "Expected:" << actual << "\n";
     }
     return equals;
 }
 
-TEST(AstToProtoTest, TokenToProto) { 
-    
+auto MakeToken(const char* value, lexeme lex = lexeme::Identifier) { 
     source_position pos;
-    token t("xx", pos, lexeme::Identifier);
+    return token(value, pos, lex);
+}
+
+TEST(AstToProtoTest, TokenToProto) { 
+    token t = MakeToken("xx");
 
     fuzzing::token token_proto = TokenToProto(t);
     EXPECT_TRUE(EqualsProto(token_proto, "value: 'Identifier: xx'"));
 }
+
+TEST(AstToProtoTest, LiteralToProto) { 
+    token int_literal = MakeToken("1", lexeme::DecimalLiteral);
+    literal_node lit { .literal = &int_literal };
+
+    fuzzing::literal_node lit_proto = LiteralToProto(lit);
+    EXPECT_TRUE(EqualsProto(lit_proto, R"(literal: { value: "DecimalLiteral: 1" })"));
+}
+
+TEST(AstToProtoTest, TypeToProto) { 
+    token type_token = MakeToken("int", lexeme::BinaryLiteral);
+    type_node type(&type_token, false);
+
+    fuzzing::type_node type_proto = TypeToProto(type);
+    // EXPECT_TRUE(EqualsProto(type_proto, R"(type: { value: "int" })"));
+    EXPECT_TRUE(EqualsProto(type_proto, R"(type: { 
+                                             value: "BinaryLiteral: int" 
+                                           }
+                                           final: false)"));
+}
+
+// TEST(AstToProtoTest, NamespaceToProto) { 
+//     token namespace = MakeToken("name");
+//     namespace_node namespace_node { .namespace_ = &namespace_token };
+
+//     fuzzing::namespace_node namespace_proto = NamespaceToProto(namespace_node);
+//     EXPECT_TRUE(EqualsProto(namespace_proto, R"(namespace_: { value: "name" })"));
+// }
 
 } //namespace
 } //namespace cpp2
