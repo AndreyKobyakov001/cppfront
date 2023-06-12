@@ -80,8 +80,6 @@ void ContractToCpp2(const fuzzing::contract_node& contract, std::ostream& out);
 
 void JumpToCpp2(const fuzzing::jump_statement_node& jump_statement, std::ostream& out);
 
-void FunctionDefinitionToCpp2(const fuzzing::function_definition_node& function_definition, std::ostream& out);
-
 void StatementToCpp2(const fuzzing::statement_node& statement, std::ostream& out);
 
 void ParameterDeclarationNodeToCpp2(const fuzzing::parameter_declaration_node& parameter_declaration, std::ostream& out);

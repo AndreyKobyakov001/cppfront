@@ -554,3 +554,23 @@ TEST(AstToProtoTest, SameProtoAfterClone) {
   EXPECT_GT(parsed_ok_count, 0);
 }
 
+
+auto PrimaryExpressionToProto(const primary_expression_node& primary_expression) -> fuzzing::primary_expression_node { 
+    fuzzing::primary_expression_node primary_expression_proto;
+    const auto& e = primary_expression.expr;
+    if (std::holds_alternative<std::monostate>(e)) { 
+    } else if (std::holds_alternative<const token*>(e)) { 
+        *primary_expression_proto.mutable_identifier() = TokenToProto(*std::get<const token*>(e));
+    } else if (std::holds_alternative<const expression_list_node*>(e)) { 
+        *primary_expression_proto.mutable_expression_list() = TokenToProto(*std::get<const expression_list_node*>(e));
+    } else if (std::holds_alternative<const id_expression_node*>(e)) { 
+        *primary_expression_proto.mutable_id_expression() = TokenToProto(*std::get<const id_expression_node*>(e));
+    } else if (std::holds_alternative<const declaration_node*>(e)) { 
+        *primary_expression_proto.mutable_declaration() = TokenToProto(*std::get<const declaration_node*>(e));
+    } else if (std::holds_alternative<const inspect_expression_node*>(e)) { 
+        *primary_expression_proto.mutable_inspect() = TokenToProto(*std::get<const inspect_expression_node*>(e));
+    } else if (std::holds_alternative<const literal_node*>(e)) { 
+        *primary_expression_proto.mutable_literal() = TokenToProto(*std::get<const literal_node*>(e));
+    }
+    return primary_expression_proto;
+}
