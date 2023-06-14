@@ -65,103 +65,250 @@ auto PrimaryExpressionToProto(const primary_expression_node& primary_expression)
 
 auto PrefixExpressionToProto(const prefix_expression_node& prefix_expression) -> fuzzing::prefix_expression_node {
     fuzzing::prefix_expression_node prefix_expression_proto;
-    // TODO: Convert prefix_expression_ to fuzzing::prefix_expression_node
+    for (const auto* op : prefix_expression.ops) {
+        *prefix_expression_proto.add_ops() = TokenToProto(*op);
+    }
+    *prefix_expression_proto.mutable_expr() = PostfixExpressionToProto(*prefix_expression.expr);
     return prefix_expression_proto;
 }
 
+//FOR REVIEW:
+
 auto IsAsExpressionToProto(const is_as_expression_node& is_as_expression) -> fuzzing::is_as_expression_node {
     fuzzing::is_as_expression_node is_as_expression_proto;
-    // TODO: Convert is_as_expression_ to fuzzing::is_as_expression_node
+    *is_as_expression_proto.mutable_expr() = PrefixExpressionToProto(*is_as_expression.expr);
+    for (const auto& term : is_as_expression.ops) {
+        auto& op_proto = *is_as_expression_proto.add_ops();
+        *op_proto.mutable_op() = TokenToProto(*term.op);
+        *op_proto.mutable_type() = TypeIdToProto(*term.type);
+        *op_proto.mutable_expr() = ExpressionToProto(*term.expr);
+    }
+
     return is_as_expression_proto;
 }
 
 auto MultiplicativeExpressionToProto(const multiplicative_expression_node& multiplicative_expression) -> fuzzing::multiplicative_expression_node {
     fuzzing::multiplicative_expression_node multiplicative_expression_proto;
-    // TODO: Convert multiplicative_expression_ to fuzzing::multiplicative_expression_node
+    *multiplicative_expression_proto.mutable_expr() = IsAsExpressionToProto(*multiplicative_expression.expr);
+    
+    for (const auto& term : multiplicative_expression.terms) {
+        // auto& op_proto = *multiplicative_expression.add_ops();
+        // auto& op_proto = TokenToProto(*multiplicative_expression.ops);
+        // *op_proto.mutable_op() = TokenToProto(*term.op);
+        // *op_proto.mutable_expr() = IsAsExpressionToProto(*term.type);
+        // *term.mutable_op() = TokenToProto(*term.op);
+        // *term.mutable_expr() = IsAsExpressionToProto(*term.type);
+        // *multiplicative_expression.mutable_op() = TokenToProto(*term.op);
+        // *multiplicative_expression.mutable_expr() = IsAsExpressionToProto(*term.type);
+        auto term_proto = multiplicative_expression_proto.add_terms();
+        *term_proto->mutable_op() = TokenToProto(*term.op);
+        *term_proto->mutable_expr() = IsAsExpressionToProto(*term.expr);
+    }
+
     return multiplicative_expression_proto;
 }
 
 auto AdditiveExpressionToProto(const additive_expression_node& additive_expression) -> fuzzing::additive_expression_node {
     fuzzing::additive_expression_node additive_expression_proto;
-    // TODO: Convert additive_expression_ to fuzzing::additive_expression_node
+     
+    *additive_expression_proto.mutable_expr() = MultiplicativeExpressionToProto(*additive_expression.expr);
+    
+    for (const auto& term : additive_expression.terms) {
+        // auto& op_proto = *additive_expression.add_ops();
+        // *op_proto.mutable_op() = TokenToProto(*term.op);
+        // *op_proto.mutable_expr() = MultiplicativeExpressionToProto(*term.type);
+        auto term_proto = additive_expression_proto.add_terms();
+        *term_proto->mutable_op() = TokenToProto(*term.op);
+        *term_proto->mutable_expr() = MultiplicativeExpressionToProto(*term.expr);
+    }
+
     return additive_expression_proto;
 }
 
 auto ShiftExpressionToProto(const shift_expression_node& shift_expression) -> fuzzing::shift_expression_node {
     fuzzing::shift_expression_node shift_expression_proto;
-    // TODO: Convert shift_expression_ to fuzzing::shift_expression_node
+    
+    *shift_expression_proto.mutable_expr() = AdditiveExpressionToProto(*shift_expression.expr);
+    for (const auto& term : shift_expression.terms) {
+        // auto& op_proto = *shift_expression.add_ops();
+        // *op_proto.mutable_op() = TokenToProto(*term.op);
+        // *op_proto.mutable_expr() = AdditiveExpressionToProto(*term.type);
+        auto term_proto = shift_expression_proto.add_terms();
+        *term_proto->mutable_op() = TokenToProto(*term.op);
+        *term_proto->mutable_expr() = AdditiveExpressionToProto(*term.expr);
+    }
+
     return shift_expression_proto;
 }
 
 auto CompareExpressionToProto(const compare_expression_node& compare_expression) -> fuzzing::compare_expression_node {
     fuzzing::compare_expression_node compare_expression_proto;
-    // TODO: Convert compare_expression_ to fuzzing::compare_expression_node
+    
+    *compare_expression_proto.mutable_expr() = ShiftExpressionToProto(*compare_expression.expr);
+    for (const auto& term : compare_expression.terms) {
+        // auto& op_proto = *compare_expression.add_ops();
+        // *op_proto.mutable_op() = TokenToProto(*term.op);
+        // *op_proto.mutable_expr() = ShiftExpressionToProto(*term.type);
+        auto term_proto = compare_expression_proto.add_terms();
+        *term_proto->mutable_op() = TokenToProto(*term.op);
+        *term_proto->mutable_expr() = ShiftExpressionToProto(*term.expr);
+    }
+
     return compare_expression_proto;
 }
 
 auto RelationalExpressionToProto(const relational_expression_node& relational_expression) -> fuzzing::relational_expression_node {
     fuzzing::relational_expression_node relational_expression_proto;
-    // TODO: Convert relational_expression_ to fuzzing::relational_expression_node
+    
+    *relational_expression_proto.mutable_expr() = CompareExpressionToProto(*relational_expression.expr);
+    for (const auto& term : relational_expression.terms) {
+        // auto& op_proto = *relational_expression.add_ops();
+        // *op_proto.mutable_op() = TokenToProto(*term.op);
+        // *op_proto.mutable_expr() = CompareExpressionToProto(*term.type);
+        auto term_proto = relational_expression_proto.add_terms();
+        *term_proto->mutable_op() = TokenToProto(*term.op);
+        *term_proto->mutable_expr() = CompareExpressionToProto(*term.expr);
+    }
+
     return relational_expression_proto;
 }
 
 auto EqualityExpressionToProto(const equality_expression_node& equality_expression) -> fuzzing::equality_expression_node {
     fuzzing::equality_expression_node equality_expression_proto;
-    // TODO: Convert equality_expression_ to fuzzing::equality_expression_node
+    *equality_expression_proto.mutable_expr() = RelationalExpressionToProto(*equality_expression.expr);
+    for (const auto& term : equality_expression.terms) {
+        // auto& op_proto = *equality_expression.add_ops();
+        // *op_proto.mutable_op() = TokenToProto(*term.op);
+        // *op_proto.mutable_expr() = RelationalExpressionToProto(*term.type);
+        auto term_proto = equality_expression_proto.add_terms();
+        *term_proto->mutable_op() = TokenToProto(*term.op);
+        *term_proto->mutable_expr() = RelationalExpressionToProto(*term.expr);
+    }
+    
     return equality_expression_proto;
 }
 
 auto BitAndExpressionToProto(const bit_and_expression_node& bit_and_expression) -> fuzzing::bit_and_expression_node {
     fuzzing::bit_and_expression_node bit_and_expression_proto;
-    // TODO: Convert bit_and_expression_ to fuzzing::bit_and_expression_node
+    
+    *bit_and_expression_proto.mutable_expr() = EqualityExpressionToProto(*bit_and_expression.expr);
+    for (const auto& term : bit_and_expression.terms) {
+        // auto& op_proto = *bit_and_expression.add_ops();
+        // *op_proto.mutable_op() = TokenToProto(*term.op);
+        // *op_proto.mutable_expr() = EqualityExpressionToProto(*term.type);
+        auto term_proto = bit_and_expression_proto.add_terms();
+        *term_proto->mutable_op() = TokenToProto(*term.op);
+        *term_proto->mutable_expr() = EqualityExpressionToProto(*term.expr);
+    }
+
     return bit_and_expression_proto;
 }
 
 auto BitXorExpressionToProto(const bit_xor_expression_node& bit_xor_expression) -> fuzzing::bit_xor_expression_node {
     fuzzing::bit_xor_expression_node bit_xor_expression_proto;
-    // TODO: Convert bit_xor_expression_ to fuzzing::bit_xor_expression_node
+    
+    *bit_xor_expression_proto.mutable_expr() = BitAndExpressionToProto(*bit_xor_expression.expr);
+    for (const auto& term : bit_xor_expression.terms) {
+        // auto& op_proto = *bit_xor_expression.add_ops(); 
+        // *op_proto.mutable_op() = TokenToProto(*term.op);
+        // *op_proto.mutable_expr() = BitAndExpressionToProto(*term.type);
+        auto term_proto = bit_xor_expression_proto.add_terms();
+        *term_proto->mutable_op() = TokenToProto(*term.op);
+        *term_proto->mutable_expr() = BitAndExpressionToProto(*term.expr);
+    }
+    
     return bit_xor_expression_proto;
 }
 
 auto BitOrExpressionToProto(const bit_or_expression_node& bit_or_expression) -> fuzzing::bit_or_expression_node {
     fuzzing::bit_or_expression_node bit_or_expression_proto;
-    // TODO: Convert bit_or_expression_ to fuzzing::bit_or_expression_node
+    
+    *bit_or_expression_proto.mutable_expr() = BitXorExpressionToProto(*bit_or_expression.expr);
+    for (const auto& term : bit_or_expression.terms) {
+        // auto& op_proto = *bit_or_expression.add_ops();
+        // *op_proto.mutable_op() = TokenToProto(*term.op);
+        // *op_proto.mutable_expr() = BitXorExpressionToProto(*term.type);
+        auto term_proto = bit_or_expression_proto.add_terms();
+        *term_proto->mutable_op() = TokenToProto(*term.op);
+        *term_proto->mutable_expr() = BitXorExpressionToProto(*term.expr);
+    }
+
     return bit_or_expression_proto;
 }
 
 auto LogicalAndExpressionToProto(const logical_and_expression_node& logical_and_expression) -> fuzzing::logical_and_expression_node {
     fuzzing::logical_and_expression_node logical_and_expression_proto;
-    // TODO: Convert logical_and_expression_ to fuzzing::logical_and_expression_node
+    
+    *logical_and_expression_proto.mutable_expr() = BitOrExpressionToProto(*logical_and_expression.expr);
+    for (const auto& term : logical_and_expression.terms) {
+        // auto& op_proto = *logical_and_expression.add_ops();
+        // *op_proto.mutable_op() = TokenToProto(*term.op);
+        // *op_proto.mutable_expr() = BitOrExpressionToProto(*term.type);
+        auto term_proto = logical_and_expression_proto.add_terms();
+        *term_proto->mutable_op() = TokenToProto(*term.op);
+        *term_proto->mutable_expr() = BitOrExpressionToProto(*term.expr);
+    }
+
     return logical_and_expression_proto;
 }
 
 auto LogicalOrExpressionToProto(const logical_or_expression_node& logical_or_expression) -> fuzzing::logical_or_expression_node {
     fuzzing::logical_or_expression_node logical_or_expression_proto;
-    // TODO: Convert logical_or_expression_ to fuzzing::logical_or_expression_node
+    
+    *logical_or_expression_proto.mutable_expr() = LogicalAndExpressionToProto(*logical_or_expression.expr);
+    for (const auto& term : logical_or_expression.terms) {
+        // auto& op_proto = *logical_or_expression.add_ops();
+        // *op_proto.mutable_op() = TokenToProto(*term.op);
+        // *op_proto.mutable_expr() = LogicalAndExpressionToProto(*term.type);
+        auto term_proto = logical_or_expression_proto.add_terms();
+        *term_proto->mutable_op() = TokenToProto(*term.op);
+        *term_proto->mutable_expr() = LogicalAndExpressionToProto(*term.expr);
+    }
+
     return logical_or_expression_proto;
 }
 
 auto AssignmentExpressionToProto(const assignment_expression_node& assignment_expression) -> fuzzing::assignment_expression_node {
     fuzzing::assignment_expression_node assignment_expression_proto;
-    // TODO: Convert assignment_expression_ to fuzzing::assignment_expression_node
+    
+    *assignment_expression_proto.mutable_expr() = LogicalOrExpressionToProto(*assignment_expression.expr);
+    for (const auto& term : assignment_expression.terms) {
+        // auto& op_proto = *assignment_expression.add_ops();
+        // *op_proto.mutable_op() = TokenToProto(*term.op);
+        // *op_proto.mutable_expr() = LogicalOrExpressionToProto(*term.type);
+        auto term_proto = assignment_expression_proto.add_terms();
+        *term_proto->mutable_op() = TokenToProto(*term.op);
+        *term_proto->mutable_expr() = LogicalOrExpressionToProto(*term.expr);
+    }
+
     return assignment_expression_proto;
 }
 
 auto ExpressionToProto(const expression_node& expression) -> fuzzing::expression_node {
     fuzzing::expression_node expression_proto;
-    // TODO: Convert expression_ to fuzzing::expression_node
+    *expression_proto.mutable_expr() = AssignmentExpressionToProto(*expression.expr);
     return expression_proto;
 }
 
 auto ExpressionListToProto(const expression_list_node& expression_list) -> fuzzing::expression_list_node {
     fuzzing::expression_list_node expression_list_proto;
-    // TODO: Convert expression_list_ to fuzzing::expression_list_node
+    // *expression_list_proto.mutable_open_paren = TokenToProto(*expression_list.open_paren);
+    // *expression_list_proto.mutable_close_paren = TokenToProto(*expression_list.close_paren);
+    // // *expression_list_proto.mutable_bool
+    // //the above line has been left blank, because I have no idea as to how to mute a bool
+    // //and similarly, problems with the nested message have arisen
+    // // *expression_list_proto.mutable_pass = I have no idea what this is
+    // *expression_list_proto.mutable_expr = ExpressionToProto(*expression_list.expr);
+    // for (const auto* term : expression_list.expressions) {
+    //     //do something, I guess
+    // }
     return expression_list_proto;
 }
 
 auto ExpressionStatementToProto(const expression_statement_node& expression_statement) -> fuzzing::expression_statement_node {
     fuzzing::expression_statement_node expression_statement_proto;
-    // TODO: Convert expression_statement_ to fuzzing::expression_statement_node
+    // *expression_statement_proto.mutable_expr() = ExpressionListToProto(expression_statement.expr);
+    // *expression.mutable_has_semicolon = bool...? - what to do with bools? 
     return expression_statement_proto;
 }
 
