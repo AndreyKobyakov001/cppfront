@@ -26,7 +26,6 @@
 *.bin
 *.exe
 source/gen_version.bat
-bazel-bin
 bazel-cppfront
 bazel-cppfront-main
 bazel-out

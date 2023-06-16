@@ -5,6 +5,27 @@
 
 namespace cpp2 {
 
+//UNDER REVIEW
+auto PassingStyleToProto(passing_style style) -> fuzzing::passing_style::en {
+    switch (style) {
+        case passing_style::in:
+            return fuzzing::passing_style::in;
+        case passing_style::copy:
+            return fuzzing::passing_style::copy;
+        case passing_style::inout:
+            return fuzzing::passing_style::inout;
+        case passing_style::out:
+            return fuzzing::passing_style::out;
+        case passing_style::move:
+            return fuzzing::passing_style::move;
+        case passing_style::forward:
+            return fuzzing::passing_style::forward;
+        case passing_style::invalid:
+            return fuzzing::passing_style::invalid;
+    }
+    return fuzzing::passing_style::invalid;  // Default case
+}
+
 auto TokenToProto(const token& token) -> fuzzing::token {
     fuzzing::token token_proto;
     token_proto.set_value(token.to_string()); 
@@ -41,6 +62,7 @@ auto NamespaceToProto(const namespace_node& namespace_) -> fuzzing::namespace_no
 auto PrimaryExpressionToProto(const primary_expression_node& primary_expression) -> fuzzing::primary_expression_node { 
     fuzzing::primary_expression_node primary_expression_proto;
     const auto& e = primary_expression.expr;
+    // for oneofs
     if (std::holds_alternative<std::monostate>(e)) { 
     } else if (std::holds_alternative<const token*>(e)) { 
         *primary_expression_proto.mutable_identifier() = TokenToProto(*std::get<const token*>(e));
@@ -284,6 +306,8 @@ auto AssignmentExpressionToProto(const assignment_expression_node& assignment_ex
     return assignment_expression_proto;
 }
 
+//FOR REVIEW, 15/6/23
+
 auto ExpressionToProto(const expression_node& expression) -> fuzzing::expression_node {
     fuzzing::expression_node expression_proto;
     *expression_proto.mutable_expr() = AssignmentExpressionToProto(*expression.expr);
@@ -292,41 +316,42 @@ auto ExpressionToProto(const expression_node& expression) -> fuzzing::expression
 
 auto ExpressionListToProto(const expression_list_node& expression_list) -> fuzzing::expression_list_node {
     fuzzing::expression_list_node expression_list_proto;
-    // *expression_list_proto.mutable_open_paren = TokenToProto(*expression_list.open_paren);
-    // *expression_list_proto.mutable_close_paren = TokenToProto(*expression_list.close_paren);
-    // // *expression_list_proto.mutable_bool
-    // //the above line has been left blank, because I have no idea as to how to mute a bool
-    // //and similarly, problems with the nested message have arisen
-    // // *expression_list_proto.mutable_pass = I have no idea what this is
-    // *expression_list_proto.mutable_expr = ExpressionToProto(*expression_list.expr);
-    // for (const auto* term : expression_list.expressions) {
-    //     //do something, I guess
-    // }
+    *expression_list_proto.mutable_open_paren() = TokenToProto(*expression_list.open_paren);
+    *expression_list_proto.mutable_close_paren() = TokenToProto(*expression_list.close_paren);
+    // *expression_list_proto.mutable_inside_initializer = set_inside_initializer(*expression_list.inside_initializer); 
+    // bool?
+    for (const auto& term : expression_list.expressions) {
+        auto term_proto = expression_list_proto.add_expressions();
+        term_proto->set_pass(PassingStyleToProto(term.pass));
+        *term_proto->mutable_expr() = ExpressionToProto(*term.expr);
+    }
     return expression_list_proto;
 }
 
 auto ExpressionStatementToProto(const expression_statement_node& expression_statement) -> fuzzing::expression_statement_node {
     fuzzing::expression_statement_node expression_statement_proto;
-    // *expression_statement_proto.mutable_expr() = ExpressionListToProto(expression_statement.expr);
-    // *expression.mutable_has_semicolon = bool...? - what to do with bools? 
+    *expression_statement_proto.mutable_expr() = ExpressionToProto(*expression_statement.expr);
+    expression_statement_proto.set_has_semicolon(expression_statement.has_semicolon);
     return expression_statement_proto;
 }
 
 auto CaptureToProto(const capture& capture) -> fuzzing::capture {
     fuzzing::capture capture_proto;
-    // TODO: Convert capture_ to fuzzing::capture
+    *capture_proto.mutable_capture_expr() = PostfixExpressionToProto(*capture.capture_expr);
     return capture_proto;
 }
 
 auto CaptureGroupToProto(const capture_group& capture_group) -> fuzzing::capture_group {
     fuzzing::capture_group capture_group_proto;
-    // TODO: Convert capture_group_ to fuzzing::capture_group
+    for(const auto& member : capture_group.members) { 
+        *capture_group_proto.add_members() = CaptureToProto(member);
+    }
     return capture_group_proto;
 }
 
 auto PostfixExpressionToProto(const postfix_expression_node& postfix_expression) -> fuzzing::postfix_expression_node {
     fuzzing::postfix_expression_node postfix_expression_proto;
-    // TODO: Convert postfix_expression_ to fuzzing::postfix_expression_node
+    *postfix_expression_proto.mutable_expr() = PrimaryExpressionToProto(*postfix_expression.expr);
     return postfix_expression_proto;
 }
 

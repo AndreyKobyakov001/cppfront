@@ -174,16 +174,16 @@ message expression_list_node {
     optional token close_paren = 2; 
     optional bool inside_initializer = 3; 
     message term {
-        optional passing_style pass = 1;
+        optional passing_style.en pass = 1;
         optional expression_node expr = 2;
     }
-    repeated term expresssions = 4;
+    repeated term expressions = 4;
 }
 
 //25/5/2023
 
 message expression_statement_node { 
-    optional expression_list_node expr = 1;
+    optional expression_node expr = 1;
     optional bool has_semicolon = 2; 
 }
 
@@ -367,7 +367,7 @@ message statement_node {
 
 message parameter_declaration_node { 
     // optional source_position pos = 1;
-    optional passing_style pass = 2;
+    optional passing_style.en pass = 2;
     enum modifier { 
         none = 0;
         implicit = 1;
@@ -390,7 +390,7 @@ message function_type_node {
     optional bool throws = 3;
     message single_type_id { 
         optional type_id_node type = 1;
-        optional passing_style pass = 2;
+        optional passing_style.en pass = 2;
     } 
     oneof returns { 
         single_type_id id = 4;
@@ -441,14 +441,16 @@ message translation_unit_node {
     repeated declaration_node declarations = 1;
 }
 
-enum passing_style { 
-    in=0; 
-    copy=1;
-    inout=2;
-    out=3;
-    move=4;
-    forward=5; 
-    invalid=6;
+message passing_style { 
+    enum en {
+        in=0; 
+        copy=1;
+        inout=2;
+        out=3;
+        move=4;
+        forward=5; 
+        invalid=6;
+    }
 }
 
 message Cpp2FuzzerInput { 
