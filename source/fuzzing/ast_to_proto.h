@@ -51,6 +51,10 @@ auto LogicalOrExpressionToProto(const logical_or_expression_node& logical_or_exp
 
 auto AssignmentExpressionToProto(const assignment_expression_node& assignment_expression) -> fuzzing::assignment_expression_node;
 
+auto ParameterDeclarationToProto(const parameter_declaration_node& parameter_declaration) -> fuzzing::parameter_declaration_node;
+
+auto ParameterDeclarationListToProto(const parameter_declaration_list_node& parameter_declaration_list) -> fuzzing::parameter_declaration_list_node;
+
 auto ExpressionToProto(const expression_node& expression) -> fuzzing::expression_node;
 
 auto ExpressionListToProto(const expression_list_node& expression_list) -> fuzzing::expression_list_node;
@@ -78,6 +82,8 @@ auto SelectionStatementToProto(const selection_statement_node& selection_stateme
 auto IterationStatementToProto(const iteration_statement_node& iteration_statement) -> fuzzing::iteration_statement_node;
 
 auto ReturnStatementToProto(const return_statement_node& return_statement) -> fuzzing::return_statement_node;
+
+auto StatementToProto(const statement_node& statement) -> fuzzing::statement_node;
 
 auto AlternativeToProto(const alternative_node& alternative) -> fuzzing::alternative_node;
 

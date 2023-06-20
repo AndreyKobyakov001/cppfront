@@ -352,120 +352,374 @@ auto CaptureGroupToProto(const capture_group& capture_group) -> fuzzing::capture
 auto PostfixExpressionToProto(const postfix_expression_node& postfix_expression) -> fuzzing::postfix_expression_node {
     fuzzing::postfix_expression_node postfix_expression_proto;
     *postfix_expression_proto.mutable_expr() = PrimaryExpressionToProto(*postfix_expression.expr);
+    for (const auto& term : postfix_expression.ops) {
+        auto term_proto = postfix_expression_proto.add_ops();
+        *term_proto->mutable_op() = TokenToProto(*term.op);
+        *term_proto->mutable_id_expr() = IdExpressionToProto(*term.id_expr);
+        *term_proto->mutable_expr_list() = ExpressionListToProto(*term.expr_list);
+        *term_proto->mutable_op_close() = TokenToProto(*term.op_close);
+    }
     return postfix_expression_proto;
 }
 
 auto UnqualifiedIdToProto(const unqualified_id_node& unqualified_id) -> fuzzing::unqualified_id_node {
     fuzzing::unqualified_id_node unqualified_id_proto;
-    // TODO: Convert unqualified_id_ to fuzzing::unqualified_id_node
+    *unqualified_id_proto.mutable_identifier() = TokenToProto(*unqualified_id.identifier);
+    for (const auto& term : unqualified_id.template_args) {
+        auto term_proto = unqualified_id_proto.add_template_args();
+        std::visit([&](const auto& arg) {
+            //I have NO idea as to what this does. Please read up on it. :)
+            using T = std::decay_t<decltype(arg)>;
+            if constexpr (std::is_same_v<T, expression_node>) {
+                *term_proto->mutable_expression() = ExpressionToProto(arg);
+            } else if constexpr (std::is_same_v<T, type_id_node>) {
+                *term_proto->mutable_type_id() = TypeIdToProto(arg);
+            }
+        }, term.arg);
+    }
     return unqualified_id_proto;
 }
 
 auto QualifiedIdToProto(const qualified_id_node& qualified_id) -> fuzzing::qualified_id_node {
     fuzzing::qualified_id_node qualified_id_proto;
-    // TODO: Convert qualified_id_ to fuzzing::qualified_id_node
+    for (const auto& term : qualified_id.ids) {
+        auto term_proto = qualified_id_proto.add_ids();
+        *term_proto->mutable_scope_op() = TokenToProto(*term.scope_op);
+        *term_proto->mutable_id() = UnqualifiedIdToProto(*term.id);
+    }
     return qualified_id_proto;
 }
 
 auto TypeIdToProto(const type_id_node& type_id) -> fuzzing::type_id_node {
     fuzzing::type_id_node type_id_proto;
-    // TODO: Convert type_id_ to fuzzing::type_id_node
+    for (const auto& pc_qualifier : type_id.pc_qualifiers) {
+        *type_id_proto.add_pc_qualifiers() = TokenToProto(*pc_qualifier);
+    }
+    *type_id_proto.mutable_address_of() = TokenToProto(*type_id.address_of);
+    *type_id_proto.mutable_dereference_of() = TokenToProto(*type_id.dereference_of);
+    type_id_proto.set_dereference_cnt(type_id.dereference_cnt); 
+
+    // *type_id_proto.id() = TokenToProto(type_id.suspicious_initialization);
+    const auto& e = type_id.id;
+
+    if (std::holds_alternative<std::monostate>(e)) { 
+    } else if (std::holds_alternative<std::unique_ptr<qualified_id_node>>(e)) {
+        *type_id_proto.mutable_qualified() =
+            QualifiedIdToProto(*std::get<std::unique_ptr<qualified_id_node>>(e));
+    } else if (std::holds_alternative<std::unique_ptr<unqualified_id_node>>(e)) {
+        *type_id_proto.mutable_unqualified() =
+            UnqualifiedIdToProto(*std::get<std::unique_ptr<unqualified_id_node>>(e));
+    // } else if (std::holds_alternative<std::unique_ptr<token>>(e)) {
+    } else if (std::holds_alternative<const token*>(e)) {
+        *type_id_proto.mutable_keyword() =
+            // TokenToProto(*std::get<token>(e));
+            TokenToProto(*std::get<const token*>(e));
+    }
+//did monostate fix it or the better const token* l413?
     return type_id_proto;
 }
 
+
 auto IdExpressionToProto(const id_expression_node& id_expression) -> fuzzing::id_expression_node {
     fuzzing::id_expression_node id_expression_proto;
-    // TODO: Convert id_expression_ to fuzzing::id_expression_node
+ 
+    const auto& e = id_expression.id;
+
+    if (std::holds_alternative<std::monostate>(e)) { 
+    } else if (std::holds_alternative<std::unique_ptr<qualified_id_node>>(e)) {
+        *id_expression_proto.mutable_qualified() =
+            QualifiedIdToProto(*std::get<std::unique_ptr<qualified_id_node>>(e));
+    } else if (std::holds_alternative<std::unique_ptr<unqualified_id_node>>(e)) {
+        *id_expression_proto.mutable_unqualified() =
+            UnqualifiedIdToProto(*std::get<std::unique_ptr<unqualified_id_node>>(e));
+    } 
     return id_expression_proto;
 }
 
 auto CompoundStatementToProto(const compound_statement_node& compound_statement) -> fuzzing::compound_statement_node {
     fuzzing::compound_statement_node compound_statement_proto;
-    // TODO: Convert compound_statement_ to fuzzing::compound_statement_node
+    for (const auto& statement : compound_statement.statements) {
+        auto* statement_proto = compound_statement_proto.add_statements();
+        *statement_proto = StatementToProto(*statement);
+        // *compound_statement_proto.mutable_statements() = StatementToProto(*statement); --deprecated
+    }
+    compound_statement_proto.set_body_indent(compound_statement.body_indent);
+    
     return compound_statement_proto;
 }
 
 auto SelectionStatementToProto(const selection_statement_node& selection_statement) -> fuzzing::selection_statement_node {
     fuzzing::selection_statement_node selection_statement_proto;
-    // TODO: Convert selection_statement_ to fuzzing::selection_statement_node
+    selection_statement_proto.set_is_constexpr(selection_statement.is_constexpr);
+    *selection_statement_proto.mutable_identifier() = TokenToProto(*selection_statement.identifier);
+    *selection_statement_proto.mutable_expression() = LogicalOrExpressionToProto(*selection_statement.expression);
+    *selection_statement_proto.mutable_true_branch() = CompoundStatementToProto(*selection_statement.true_branch);
+    *selection_statement_proto.mutable_false_branch() = CompoundStatementToProto(*selection_statement.false_branch);
+    selection_statement_proto.set_has_source_false_branch(selection_statement.has_source_false_branch);
     return selection_statement_proto;
 }
 
 auto IterationStatementToProto(const iteration_statement_node& iteration_statement) -> fuzzing::iteration_statement_node {
     fuzzing::iteration_statement_node iteration_statement_proto;
-    // TODO: Convert iteration_statement_ to fuzzing::iteration_statement_node
+    *iteration_statement_proto.mutable_label() = TokenToProto(*iteration_statement.label);
+    *iteration_statement_proto.mutable_identifier() = TokenToProto(*iteration_statement.identifier);
+    *iteration_statement_proto.mutable_next_expression() = AssignmentExpressionToProto(*iteration_statement.next_expression);
+    *iteration_statement_proto.mutable_condition() = LogicalOrExpressionToProto(*iteration_statement.condition);
+    *iteration_statement_proto.mutable_statements() = CompoundStatementToProto(*iteration_statement.statements);
+    *iteration_statement_proto.mutable_range() = ExpressionToProto(*iteration_statement.range);
+    *iteration_statement_proto.mutable_parameter() = ParameterDeclarationToProto(*iteration_statement.parameter);
+    *iteration_statement_proto.mutable_body() = StatementToProto(*iteration_statement.body);
+    iteration_statement_proto.set_for_with_in(iteration_statement.for_with_in);
     return iteration_statement_proto;
 }
 
+
 auto ReturnStatementToProto(const return_statement_node& return_statement) -> fuzzing::return_statement_node {
     fuzzing::return_statement_node return_statement_proto;
-    // TODO: Convert return_statement_ to fuzzing::return_statement_node
+    *return_statement_proto.mutable_identifier() = TokenToProto(*return_statement.identifier);
+    *return_statement_proto.mutable_expression() = ExpressionToProto(*return_statement.expression);
     return return_statement_proto;
 }
 
 auto AlternativeToProto(const alternative_node& alternative) -> fuzzing::alternative_node {
     fuzzing::alternative_node alternative_proto;
-    // TODO: Convert alternative_ to fuzzing::alternative_node
+    *alternative_proto.mutable_name() = UnqualifiedIdToProto(*alternative.name);
+    *alternative_proto.mutable_is_as_keyword() = TokenToProto(*alternative.is_as_keyword);
+    *alternative_proto.mutable_type_id() = TypeIdToProto(*alternative.type_id);
+    *alternative_proto.mutable_value() = PostfixExpressionToProto(*alternative.value);
+    *alternative_proto.mutable_statement() = StatementToProto(*alternative.statement);
     return alternative_proto;
 }
 
 auto InspectExpressionToProto(const inspect_expression_node& inspect_expression) -> fuzzing::inspect_expression_node {
     fuzzing::inspect_expression_node inspect_expression_proto;
-    // TODO: Convert inspect_expression_ to fuzzing::inspect_expression_node
+    inspect_expression_proto.set_is_constexpr(inspect_expression.is_constexpr);
+    *inspect_expression_proto.mutable_identifier() = TokenToProto(*inspect_expression.identifier);
+    *inspect_expression_proto.mutable_expression() = ExpressionToProto(*inspect_expression.expression);
+    *inspect_expression_proto.mutable_result_type() = TypeIdToProto(*inspect_expression.result_type);
+
+    for (const auto& alternative : inspect_expression.alternatives) {
+        auto* e = inspect_expression_proto.add_alternatives();
+        *e = AlternativeToProto(*alternative);
+        }
     return inspect_expression_proto;
 }
 
 auto ContractToProto(const contract_node& contract) -> fuzzing::contract_node {
     fuzzing::contract_node contract_proto;
-    // TODO: Convert contract_ to fuzzing::contract_node
+    *contract_proto.mutable_captures() = CaptureGroupToProto(contract.captures);
+    *contract_proto.mutable_kind() = TokenToProto(*contract.kind);
+    *contract_proto.mutable_group() = IdExpressionToProto(*contract.group);
+    *contract_proto.mutable_condition() = LogicalOrExpressionToProto(*contract.condition);
+    *contract_proto.mutable_message() = TokenToProto(*contract.message);
+    
     return contract_proto;
 }
 
 auto JumpToProto(const jump_statement_node& jump_statement) -> fuzzing::jump_statement_node { 
     fuzzing::jump_statement_node jump_statement_proto;
-
+    *jump_statement_proto.mutable_keyword() = TokenToProto(*jump_statement.keyword);
+    *jump_statement_proto.mutable_label() = TokenToProto(*jump_statement.label);
     return jump_statement_proto;
 }
 
 auto StatementToProto(const statement_node& statement) -> fuzzing::statement_node {
     fuzzing::statement_node statement_proto;
-    // TODO: Convert statement_ to fuzzing::statement_node
+    *statement_proto.mutable_parameters() = ParameterDeclarationListToProto(*statement.parameters);
+    // const auto& e = statement.statement;
+    
+    //visitor
+    struct converter { 
+        fuzzing::statement_node* s;
+        explicit converter(fuzzing::statement_node& s_param): s(&s_param) {}
+        
+        void operator()(const std::unique_ptr<expression_statement_node>& e) { 
+          *s->mutable_expression() = ExpressionStatementToProto(*e);
+        }
+        void operator()(const std::unique_ptr<compound_statement_node>& e) { 
+            *s->mutable_compound() = CompoundStatementToProto(*e);
+        } 
+        void operator()(const std::unique_ptr<selection_statement_node>& e) { 
+            *s->mutable_selection() = SelectionStatementToProto(*e);
+        }
+        void operator()(const std::unique_ptr<declaration_node>& e) { 
+            *s->mutable_declaration() = DeclarationToProto(*e);
+        } 
+        void operator()(const std::unique_ptr<return_statement_node>& e) { 
+            *s->mutable_return_() = ReturnStatementToProto(*e);
+        } 
+        void operator()(const std::unique_ptr<iteration_statement_node>& e) { 
+            *s->mutable_iteration() = IterationStatementToProto(*e);
+        }
+        void operator()(const std::unique_ptr<contract_node>& e) { 
+            *s->mutable_contract() = ContractToProto(*e);
+        } 
+        void operator()(const std::unique_ptr<inspect_expression_node>& e) { 
+            *s->mutable_inspect() = InspectExpressionToProto(*e);
+        } 
+        void operator()(const std::unique_ptr<jump_statement_node>& e) { 
+            *s->mutable_jump() = JumpToProto(*e);
+        }
+    };
+    
+    std::visit(converter(statement_proto), statement.statement);
+    
+    statement_proto.set_emitted(statement.emitted);
+
     return statement_proto;
 }
 
-auto ParameterDeclarationNodeToProto(const parameter_declaration_node& parameter_declaration) -> fuzzing::parameter_declaration_node {
+auto ModifierToProto(const parameter_declaration_node::modifier mod) { 
+    switch (mod) {
+        case parameter_declaration_node::modifier::none:
+            return fuzzing::parameter_declaration_node::none;
+        case parameter_declaration_node::modifier::implicit:
+            return fuzzing::parameter_declaration_node::implicit;
+        case parameter_declaration_node::modifier::virtual_:
+            return fuzzing::parameter_declaration_node::virtual_;
+        case parameter_declaration_node::modifier::override_:
+            return fuzzing::parameter_declaration_node::override_;
+        case parameter_declaration_node::modifier::final_:
+            return fuzzing::parameter_declaration_node::final_;
+    }
+    return fuzzing::parameter_declaration_node::none;
+}
+
+auto ParameterDeclarationToProto(const parameter_declaration_node& parameter_declaration) -> fuzzing::parameter_declaration_node {
     fuzzing::parameter_declaration_node parameter_declaration_proto;
-    // TODO: Convert parameter_declaration_ to fuzzing::parameter_declaration_node
+    parameter_declaration_proto.set_mod(ModifierToProto(parameter_declaration.mod));
+    *parameter_declaration_proto.mutable_declaration() = DeclarationToProto(*parameter_declaration.declaration);
     return parameter_declaration_proto;
 }
 
 auto ParameterDeclarationListToProto(const parameter_declaration_list_node& parameter_declaration_list) -> fuzzing::parameter_declaration_list_node {
     fuzzing::parameter_declaration_list_node parameter_declaration_list_proto;
-    // TODO: Convert parameter_declaration_list_ to fuzzing::parameter_declaration_list_node
+    *parameter_declaration_list_proto.mutable_open_paren() = TokenToProto(*parameter_declaration_list.open_paren);
+    *parameter_declaration_list_proto.mutable_close_paren() = TokenToProto(*parameter_declaration_list.close_paren);
+
+    for (const auto& parameter : parameter_declaration_list.parameters) {
+        auto* e = parameter_declaration_list_proto.add_parameters();
+        *e = ParameterDeclarationToProto(*parameter);
+    }
+
     return parameter_declaration_list_proto;
 }
 
 auto FunctionTypeToProto(const function_type_node& function_type) -> fuzzing::function_type_node {
     fuzzing::function_type_node function_type_proto;
-    // TODO: Convert function_type_ to fuzzing::function_type_node
+    *function_type_proto.mutable_my_decl() = DeclarationToProto(*function_type.my_decl);
+    *function_type_proto.mutable_parameters() = ParameterDeclarationListToProto(*function_type.parameters);
+    function_type_proto.set_throws(function_type.throws);
+    
+    //visitor
+    // struct converter { 
+    //     fuzzing::function_type_node* s;
+    //     explicit converter(fuzzing::function_type_node& s_param): s(&s_param) {}
+        
+    //     void operator()(const single_type_id& e) { 
+        //does not name a type
+    //       *s->mutable_type() = TypeIdToProto(*e);
+    //       *s->mutable_pass() = PassingStyleToProto(*e);
+    //     }
+    //     void operator()(const std::unique_ptr<parameter_declaration_list_node>& e) { 
+    //         *s->mutable_list() = ParameterDeclarationListToProto(*e);
+    //     } 
+    // };
+    
+    // std::visit(converter(function_type_proto), function_type.returns);
+
+    // const auto& returns = function_type.returns;
+    // if (std::holds_alternative<single_type_id>(returns)) {
+    //     const auto& single_type_id = std::get<single_type_id_node>(returns);
+    //     auto* id_proto = function_type_proto.mutable_id();
+    //     *id_proto->mutable_type() = TypeIdToProto(*single_type_id.type);
+    //     *id_proto->mutable_pass() = PassingStyleToProto(*single_type_id.pass);
+    // } else if (std::holds_alternative<parameter_declaration_list_node>(returns)) {
+    //     const auto& parameter_list = std::get<parameter_declaration_list_node>(returns);
+    //     *function_type_proto.mutable_list() = ParameterDeclarationListToProto(parameter_list);
+    // }
+    
+    for (const auto& contract : function_type.contracts) {
+        *function_type_proto.add_contracts() = ContractToProto(*contract);
+    }
+    
     return function_type_proto;
 }
 
+
 auto AliasToProto(const alias_node& alias) -> fuzzing::alias_node {
     fuzzing::alias_node alias_proto;
-    // TODO: Convert alias_ to fuzzing::alias_node
+    *alias_proto.mutable_type() = TokenToProto(*alias.type);
+    //oneof
+
+    struct converter { 
+        fuzzing::alias_node* s;
+        explicit converter(fuzzing::alias_node& s_param): s(&s_param) {}
+        
+        void operator()(const std::unique_ptr<type_id_node>& e) { 
+          *s->mutable_a_type() = TypeIdToProto(*e);
+        }
+        void operator()(const std::unique_ptr<id_expression_node>& e) { 
+            *s->mutable_a_namespace() = IdExpressionToProto(*e);
+        } 
+        void operator()(const std::unique_ptr<expression_node>& e) { 
+            *s->mutable_an_object() = ExpressionToProto(*e);
+        }
+    };
+    
+    std::visit(converter(alias_proto), alias.initializer);
+
     return alias_proto;
 }
 
 auto DeclarationToProto(const declaration_node& declaration) -> fuzzing::declaration_node {
     fuzzing::declaration_node declaration_proto;
-    // TODO: Convert declaration_ to fuzzing::declaration_node
+    *declaration_proto.mutable_captures() = CaptureGroupToProto(declaration.captures);
+    *declaration_proto.mutable_identifier() = UnqualifiedIdToProto(*declaration.identifier);
+
+    // const auto& e = declaration_proto.type;
+
+    struct converter { 
+        fuzzing::declaration_node* s;
+        explicit converter(fuzzing::declaration_node& s_param): s(&s_param) {}
+        
+        void operator()(const std::unique_ptr<function_type_node>& e) { 
+          *s->mutable_a_function() = FunctionTypeToProto(*e);
+        }
+        void operator()(const std::unique_ptr<type_id_node>& e) { 
+            *s->mutable_an_object() = TypeIdToProto(*e);
+        } 
+        void operator()(const std::unique_ptr<type_node>& e) { 
+            *s->mutable_a_type() = TypeToProto(*e);
+        }
+        void operator()(const std::unique_ptr<namespace_node>& e) { 
+            *s->mutable_a_namespace() = NamespaceToProto(*e);
+        } 
+        void operator()(const std::unique_ptr<alias_node>& e) { 
+            *s->mutable_an_alias() = AliasToProto(*e);
+        } 
+       
+    };
+    
+    std::visit(converter(declaration_proto), declaration.type);
+
+    for (const auto& meta_function : declaration.meta_functions) {
+        *declaration_proto.add_meta_functions() = IdExpressionToProto(*meta_function);
+    }
+
+    *declaration_proto.mutable_template_parameters() = ParameterDeclarationListToProto(*declaration.template_parameters);
+    *declaration_proto.mutable_requires_clause_expression() = ExpressionToProto(*declaration.requires_clause_expression);
+    *declaration_proto.mutable_initializer() = StatementToProto(*declaration.initializer);
+    *declaration_proto.mutable_parent_declaration() = DeclarationToProto(*declaration.parent_declaration);    
+
     return declaration_proto;
 }
 
 auto TranslationUnitToProto(const translation_unit_node& translation_unit) -> fuzzing::translation_unit_node {
     fuzzing::translation_unit_node translation_unit_proto;
-    // TODO: Convert translation_unit_ to fuzzing::translation_unit_node
+    for (const auto& declaration : translation_unit.declarations) {
+        *translation_unit_proto.add_declarations() = DeclarationToProto(*declaration);
+    }
     return translation_unit_proto;
 }
 
