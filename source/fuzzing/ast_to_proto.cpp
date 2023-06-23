@@ -612,32 +612,24 @@ auto FunctionTypeToProto(const function_type_node& function_type) -> fuzzing::fu
     function_type_proto.set_throws(function_type.throws);
     
     //visitor
-    // struct converter { 
-    //     fuzzing::function_type_node* s;
-    //     explicit converter(fuzzing::function_type_node& s_param): s(&s_param) {}
+    struct converter { 
+        fuzzing::function_type_node* s;
+        explicit converter(fuzzing::function_type_node& s_param): s(&s_param) {}
         
-    //     void operator()(const single_type_id& e) { 
-        //does not name a type
-    //       *s->mutable_type() = TypeIdToProto(*e);
-    //       *s->mutable_pass() = PassingStyleToProto(*e);
-    //     }
-    //     void operator()(const std::unique_ptr<parameter_declaration_list_node>& e) { 
-    //         *s->mutable_list() = ParameterDeclarationListToProto(*e);
-    //     } 
-    // };
+        void operator()(const std::monostate& e) { 
+            //hello :)
+        }
+        void operator()(const function_type_node::single_type_id& e) { 
+        // does not name a type
+          *s->mutable_id()->mutable_type() = TypeIdToProto(*e.type);
+          s->mutable_id()->set_pass(PassingStyleToProto(e.pass));
+        }
+        void operator()(const std::unique_ptr<parameter_declaration_list_node>& e) { 
+            *s->mutable_list() = ParameterDeclarationListToProto(*e);
+        } 
+    };
     
-    // std::visit(converter(function_type_proto), function_type.returns);
-
-    // const auto& returns = function_type.returns;
-    // if (std::holds_alternative<single_type_id>(returns)) {
-    //     const auto& single_type_id = std::get<single_type_id_node>(returns);
-    //     auto* id_proto = function_type_proto.mutable_id();
-    //     *id_proto->mutable_type() = TypeIdToProto(*single_type_id.type);
-    //     *id_proto->mutable_pass() = PassingStyleToProto(*single_type_id.pass);
-    // } else if (std::holds_alternative<parameter_declaration_list_node>(returns)) {
-    //     const auto& parameter_list = std::get<parameter_declaration_list_node>(returns);
-    //     *function_type_proto.mutable_list() = ParameterDeclarationListToProto(parameter_list);
-    // }
+    std::visit(converter(function_type_proto), function_type.returns);
     
     for (const auto& contract : function_type.contracts) {
         *function_type_proto.add_contracts() = ContractToProto(*contract);
