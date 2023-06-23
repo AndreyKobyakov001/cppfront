@@ -66,5 +66,169 @@ TEST(AstToProtoTest, NamespaceToProto) {
     EXPECT_TRUE(EqualsProto(namespace_proto, R"(namespace_: { value: "Identifier: name" })"));
 }
 
+TEST(AstToProtoTest, PrimaryExpressionToProto) { 
+    
+}
+
+TEST(AstToProtoTest, PrefixExpressionToProto) { 
+    
+}
+
+TEST(AstToProtoTest, IsAsExpressionToProto) { 
+    
+}
+
+TEST(AstToProtoTest, MultiplicativeExpressionToProto) { 
+    
+}
+
+TEST(AstToProtoTest, AdditiveExpressionToProto) { 
+    
+}
+
+TEST(AstToProtoTest, ShiftExpressionToProto) { 
+
+}
+
+TEST(AstToProtoTest, CompareExpressionToProto) { 
+    
+}
+
+TEST(AstToProtoTest, RelationalExpressionToProto) { 
+    
+}
+
+TEST(AstToProtoTest, EqualityExpressionToProto) { 
+    
+}
+
+TEST(AstToProtoTest, BitAndExpressionToProto) { 
+    
+}
+
+TEST(AstToProtoTest, BitXorExpressionToProto) { 
+
+}
+
+TEST(AstToProtoTest, BitOrExpressionToProto) { 
+    
+}
+
+TEST(AstToProtoTest, LogicalAndExpressionToProto) { 
+    
+}
+
+TEST(AstToProtoTest, LogicalOrExpressionToProto) { 
+    
+}
+
+TEST(AstToProtoTest, AssignmentExpressionToProto) { 
+    
+}
+
+TEST(AstToProtoTest, ExpressionToProto) { 
+
+}
+
+TEST(AstToProtoTest, ExpressionListToProto) { 
+    
+}
+
+TEST(AstToProtoTest, ExpressionStatementToProto) { 
+    
+}
+
+TEST(AstToProtoTest, CaptureToProto) { 
+    
+}
+
+TEST(AstToProtoTest, CaptureGroupToProto) { 
+    
+}
+
+TEST(AstToProtoTest, PostfixExpressionToProto) { 
+
+}
+
+TEST(AstToProtoTest, UnqualifiedIdToProto) { 
+    
+}
+
+TEST(AstToProtoTest, QualifiedIdToProto) { 
+    
+}
+
+TEST(AstToProtoTest, TypeIdToProto) { 
+    
+}
+
+TEST(AstToProtoTest, IdExpressionToProto) { 
+    
+}
+
+TEST(AstToProtoTest, CompoundStatementToProto) { 
+
+}
+
+TEST(AstToProtoTest, SelectionStatementToProto) { 
+    
+}
+
+TEST(AstToProtoTest, IterationStatementToProto) { 
+    
+}
+
+TEST(AstToProtoTest, ReturnStatementToProto) { 
+    
+}
+
+TEST(AstToProtoTest, AlternativeToProto) { 
+    
+}
+
+TEST(AstToProtoTest, InspectExpressionToProto) { 
+
+}
+
+TEST(AstToProtoTest, ContractToProto) { 
+    
+}
+
+TEST(AstToProtoTest, JumpToProto) { 
+    
+}
+
+TEST(AstToProtoTest, StatementToProto) { 
+    
+}
+
+TEST(AstToProtoTest, ModifierToProto) { 
+    
+}
+
+TEST(AstToProtoTest, ParameterDeclarationToProto) { 
+
+}
+
+TEST(AstToProtoTest, ParameterDeclarationListToProto) { 
+    
+}
+
+TEST(AstToProtoTest, FunctionTypeToProto) { 
+    
+}
+
+TEST(AstToProtoTest, AliasToProto) { 
+    
+}
+
+TEST(AstToProtoTest, DeclarationToProto) { 
+    
+}
+
+TEST(AstToProtoTest, TranslationUnitToProto) { 
+    
+}
+
 } //namespace
 } //namespace cpp2
