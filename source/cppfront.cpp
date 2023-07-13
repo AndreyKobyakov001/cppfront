@@ -23,4 +23,17 @@ cmdline_processor& cmdline() {
     static auto* cmd = new cmdline_processor;
     return *cmd;
 }
+
+//  Defined out of line here just to avoid bringing <iostream> into the headers,
+//  so that we can't accidentally start depending on iostreams in the compiler body
+auto cmdline_processor::print(std::string_view s, int width)
+    -> void
+{
+    if (width > 0) {
+        std::cout << std::setw(width) << std::left;
+    }
+    std::cout << s;
+}
+
+
 } //namespace cpp2

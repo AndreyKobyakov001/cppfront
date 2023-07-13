@@ -23,16 +23,6 @@
 
 namespace cpp2 {
 
-//  Defined out of line here just to avoid bringing <iostream> into the headers,
-//  so that we can't accidentally start depending on iostreams in the compiler body
-auto cmdline_processor::print(std::string_view s, int width)
-    -> void
-{
-    if (width > 0) {
-        std::cout << std::setw(width) << std::left;
-    }
-    std::cout << s;
-}
 
 
 //-----------------------------------------------------------------------
@@ -41,7 +31,7 @@ auto cmdline_processor::print(std::string_view s, int width)
 //
 //-----------------------------------------------------------------------
 
-auto pad(int padding)
+inline auto pad(int padding)
     -> std::string_view
 {
     static std::string indent_str = std::string( 1024, ' ' );    // "1K should be enough for everyone"
@@ -1115,6 +1105,7 @@ public:
         //  Load the program file into memory
         //
         else if (!source.load(sourcefile))
+        //make it a pretty
         {
             if (errors.empty()) {
                 errors.emplace_back(

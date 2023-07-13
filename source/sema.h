@@ -179,9 +179,10 @@ struct symbol {
 //  of the form "x = expr;" for an uninitialized local variable x,
 //  which we will rewrite to construct the local variable.
 //
-std::vector<token const*> definite_initializations;
+inline std::vector<token const*> definite_initializations;
+//I don't know if this is a legal solution, but it *does* work. 
 
-auto is_definite_initialization(token const* t)
+inline auto is_definite_initialization(token const* t)
     -> bool
 {
     return
@@ -212,9 +213,9 @@ struct last_use {
 
     bool operator==(last_use const& that) { return t == that.t; }
 };
-std::vector<last_use> definite_last_uses;
+inline std::vector<last_use> definite_last_uses;
 
-auto is_definite_last_use(token const* t)
+inline auto is_definite_last_use(token const* t)
     -> last_use const*
 {
     auto iter = std::find(

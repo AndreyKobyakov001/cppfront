@@ -26,7 +26,7 @@
 
 namespace cpp2 {
 
-auto violates_lifetime_safety = false;
+extern bool violates_lifetime_safety;
 
 //-----------------------------------------------------------------------
 //  Operator categorization
@@ -36,7 +36,7 @@ auto violates_lifetime_safety = false;
 //G     one of  '!' '-' '+'
 //GT     parameter-direction
 //G
-auto is_prefix_operator(token const& tok)
+inline auto is_prefix_operator(token const& tok)
     -> bool
 {
     //if (to_passing_style(tok) != passing_style::invalid) {
@@ -57,7 +57,7 @@ auto is_prefix_operator(token const& tok)
 //G postfix-operator:
 //G     one of  '++' '--' '*' '&' '~' '$'
 //G
-auto is_postfix_operator(lexeme l)
+inline auto is_postfix_operator(lexeme l)
     -> bool
 {
     switch (l) {
@@ -77,7 +77,7 @@ auto is_postfix_operator(lexeme l)
 //G assignment-operator:
 //G     one of  '=' '*=' '/=' '%=' '+=' '-=' '>>=' '<<=' '&=' '^=' '|='
 //G
-auto is_assignment_operator(lexeme l)
+inline auto is_assignment_operator(lexeme l)
     -> bool
 {
     switch (l) {
@@ -389,7 +389,7 @@ struct expression_node
 
 
 enum class passing_style { in=0, copy, inout, out, move, forward, invalid };
-auto to_passing_style(token const& t) -> passing_style {
+inline auto to_passing_style(token const& t) -> passing_style {
     if (t.type() == lexeme::Identifier) {
         if (t == "in"     ) { return passing_style::in; }
         if (t == "copy"   ) { return passing_style::copy; }
@@ -400,7 +400,7 @@ auto to_passing_style(token const& t) -> passing_style {
     }
     return passing_style::invalid;
 }
-auto to_string_view(passing_style pass) -> std::string_view {
+inline auto to_string_view(passing_style pass) -> std::string_view {
     switch (pass) {
     break;case passing_style::in     : return "in";
     break;case passing_style::copy   : return "copy";
@@ -452,13 +452,13 @@ struct expression_list_node
     }
 };
 
-auto primary_expression_node::is_expression_list() const
+inline auto primary_expression_node::is_expression_list() const
     -> bool
 {
     return expr.index() == expression_list;
 }
 
-auto primary_expression_node::get_expression_list() const
+inline auto primary_expression_node::get_expression_list() const
     -> expression_list_node const*
 {
     if (is_expression_list()) {
@@ -502,16 +502,16 @@ struct capture {
 struct capture_group {
     std::vector<capture> members;
 
-    auto add(postfix_expression_node* p)
+    inline auto add(postfix_expression_node* p)
         -> void
     {
         members.push_back({p});
     }
 
-    auto remove(postfix_expression_node* p)
+    inline auto remove(postfix_expression_node* p)
         -> void;
 
-    ~capture_group();
+    inline ~capture_group();
 };
 
 
@@ -580,13 +580,13 @@ struct postfix_expression_node
     auto visit(auto& v, int depth) -> void;
 };
 
-auto prefix_expression_node::is_expression_list() const
+inline auto prefix_expression_node::is_expression_list() const
     -> bool
 {
     return ops.empty() && expr->is_expression_list();
 }
 
-auto prefix_expression_node::get_expression_list() const
+inline auto prefix_expression_node::get_expression_list() const
     -> expression_list_node const*
 {
     if (is_expression_list()) {
@@ -595,7 +595,7 @@ auto prefix_expression_node::get_expression_list() const
     return {};
 }
 
-auto prefix_expression_node::is_result_a_temporary_variable() const -> bool {
+inline auto prefix_expression_node::is_result_a_temporary_variable() const -> bool {
     if (ops.empty()) {
         return expr->is_result_a_temporary_variable();
     } else {
@@ -604,7 +604,7 @@ auto prefix_expression_node::is_result_a_temporary_variable() const -> bool {
 }
 
 
-auto expression_node::get_lhs_rhs_if_simple_assignment() const
+inline auto expression_node::get_lhs_rhs_if_simple_assignment() const
     -> assignment_expression_lhs_rhs
 {
     auto ret = expr->get_lhs_rhs_if_simple_binary_expression_with(lexeme::Assignment);
@@ -612,7 +612,7 @@ auto expression_node::get_lhs_rhs_if_simple_assignment() const
 }
 
 
-auto capture_group::remove(postfix_expression_node* p)
+inline auto capture_group::remove(postfix_expression_node* p)
     -> void
 {
     p->cap_grp = {};
@@ -636,7 +636,7 @@ capture_group::~capture_group()
 }
 
 
-auto prefix_expression_node::position() const
+inline auto prefix_expression_node::position() const
     -> source_position
 {
     if (std::ssize(ops) > 0) {
@@ -647,7 +647,7 @@ auto prefix_expression_node::position() const
 }
 
 
-auto prefix_expression_node::visit(auto& v, int depth)
+inline auto prefix_expression_node::visit(auto& v, int depth)
     -> void
 {
     v.start(*this, depth);
@@ -920,7 +920,7 @@ struct type_id_node
     }
 };
 
-auto unqualified_id_node::to_string() const
+inline auto unqualified_id_node::to_string() const
     -> std::string
 {
     assert(identifier);
@@ -1098,7 +1098,7 @@ struct id_expression_node
 };
 
 
-auto postfix_expression_node::get_first_token_ignoring_this() const
+inline auto postfix_expression_node::get_first_token_ignoring_this() const
     -> token const*
 {
     if (
@@ -1114,7 +1114,7 @@ auto postfix_expression_node::get_first_token_ignoring_this() const
 }
 
 
-auto postfix_expression_node::visit(auto& v, int depth)
+inline auto postfix_expression_node::visit(auto& v, int depth)
     -> void
 {
     v.start(*this, depth);
@@ -1453,7 +1453,7 @@ struct statement_node
 };
 
 
-auto alternative_node::visit(auto& v, int depth)
+inline auto alternative_node::visit(auto& v, int depth)
     -> void
 {
     v.start(*this, depth);
@@ -1475,7 +1475,7 @@ auto alternative_node::visit(auto& v, int depth)
 }
 
 
-auto compound_statement_node::visit(auto& v, int depth)
+inline auto compound_statement_node::visit(auto& v, int depth)
     -> void
 {
     v.start(*this, depth);
@@ -1614,7 +1614,7 @@ struct parameter_declaration_list_node
 };
 
 
-auto statement_node::visit(auto& v, int depth)
+inline auto statement_node::visit(auto& v, int depth)
     -> void
 {
     v.start(*this, depth);
@@ -1953,7 +1953,7 @@ struct alias_node
 
 enum class accessibility { default_ = 0, public_, protected_, private_ };
 
-auto to_string(accessibility a)
+inline auto to_string(accessibility a)
     -> std::string
 {
     switch (a) {
@@ -2726,28 +2726,28 @@ public:
 };
 
 
-auto parameter_declaration_node::has_name() const
+inline auto parameter_declaration_node::has_name() const
     -> bool
 {
     return declaration->has_name();
 }
 
 
-auto parameter_declaration_node::name() const
+inline auto parameter_declaration_node::name() const
     -> token const*
 {
     return declaration->name();
 }
 
 
-auto parameter_declaration_node::has_name(std::string_view s) const
+inline auto parameter_declaration_node::has_name(std::string_view s) const
     -> bool
 {
     return declaration->has_name(s);
 }
 
 
-auto function_type_node::is_function_with_this() const
+inline auto function_type_node::is_function_with_this() const
     -> bool
 {
     if (
@@ -2761,7 +2761,7 @@ auto function_type_node::is_function_with_this() const
 }
 
 
-auto function_type_node::is_virtual_function() const
+inline auto function_type_node::is_virtual_function() const
     -> bool
 {
     if (
@@ -2776,7 +2776,7 @@ auto function_type_node::is_virtual_function() const
 }
 
 
-auto function_type_node::make_function_virtual()
+inline auto function_type_node::make_function_virtual()
     -> bool
 {
     if (is_function_with_this()) {
@@ -2787,7 +2787,7 @@ auto function_type_node::make_function_virtual()
 }
 
 
-auto function_type_node::is_defaultable() const
+inline auto function_type_node::is_defaultable() const
     -> bool
 {
     if (
@@ -2801,7 +2801,7 @@ auto function_type_node::is_defaultable() const
 }
 
 
-auto function_type_node::is_constructor() const
+inline auto function_type_node::is_constructor() const
     -> bool
 {
     if (
@@ -2817,7 +2817,7 @@ auto function_type_node::is_constructor() const
 }
 
 
-auto function_type_node::is_default_constructor() const
+inline auto function_type_node::is_default_constructor() const
     -> bool
 {
     if (
@@ -2831,7 +2831,7 @@ auto function_type_node::is_default_constructor() const
 }
 
 
-auto function_type_node::is_move() const
+inline auto function_type_node::is_move() const
     -> bool
 {
     if (
@@ -2847,7 +2847,7 @@ auto function_type_node::is_move() const
 }
 
 
-auto function_type_node::is_swap() const
+inline auto function_type_node::is_swap() const
     -> bool
 {
     assert (my_decl);
@@ -2863,7 +2863,7 @@ auto function_type_node::is_swap() const
 }
 
 
-auto function_type_node::is_constructor_with_that() const
+inline auto function_type_node::is_constructor_with_that() const
     -> bool
 {
     if (
@@ -2878,7 +2878,7 @@ auto function_type_node::is_constructor_with_that() const
 }
 
 
-auto function_type_node::is_assignment_with_that() const
+inline auto function_type_node::is_assignment_with_that() const
     -> bool
 {
     if (
@@ -2893,7 +2893,7 @@ auto function_type_node::is_assignment_with_that() const
 }
 
 
-auto function_type_node::is_constructor_with_in_that() const
+inline auto function_type_node::is_constructor_with_in_that() const
     -> bool
 {
     if (
@@ -2909,7 +2909,7 @@ auto function_type_node::is_constructor_with_in_that() const
 }
 
 
-auto function_type_node::is_constructor_with_move_that() const
+inline auto function_type_node::is_constructor_with_move_that() const
     -> bool
 {
     if (
@@ -2925,7 +2925,7 @@ auto function_type_node::is_constructor_with_move_that() const
 }
 
 
-auto function_type_node::is_assignment() const
+inline auto function_type_node::is_assignment() const
     -> bool
 {
     if (
@@ -2941,7 +2941,7 @@ auto function_type_node::is_assignment() const
 }
 
 
-auto function_type_node::is_assignment_with_in_that() const
+inline auto function_type_node::is_assignment_with_in_that() const
     -> bool
 {
     if (
@@ -2957,7 +2957,7 @@ auto function_type_node::is_assignment_with_in_that() const
 }
 
 
-auto function_type_node::is_assignment_with_move_that() const
+inline auto function_type_node::is_assignment_with_move_that() const
     -> bool
 {
     if (
@@ -2973,7 +2973,7 @@ auto function_type_node::is_assignment_with_move_that() const
 }
 
 
-auto function_type_node::is_destructor() const
+inline auto function_type_node::is_destructor() const
     -> bool
 {
     if (
@@ -2989,7 +2989,7 @@ auto function_type_node::is_destructor() const
 }
 
 
-auto primary_expression_node::template_args_count()
+inline auto primary_expression_node::template_args_count()
     -> int
 {
     if (expr.index() == id_expression) {
@@ -3000,7 +3000,7 @@ auto primary_expression_node::template_args_count()
 }
 
 
-auto primary_expression_node::get_token() const
+inline auto primary_expression_node::get_token() const
     -> token const*
 {
     if (expr.index() == identifier) {
@@ -3018,7 +3018,7 @@ auto primary_expression_node::get_token() const
 }
 
 
-auto primary_expression_node::position() const
+inline auto primary_expression_node::position() const
     -> source_position
 {
     switch (expr.index())
@@ -3069,7 +3069,7 @@ auto primary_expression_node::position() const
 }
 
 
-auto primary_expression_node::visit(auto& v, int depth)
+inline auto primary_expression_node::visit(auto& v, int depth)
     -> void
 {
     v.start(*this, depth);
@@ -3083,7 +3083,7 @@ auto primary_expression_node::visit(auto& v, int depth)
 }
 
 
-auto iteration_statement_node::visit(auto& v, int depth)
+inline auto iteration_statement_node::visit(auto& v, int depth)
     -> void
 {
     v.start(*this, depth);
@@ -3113,7 +3113,7 @@ auto iteration_statement_node::visit(auto& v, int depth)
 }
 
 
-auto statement_node::position() const
+inline auto statement_node::position() const
     -> source_position
 {
     switch (statement.index())
@@ -3167,7 +3167,7 @@ auto statement_node::position() const
 }
 
 
-auto parameter_declaration_node::position() const
+inline auto parameter_declaration_node::position() const
     -> source_position
 {
     assert (declaration);
@@ -3175,7 +3175,7 @@ auto parameter_declaration_node::position() const
 }
 
 
-auto parameter_declaration_node::visit(auto& v, int depth)
+inline auto parameter_declaration_node::visit(auto& v, int depth)
     -> void
 {
     v.start(*this, depth);
@@ -3215,7 +3215,7 @@ struct translation_unit_node
 //
 //-----------------------------------------------------------------------
 //
-class parser
+class parser 
 {
     std::vector<error_entry>& errors;
 
@@ -3465,6 +3465,10 @@ public:
     auto visit(auto& v) -> void
     {
         parse_tree->visit(v, 0);
+    }
+
+    const auto& get_parse_tree() const { 
+        return parse_tree; 
     }
 
 private:
@@ -5795,7 +5799,7 @@ private:
     }
 
 
-    auto apply_type_meta_functions( declaration_node& decl )
+    inline auto apply_type_meta_functions( declaration_node& decl )
         -> bool;
 
 
@@ -6996,7 +7000,7 @@ public:
 };
 
 
-auto parser::debug_print(std::ostream& o)
+inline auto parser::debug_print(std::ostream& o)
 
     -> void
 {

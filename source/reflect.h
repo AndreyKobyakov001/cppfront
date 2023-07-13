@@ -219,41 +219,41 @@ class declaration
     );
 
 #line 186 "reflect.h2"
-    public: [[nodiscard]] auto is_public() const -> bool;
-    public: [[nodiscard]] auto is_protected() const -> bool;
-    public: [[nodiscard]] auto is_private() const -> bool;
-    public: [[nodiscard]] auto is_default_access() const -> bool;
+    public: [[nodiscard]] inline auto is_public() const -> bool;
+    public: [[nodiscard]] inline auto is_protected() const -> bool;
+    public: [[nodiscard]] inline auto is_private() const -> bool;
+    public: [[nodiscard]] inline auto is_default_access() const -> bool;
 
-    public: [[nodiscard]] auto make_public() -> bool;
-    public: [[nodiscard]] auto make_protected() -> bool;
-    public: [[nodiscard]] auto make_private() -> bool;
+    public: [[nodiscard]] inline auto make_public() -> bool;
+    public: [[nodiscard]] inline auto make_protected() -> bool;
+    public: [[nodiscard]] inline auto make_private() -> bool;
 
-    public: [[nodiscard]] auto has_name() const -> bool;
-    public: [[nodiscard]] auto has_name(cpp2::in<std::string_view> s) const -> bool;
+    public: [[nodiscard]] inline auto has_name() const -> bool;
+    public: [[nodiscard]] inline auto has_name(cpp2::in<std::string_view> s) const -> bool;
 
-    public: [[nodiscard]] auto name() const -> std::string_view;
+    public: [[nodiscard]] inline auto name() const -> std::string_view;
         
 
 #line 203 "reflect.h2"
-    public: [[nodiscard]] auto has_initializer() const -> bool;
+    public: [[nodiscard]] inline auto has_initializer() const -> bool;
 
-    public: [[nodiscard]] auto is_global() const -> bool;
-    public: [[nodiscard]] auto is_function() const -> bool;
-    public: [[nodiscard]] auto is_object() const -> bool;
-    public: [[nodiscard]] auto is_type() const -> bool;
-    public: [[nodiscard]] auto is_namespace() const -> bool;
-    public: [[nodiscard]] auto is_alias() const -> bool;
+    public: [[nodiscard]] inline auto is_global() const -> bool;
+    public: [[nodiscard]] inline auto is_function() const -> bool;
+    public: [[nodiscard]] inline auto is_object() const -> bool;
+    public: [[nodiscard]] inline auto is_type() const -> bool;
+    public: [[nodiscard]] inline auto is_namespace() const -> bool;
+    public: [[nodiscard]] inline auto is_alias() const -> bool;
 
-    public: [[nodiscard]] auto as_function() const -> function_declaration;
-    public: [[nodiscard]] auto as_object() const -> object_declaration;
-    public: [[nodiscard]] auto as_type() const -> type_declaration;
+    public: [[nodiscard]] inline auto as_function() const -> function_declaration;
+    public: [[nodiscard]] inline auto as_object() const -> object_declaration;
+    public: [[nodiscard]] inline auto as_type() const -> type_declaration;
 
-    public: [[nodiscard]] auto parent_is_function() const -> bool;
-    public: [[nodiscard]] auto parent_is_object() const -> bool;
-    public: [[nodiscard]] auto parent_is_type() const -> bool;
-    public: [[nodiscard]] auto parent_is_namespace() const -> bool;
-    public: [[nodiscard]] auto parent_is_alias() const -> bool;
-    public: [[nodiscard]] auto parent_is_polymorphic() const -> bool;
+    public: [[nodiscard]] inline auto parent_is_function() const -> bool;
+    public: [[nodiscard]] inline auto parent_is_object() const -> bool;
+    public: [[nodiscard]] inline auto parent_is_type() const -> bool;
+    public: [[nodiscard]] inline auto parent_is_namespace() const -> bool;
+    public: [[nodiscard]] inline auto parent_is_alias() const -> bool;
+    public: [[nodiscard]] inline auto parent_is_polymorphic() const -> bool;
 
 public: virtual ~declaration();
 public: declaration(declaration const& that);
@@ -275,41 +275,41 @@ class function_declaration
     );
 
 #line 242 "reflect.h2"
-    public: [[nodiscard]] auto index_of_parameter_named(cpp2::in<std::string_view> s) const -> int;
-    public: [[nodiscard]] auto has_parameter_named(cpp2::in<std::string_view> s) const -> bool;
-    public: [[nodiscard]] auto has_in_parameter_named(cpp2::in<std::string_view> s) const -> bool;
-    public: [[nodiscard]] auto has_out_parameter_named(cpp2::in<std::string_view> s) const -> bool;
-    public: [[nodiscard]] auto has_move_parameter_named(cpp2::in<std::string_view> s) const -> bool;
+    public: [[nodiscard]] inline auto index_of_parameter_named(cpp2::in<std::string_view> s) const -> int;
+    public: [[nodiscard]] inline auto has_parameter_named(cpp2::in<std::string_view> s) const -> bool;
+    public: [[nodiscard]] inline auto has_in_parameter_named(cpp2::in<std::string_view> s) const -> bool;
+    public: [[nodiscard]] inline auto has_out_parameter_named(cpp2::in<std::string_view> s) const -> bool;
+    public: [[nodiscard]] inline auto has_move_parameter_named(cpp2::in<std::string_view> s) const -> bool;
 
-    public: [[nodiscard]] auto has_parameter_with_name_and_pass(cpp2::in<std::string_view> s, cpp2::in<passing_style> pass) const -> bool;
+    public: [[nodiscard]] inline auto has_parameter_with_name_and_pass(cpp2::in<std::string_view> s, cpp2::in<passing_style> pass) const -> bool;
                                                   
-    public: [[nodiscard]] auto is_function_with_this() const -> bool;
-    public: [[nodiscard]] auto is_virtual() const -> bool;
-    public: [[nodiscard]] auto is_defaultable() const -> bool;
-    public: [[nodiscard]] auto is_constructor() const -> bool;
-    public: [[nodiscard]] auto is_default_constructor() const -> bool;
-    public: [[nodiscard]] auto is_move() const -> bool;
-    public: [[nodiscard]] auto is_swap() const -> bool;
-    public: [[nodiscard]] auto is_constructor_with_that() const -> bool;
-    public: [[nodiscard]] auto is_constructor_with_in_that() const -> bool;
-    public: [[nodiscard]] auto is_constructor_with_move_that() const -> bool;
-    public: [[nodiscard]] auto is_assignment() const -> bool;
-    public: [[nodiscard]] auto is_assignment_with_that() const -> bool;
-    public: [[nodiscard]] auto is_assignment_with_in_that() const -> bool;
-    public: [[nodiscard]] auto is_assignment_with_move_that() const -> bool;
-    public: [[nodiscard]] auto is_destructor() const -> bool;
+    public: [[nodiscard]] inline auto is_function_with_this() const -> bool;
+    public: [[nodiscard]] inline auto is_virtual() const -> bool;
+    public: [[nodiscard]] inline auto is_defaultable() const -> bool;
+    public: [[nodiscard]] inline auto is_constructor() const -> bool;
+    public: [[nodiscard]] inline auto is_default_constructor() const -> bool;
+    public: [[nodiscard]] inline auto is_move() const -> bool;
+    public: [[nodiscard]] inline auto is_swap() const -> bool;
+    public: [[nodiscard]] inline auto is_constructor_with_that() const -> bool;
+    public: [[nodiscard]] inline auto is_constructor_with_in_that() const -> bool;
+    public: [[nodiscard]] inline auto is_constructor_with_move_that() const -> bool;
+    public: [[nodiscard]] inline auto is_assignment() const -> bool;
+    public: [[nodiscard]] inline auto is_assignment_with_that() const -> bool;
+    public: [[nodiscard]] inline auto is_assignment_with_in_that() const -> bool;
+    public: [[nodiscard]] inline auto is_assignment_with_move_that() const -> bool;
+    public: [[nodiscard]] inline auto is_destructor() const -> bool;
 
-    public: [[nodiscard]] auto is_copy_or_move() const -> bool;
+    public: [[nodiscard]] inline auto is_copy_or_move() const -> bool;
 
-    public: [[nodiscard]] auto has_declared_return_type() const -> bool;
-    public: [[nodiscard]] auto has_bool_return_type() const -> bool;
-    public: [[nodiscard]] auto has_non_void_return_type() const -> bool;
+    public: [[nodiscard]] inline auto has_declared_return_type() const -> bool;
+    public: [[nodiscard]] inline auto has_bool_return_type() const -> bool;
+    public: [[nodiscard]] inline auto has_non_void_return_type() const -> bool;
 
-    public: [[nodiscard]] auto unnamed_return_type() const -> std::string;
+    public: [[nodiscard]] inline auto unnamed_return_type() const -> std::string;
 
-    public: [[nodiscard]] auto is_binary_comparison_function() const -> bool;
+    public: [[nodiscard]] inline auto is_binary_comparison_function() const -> bool;
 
-    public: [[nodiscard]] auto make_virtual() -> bool;
+    public: [[nodiscard]] inline auto make_virtual() -> bool;
 
 public: function_declaration(function_declaration const& that);
 #line 277 "reflect.h2"
@@ -330,9 +330,9 @@ class object_declaration
     );
 
 #line 297 "reflect.h2"
-    public: [[nodiscard]] auto is_const() const -> bool;
+    public: [[nodiscard]] inline auto is_const() const -> bool;
 
-    public: [[nodiscard]] auto has_wildcard_type() const -> bool;
+    public: [[nodiscard]] inline auto has_wildcard_type() const -> bool;
 
 public: object_declaration(object_declaration const& that);
 
@@ -356,33 +356,33 @@ class type_declaration
     );
 
 #line 323 "reflect.h2"
-    public: [[nodiscard]] auto is_polymorphic() const -> bool;
-    public: [[nodiscard]] auto is_final() const -> bool;
-    public: [[nodiscard]] auto make_final() -> bool;
+    public: [[nodiscard]] inline auto is_polymorphic() const -> bool;
+    public: [[nodiscard]] inline auto is_final() const -> bool;
+    public: [[nodiscard]] inline auto make_final() -> bool;
 
-    public: [[nodiscard]] auto get_member_functions() const -> 
+    public: [[nodiscard]] inline auto get_member_functions() const -> 
         std::vector<function_declaration>; 
 
 #line 337 "reflect.h2"
-    public: [[nodiscard]] auto get_member_objects() const -> 
+    public: [[nodiscard]] inline auto get_member_objects() const -> 
         std::vector<object_declaration>; 
 
 #line 347 "reflect.h2"
-    public: [[nodiscard]] auto get_member_types() const -> 
+    public: [[nodiscard]] inline auto get_member_types() const -> 
         std::vector<type_declaration>; 
 
 #line 357 "reflect.h2"
-    public: [[nodiscard]] auto get_members() const -> 
+    public: [[nodiscard]] inline auto get_members() const -> 
         std::vector<declaration>; struct query_declared_that_functions__ret { bool out_this_in_that; bool out_this_move_that; bool inout_this_in_that; bool inout_this_move_that; };
 
 
 
 #line 367 "reflect.h2"
-    public: [[nodiscard]] auto query_declared_that_functions() const -> query_declared_that_functions__ret;
+    public: [[nodiscard]] inline auto query_declared_that_functions() const -> query_declared_that_functions__ret;
         
 
 #line 382 "reflect.h2"
-    public: [[nodiscard]] auto add_member(cpp2::in<std::string_view> source) -> 
+    public: [[nodiscard]] inline auto add_member(cpp2::in<std::string_view> source) -> 
         bool; 
         public: type_declaration(type_declaration const& that);
 
@@ -403,7 +403,7 @@ class type_declaration
 //  Some common metafunction helpers (metafunctions are just functions,
 //  so they can be factored as usual)
 //
-auto add_virtual_destructor(meta::type_declaration& t) -> void;
+inline auto add_virtual_destructor(meta::type_declaration& t) -> void;
 
 #line 413 "reflect.h2"
 //-----------------------------------------------------------------------
@@ -418,7 +418,7 @@ auto add_virtual_destructor(meta::type_declaration& t) -> void;
 //
 //  an abstract base class having only pure virtual functions
 //
-auto interface(meta::type_declaration& t) -> void;
+inline auto interface(meta::type_declaration& t) -> void;
 
 #line 452 "reflect.h2"
 //-----------------------------------------------------------------------
@@ -440,7 +440,7 @@ auto interface(meta::type_declaration& t) -> void;
 //
 //  Unlike an interface, it can have nonpublic and nonvirtual functions.
 //
-auto polymorphic_base(meta::type_declaration& t) -> void;
+inline auto polymorphic_base(meta::type_declaration& t) -> void;
 
 #line 496 "reflect.h2"
 //-----------------------------------------------------------------------
@@ -463,7 +463,7 @@ auto polymorphic_base(meta::type_declaration& t) -> void;
 //-----------------------------------------------------------------------
 //
 
-auto ordered_impl(
+inline auto ordered_impl(
     meta::type_declaration& t, 
     cpp2::in<std::string_view> ordering// must be "strong_ordering" etc.
 ) -> void;
@@ -474,19 +474,19 @@ auto ordered_impl(
 //
 //  Note: the ordering that should be encouraged as default gets the nice name
 //
-auto ordered(meta::type_declaration& t) -> void;
+inline auto ordered(meta::type_declaration& t) -> void;
 
 #line 551 "reflect.h2"
 //-----------------------------------------------------------------------
 //  weakly_ordered - a weakly ordered type
 //
-auto weakly_ordered(meta::type_declaration& t) -> void;
+inline auto weakly_ordered(meta::type_declaration& t) -> void;
 
 #line 559 "reflect.h2"
 //-----------------------------------------------------------------------
 //  partially_ordered - a partially ordered type
 //
-auto partially_ordered(meta::type_declaration& t) -> void;
+inline auto partially_ordered(meta::type_declaration& t) -> void;
 
 #line 568 "reflect.h2"
 //-----------------------------------------------------------------------
@@ -505,7 +505,7 @@ auto partially_ordered(meta::type_declaration& t) -> void;
 //
 //  A type with (copy and move) x (construction and assignment)
 //
-auto copyable(meta::type_declaration& t) -> void;
+inline auto copyable(meta::type_declaration& t) -> void;
 
 #line 606 "reflect.h2"
 //-----------------------------------------------------------------------
@@ -515,7 +515,7 @@ auto copyable(meta::type_declaration& t) -> void;
 //  A regular type: copyable, plus has public default construction
 //  and no protected or virtual functions
 //
-auto basic_value(meta::type_declaration& t) -> void;
+inline auto basic_value(meta::type_declaration& t) -> void;
 
 #line 632 "reflect.h2"
 //-----------------------------------------------------------------------
@@ -527,13 +527,13 @@ auto basic_value(meta::type_declaration& t) -> void;
 //
 //  Note: the ordering that should be encouraged as default gets the nice name
 //
-auto value(meta::type_declaration& t) -> void;
+inline auto value(meta::type_declaration& t) -> void;
 
 #line 647 "reflect.h2"
-auto weakly_ordered_value(meta::type_declaration& t) -> void;
+inline auto weakly_ordered_value(meta::type_declaration& t) -> void;
 
 #line 653 "reflect.h2"
-auto partially_ordered_value(meta::type_declaration& t) -> void;
+inline auto partially_ordered_value(meta::type_declaration& t) -> void;
 
 #line 660 "reflect.h2"
 //-----------------------------------------------------------------------
@@ -561,7 +561,7 @@ auto partially_ordered_value(meta::type_declaration& t) -> void;
 //  no virtual functions, and no user-defined constructors
 //  (i.e., no invariants) or assignment or destructors.
 //
-auto cpp2_struct(meta::type_declaration& t) -> void;
+inline auto cpp2_struct(meta::type_declaration& t) -> void;
 
 #line 703 "reflect.h2"
 //=======================================================================
@@ -578,7 +578,7 @@ namespace cpp2 {
 //-----------------------------------------------------------------------
 //
 
-auto parser::apply_type_meta_functions( declaration_node& n )
+inline auto parser::apply_type_meta_functions( declaration_node& n )
     -> bool
 {
     assert(n.is_type());
@@ -645,7 +645,7 @@ namespace cpp2 {
 namespace meta {
 
 #line 155 "reflect.h2"
-    declaration_base::declaration_base(
+    inline declaration_base::declaration_base(
 
         cpp2::in<declaration_node*> n_, 
         cpp2::in<compiler_services> s
@@ -659,15 +659,15 @@ namespace meta {
         cpp2::Default.expects(n, "a meta::declaration must point to a valid declaration_node, not null");
     }
 
-    [[nodiscard]] auto declaration_base::position() const -> source_position { return CPP2_UFCS_0(position, (*cpp2::assert_not_null(n)));  }
+    [[nodiscard]] inline auto declaration_base::position() const -> source_position { return CPP2_UFCS_0(position, (*cpp2::assert_not_null(n)));  }
 
-    declaration_base::~declaration_base(){}
-declaration_base::declaration_base(declaration_base const& that)
+    inline declaration_base::~declaration_base(){}
+inline declaration_base::declaration_base(declaration_base const& that)
                                 : compiler_services{ that }
                                 , n{ that.n }{}
 
 #line 177 "reflect.h2"
-    declaration::declaration(
+    inline declaration::declaration(
 
         cpp2::in<declaration_node*> n_, 
         cpp2::in<compiler_services> s
@@ -678,49 +678,49 @@ declaration_base::declaration_base(declaration_base const& that)
 
     }
 
-    [[nodiscard]] auto declaration::is_public() const -> bool { return CPP2_UFCS_0(is_public, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto declaration::is_protected() const -> bool { return CPP2_UFCS_0(is_protected, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto declaration::is_private() const -> bool { return CPP2_UFCS_0(is_private, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto declaration::is_default_access() const -> bool { return CPP2_UFCS_0(is_default_access, (*cpp2::assert_not_null(n)));  }
+    [[nodiscard]] inline auto declaration::is_public() const -> bool { return CPP2_UFCS_0(is_public, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto declaration::is_protected() const -> bool { return CPP2_UFCS_0(is_protected, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto declaration::is_private() const -> bool { return CPP2_UFCS_0(is_private, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto declaration::is_default_access() const -> bool { return CPP2_UFCS_0(is_default_access, (*cpp2::assert_not_null(n)));  }
 
-    [[nodiscard]] auto declaration::make_public() -> bool { return CPP2_UFCS_0(make_public, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto declaration::make_protected() -> bool { return CPP2_UFCS_0(make_protected, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto declaration::make_private() -> bool { return CPP2_UFCS_0(make_private, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto declaration::make_public() -> bool { return CPP2_UFCS_0(make_public, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto declaration::make_protected() -> bool { return CPP2_UFCS_0(make_protected, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto declaration::make_private() -> bool { return CPP2_UFCS_0(make_private, (*cpp2::assert_not_null(n))); }
 
-    [[nodiscard]] auto declaration::has_name() const -> bool { return CPP2_UFCS_0(has_name, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto declaration::has_name(cpp2::in<std::string_view> s) const -> bool { return CPP2_UFCS(has_name, (*cpp2::assert_not_null(n)), s); }
+    [[nodiscard]] inline auto declaration::has_name() const -> bool { return CPP2_UFCS_0(has_name, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto declaration::has_name(cpp2::in<std::string_view> s) const -> bool { return CPP2_UFCS(has_name, (*cpp2::assert_not_null(n)), s); }
 
-    [[nodiscard]] auto declaration::name() const -> std::string_view{
+    [[nodiscard]] inline auto declaration::name() const -> std::string_view{
         if (has_name()) {return CPP2_UFCS_0(as_string_view, (*cpp2::assert_not_null(CPP2_UFCS_0(name, *cpp2::assert_not_null(n))))); }
         else          { return ""; }
     }
 
-    [[nodiscard]] auto declaration::has_initializer() const -> bool { return CPP2_UFCS_0(has_initializer, (*cpp2::assert_not_null(n)));  }
+    [[nodiscard]] inline auto declaration::has_initializer() const -> bool { return CPP2_UFCS_0(has_initializer, (*cpp2::assert_not_null(n)));  }
 
-    [[nodiscard]] auto declaration::is_global() const -> bool { return CPP2_UFCS_0(is_global, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto declaration::is_function() const -> bool { return CPP2_UFCS_0(is_function, (*cpp2::assert_not_null(n)));  }
-    [[nodiscard]] auto declaration::is_object() const -> bool { return CPP2_UFCS_0(is_object, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto declaration::is_type() const -> bool { return CPP2_UFCS_0(is_type, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto declaration::is_namespace() const -> bool { return CPP2_UFCS_0(is_namespace, (*cpp2::assert_not_null(n)));  }
-    [[nodiscard]] auto declaration::is_alias() const -> bool { return CPP2_UFCS_0(is_alias, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto declaration::is_global() const -> bool { return CPP2_UFCS_0(is_global, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto declaration::is_function() const -> bool { return CPP2_UFCS_0(is_function, (*cpp2::assert_not_null(n)));  }
+    [[nodiscard]] inline auto declaration::is_object() const -> bool { return CPP2_UFCS_0(is_object, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto declaration::is_type() const -> bool { return CPP2_UFCS_0(is_type, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto declaration::is_namespace() const -> bool { return CPP2_UFCS_0(is_namespace, (*cpp2::assert_not_null(n)));  }
+    [[nodiscard]] inline auto declaration::is_alias() const -> bool { return CPP2_UFCS_0(is_alias, (*cpp2::assert_not_null(n))); }
 
-    [[nodiscard]] auto declaration::as_function() const -> function_declaration { return function_declaration(n, (*this));  }
-    [[nodiscard]] auto declaration::as_object() const -> object_declaration { return object_declaration(n, (*this)); }
-    [[nodiscard]] auto declaration::as_type() const -> type_declaration { return type_declaration(n, (*this)); }
+    [[nodiscard]] inline auto declaration::as_function() const -> function_declaration { return function_declaration(n, (*this));  }
+    [[nodiscard]] inline auto declaration::as_object() const -> object_declaration { return object_declaration(n, (*this)); }
+    [[nodiscard]] inline auto declaration::as_type() const -> type_declaration { return type_declaration(n, (*this)); }
 
-    [[nodiscard]] auto declaration::parent_is_function() const -> bool { return CPP2_UFCS_0(parent_is_function, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto declaration::parent_is_object() const -> bool { return CPP2_UFCS_0(parent_is_object, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto declaration::parent_is_type() const -> bool { return CPP2_UFCS_0(parent_is_type, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto declaration::parent_is_namespace() const -> bool { return CPP2_UFCS_0(parent_is_namespace, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto declaration::parent_is_alias() const -> bool { return CPP2_UFCS_0(parent_is_alias, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto declaration::parent_is_polymorphic() const -> bool { return CPP2_UFCS_0(parent_is_polymorphic, (*cpp2::assert_not_null(n)));  }
+    [[nodiscard]] inline auto declaration::parent_is_function() const -> bool { return CPP2_UFCS_0(parent_is_function, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto declaration::parent_is_object() const -> bool { return CPP2_UFCS_0(parent_is_object, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto declaration::parent_is_type() const -> bool { return CPP2_UFCS_0(parent_is_type, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto declaration::parent_is_namespace() const -> bool { return CPP2_UFCS_0(parent_is_namespace, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto declaration::parent_is_alias() const -> bool { return CPP2_UFCS_0(parent_is_alias, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto declaration::parent_is_polymorphic() const -> bool { return CPP2_UFCS_0(parent_is_polymorphic, (*cpp2::assert_not_null(n)));  }
 
-    declaration::~declaration(){}
-declaration::declaration(declaration const& that)
+    inline declaration::~declaration(){}
+inline declaration::declaration(declaration const& that)
                                 : declaration_base{ that }{}
 
 #line 232 "reflect.h2"
-    function_declaration::function_declaration(
+    inline function_declaration::function_declaration(
 
         cpp2::in<declaration_node*> n_, 
         cpp2::in<compiler_services> s
@@ -732,47 +732,47 @@ declaration::declaration(declaration const& that)
         cpp2::Default.expects(CPP2_UFCS_0(is_function, (*cpp2::assert_not_null(n))), "");
     }
 
-    [[nodiscard]] auto function_declaration::index_of_parameter_named(cpp2::in<std::string_view> s) const -> int { return CPP2_UFCS(index_of_parameter_named, (*cpp2::assert_not_null(n)), s); }
-    [[nodiscard]] auto function_declaration::has_parameter_named(cpp2::in<std::string_view> s) const -> bool { return CPP2_UFCS(has_parameter_named, (*cpp2::assert_not_null(n)), s); }
-    [[nodiscard]] auto function_declaration::has_in_parameter_named(cpp2::in<std::string_view> s) const -> bool { return CPP2_UFCS(has_in_parameter_named, (*cpp2::assert_not_null(n)), s); }
-    [[nodiscard]] auto function_declaration::has_out_parameter_named(cpp2::in<std::string_view> s) const -> bool { return CPP2_UFCS(has_out_parameter_named, (*cpp2::assert_not_null(n)), s); }
-    [[nodiscard]] auto function_declaration::has_move_parameter_named(cpp2::in<std::string_view> s) const -> bool { return CPP2_UFCS(has_move_parameter_named, (*cpp2::assert_not_null(n)), s); }
+    [[nodiscard]] inline auto function_declaration::index_of_parameter_named(cpp2::in<std::string_view> s) const -> int { return CPP2_UFCS(index_of_parameter_named, (*cpp2::assert_not_null(n)), s); }
+    [[nodiscard]] inline auto function_declaration::has_parameter_named(cpp2::in<std::string_view> s) const -> bool { return CPP2_UFCS(has_parameter_named, (*cpp2::assert_not_null(n)), s); }
+    [[nodiscard]] inline auto function_declaration::has_in_parameter_named(cpp2::in<std::string_view> s) const -> bool { return CPP2_UFCS(has_in_parameter_named, (*cpp2::assert_not_null(n)), s); }
+    [[nodiscard]] inline auto function_declaration::has_out_parameter_named(cpp2::in<std::string_view> s) const -> bool { return CPP2_UFCS(has_out_parameter_named, (*cpp2::assert_not_null(n)), s); }
+    [[nodiscard]] inline auto function_declaration::has_move_parameter_named(cpp2::in<std::string_view> s) const -> bool { return CPP2_UFCS(has_move_parameter_named, (*cpp2::assert_not_null(n)), s); }
 
-    [[nodiscard]] auto function_declaration::has_parameter_with_name_and_pass(cpp2::in<std::string_view> s, cpp2::in<passing_style> pass) const -> bool { 
+    [[nodiscard]] inline auto function_declaration::has_parameter_with_name_and_pass(cpp2::in<std::string_view> s, cpp2::in<passing_style> pass) const -> bool { 
                                                   return CPP2_UFCS(has_parameter_with_name_and_pass, (*cpp2::assert_not_null(n)), s, pass);  }
-    [[nodiscard]] auto function_declaration::is_function_with_this() const -> bool { return CPP2_UFCS_0(is_function_with_this, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto function_declaration::is_virtual() const -> bool { return CPP2_UFCS_0(is_virtual_function, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto function_declaration::is_defaultable() const -> bool { return CPP2_UFCS_0(is_defaultable_function, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto function_declaration::is_constructor() const -> bool { return CPP2_UFCS_0(is_constructor, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto function_declaration::is_default_constructor() const -> bool { return CPP2_UFCS_0(is_default_constructor, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto function_declaration::is_move() const -> bool { return CPP2_UFCS_0(is_move, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto function_declaration::is_swap() const -> bool { return CPP2_UFCS_0(is_swap, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto function_declaration::is_constructor_with_that() const -> bool { return CPP2_UFCS_0(is_constructor_with_that, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto function_declaration::is_constructor_with_in_that() const -> bool { return CPP2_UFCS_0(is_constructor_with_in_that, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto function_declaration::is_constructor_with_move_that() const -> bool { return CPP2_UFCS_0(is_constructor_with_move_that, (*cpp2::assert_not_null(n)));  }
-    [[nodiscard]] auto function_declaration::is_assignment() const -> bool { return CPP2_UFCS_0(is_assignment, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto function_declaration::is_assignment_with_that() const -> bool { return CPP2_UFCS_0(is_assignment_with_that, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto function_declaration::is_assignment_with_in_that() const -> bool { return CPP2_UFCS_0(is_assignment_with_in_that, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto function_declaration::is_assignment_with_move_that() const -> bool { return CPP2_UFCS_0(is_assignment_with_move_that, (*cpp2::assert_not_null(n)));  }
-    [[nodiscard]] auto function_declaration::is_destructor() const -> bool { return CPP2_UFCS_0(is_destructor, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto function_declaration::is_function_with_this() const -> bool { return CPP2_UFCS_0(is_function_with_this, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto function_declaration::is_virtual() const -> bool { return CPP2_UFCS_0(is_virtual_function, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto function_declaration::is_defaultable() const -> bool { return CPP2_UFCS_0(is_defaultable_function, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto function_declaration::is_constructor() const -> bool { return CPP2_UFCS_0(is_constructor, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto function_declaration::is_default_constructor() const -> bool { return CPP2_UFCS_0(is_default_constructor, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto function_declaration::is_move() const -> bool { return CPP2_UFCS_0(is_move, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto function_declaration::is_swap() const -> bool { return CPP2_UFCS_0(is_swap, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto function_declaration::is_constructor_with_that() const -> bool { return CPP2_UFCS_0(is_constructor_with_that, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto function_declaration::is_constructor_with_in_that() const -> bool { return CPP2_UFCS_0(is_constructor_with_in_that, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto function_declaration::is_constructor_with_move_that() const -> bool { return CPP2_UFCS_0(is_constructor_with_move_that, (*cpp2::assert_not_null(n)));  }
+    [[nodiscard]] inline auto function_declaration::is_assignment() const -> bool { return CPP2_UFCS_0(is_assignment, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto function_declaration::is_assignment_with_that() const -> bool { return CPP2_UFCS_0(is_assignment_with_that, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto function_declaration::is_assignment_with_in_that() const -> bool { return CPP2_UFCS_0(is_assignment_with_in_that, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto function_declaration::is_assignment_with_move_that() const -> bool { return CPP2_UFCS_0(is_assignment_with_move_that, (*cpp2::assert_not_null(n)));  }
+    [[nodiscard]] inline auto function_declaration::is_destructor() const -> bool { return CPP2_UFCS_0(is_destructor, (*cpp2::assert_not_null(n))); }
 
-    [[nodiscard]] auto function_declaration::is_copy_or_move() const -> bool { return is_constructor_with_that() || is_assignment_with_that(); }
+    [[nodiscard]] inline auto function_declaration::is_copy_or_move() const -> bool { return is_constructor_with_that() || is_assignment_with_that(); }
 
-    [[nodiscard]] auto function_declaration::has_declared_return_type() const -> bool { return CPP2_UFCS_0(has_declared_return_type, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto function_declaration::has_bool_return_type() const -> bool { return CPP2_UFCS_0(has_bool_return_type, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto function_declaration::has_non_void_return_type() const -> bool { return CPP2_UFCS_0(has_non_void_return_type, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto function_declaration::has_declared_return_type() const -> bool { return CPP2_UFCS_0(has_declared_return_type, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto function_declaration::has_bool_return_type() const -> bool { return CPP2_UFCS_0(has_bool_return_type, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto function_declaration::has_non_void_return_type() const -> bool { return CPP2_UFCS_0(has_non_void_return_type, (*cpp2::assert_not_null(n))); }
 
-    [[nodiscard]] auto function_declaration::unnamed_return_type() const -> std::string { return CPP2_UFCS_0(unnamed_return_type_to_string, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto function_declaration::unnamed_return_type() const -> std::string { return CPP2_UFCS_0(unnamed_return_type_to_string, (*cpp2::assert_not_null(n))); }
 
-    [[nodiscard]] auto function_declaration::is_binary_comparison_function() const -> bool { return CPP2_UFCS_0(is_binary_comparison_function, (*cpp2::assert_not_null(n)));  }
+    [[nodiscard]] inline auto function_declaration::is_binary_comparison_function() const -> bool { return CPP2_UFCS_0(is_binary_comparison_function, (*cpp2::assert_not_null(n)));  }
 
-    [[nodiscard]] auto function_declaration::make_virtual() -> bool { return CPP2_UFCS_0(make_function_virtual, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto function_declaration::make_virtual() -> bool { return CPP2_UFCS_0(make_function_virtual, (*cpp2::assert_not_null(n))); }
 
-    function_declaration::function_declaration(function_declaration const& that)
+    inline function_declaration::function_declaration(function_declaration const& that)
                                 : declaration{ that }{}
 
 #line 287 "reflect.h2"
-    object_declaration::object_declaration(
+    inline object_declaration::object_declaration(
 
         cpp2::in<declaration_node*> n_, 
         cpp2::in<compiler_services> s
@@ -784,15 +784,15 @@ declaration::declaration(declaration const& that)
         cpp2::Default.expects(CPP2_UFCS_0(is_object, (*cpp2::assert_not_null(n))), "");
     }
 
-    [[nodiscard]] auto object_declaration::is_const() const -> bool { return CPP2_UFCS_0(is_const, (*cpp2::assert_not_null(n)));  }
+    [[nodiscard]] inline auto object_declaration::is_const() const -> bool { return CPP2_UFCS_0(is_const, (*cpp2::assert_not_null(n)));  }
 
-    [[nodiscard]] auto object_declaration::has_wildcard_type() const -> bool { return CPP2_UFCS_0(has_wildcard_type, (*cpp2::assert_not_null(n)));  }
+    [[nodiscard]] inline auto object_declaration::has_wildcard_type() const -> bool { return CPP2_UFCS_0(has_wildcard_type, (*cpp2::assert_not_null(n)));  }
 
-    object_declaration::object_declaration(object_declaration const& that)
+    inline object_declaration::object_declaration(object_declaration const& that)
                                 : declaration{ that }{}
 
 #line 313 "reflect.h2"
-    type_declaration::type_declaration(
+    inline type_declaration::type_declaration(
 
         cpp2::in<declaration_node*> n_, 
         cpp2::in<compiler_services> s
@@ -804,11 +804,11 @@ declaration::declaration(declaration const& that)
         cpp2::Default.expects(CPP2_UFCS_0(is_type, (*cpp2::assert_not_null(n))), "");
     }
 
-    [[nodiscard]] auto type_declaration::is_polymorphic() const -> bool { return CPP2_UFCS_0(is_polymorphic, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto type_declaration::is_final() const -> bool { return CPP2_UFCS_0(is_type_final, (*cpp2::assert_not_null(n))); }
-    [[nodiscard]] auto type_declaration::make_final() -> bool { return CPP2_UFCS_0(make_type_final, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto type_declaration::is_polymorphic() const -> bool { return CPP2_UFCS_0(is_polymorphic, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto type_declaration::is_final() const -> bool { return CPP2_UFCS_0(is_type_final, (*cpp2::assert_not_null(n))); }
+    [[nodiscard]] inline auto type_declaration::make_final() -> bool { return CPP2_UFCS_0(make_type_final, (*cpp2::assert_not_null(n))); }
 
-    [[nodiscard]] auto type_declaration::get_member_functions() const -> 
+    [[nodiscard]] inline auto type_declaration::get_member_functions() const -> 
         std::vector<function_declaration>
     {
         std::vector<function_declaration> ret {}; 
@@ -818,7 +818,7 @@ declaration::declaration(declaration const& that)
         return ret; 
     }
 
-    [[nodiscard]] auto type_declaration::get_member_objects() const -> 
+    [[nodiscard]] inline auto type_declaration::get_member_objects() const -> 
         std::vector<object_declaration>
     {
         std::vector<object_declaration> ret {}; 
@@ -828,7 +828,7 @@ declaration::declaration(declaration const& that)
         return ret; 
     }
 
-    [[nodiscard]] auto type_declaration::get_member_types() const -> 
+    [[nodiscard]] inline auto type_declaration::get_member_types() const -> 
         std::vector<type_declaration>
     {
         std::vector<type_declaration> ret {}; 
@@ -838,7 +838,7 @@ declaration::declaration(declaration const& that)
         return ret; 
     }
 
-    [[nodiscard]] auto type_declaration::get_members() const -> 
+    [[nodiscard]] inline auto type_declaration::get_members() const -> 
         std::vector<declaration>
     {
         std::vector<declaration> ret {}; 
@@ -848,7 +848,7 @@ declaration::declaration(declaration const& that)
         return ret; 
     }
 
-    [[nodiscard]] auto type_declaration::query_declared_that_functions() const -> query_declared_that_functions__ret
+    [[nodiscard]] inline auto type_declaration::query_declared_that_functions() const -> query_declared_that_functions__ret
 
 #line 374 "reflect.h2"
     {
@@ -864,7 +864,7 @@ declaration::declaration(declaration const& that)
         inout_this_move_that.construct(std::move(declared).inout_this_move_that!=nullptr);
     return  { std::move(out_this_in_that.value()), std::move(out_this_move_that.value()), std::move(inout_this_in_that.value()), std::move(inout_this_move_that.value()) }; }
 
-    [[nodiscard]] auto type_declaration::add_member(cpp2::in<std::string_view> source) -> 
+    [[nodiscard]] inline auto type_declaration::add_member(cpp2::in<std::string_view> source) -> 
         bool
     {
         auto decl {parse_statement(source)}; 
@@ -874,18 +874,18 @@ declaration::declaration(declaration const& that)
         return false; 
     }
 
-    type_declaration::type_declaration(type_declaration const& that)
+    inline type_declaration::type_declaration(type_declaration const& that)
                                 : declaration{ that }{}
 
 #line 406 "reflect.h2"
-auto add_virtual_destructor(meta::type_declaration& t) -> void
+inline auto add_virtual_destructor(meta::type_declaration& t) -> void
 {
     CPP2_UFCS(require, t, CPP2_UFCS(add_member, t, "operator=: (virtual move this) = { }"), 
                "could not add virtual destructor");
 }
 
 #line 425 "reflect.h2"
-auto interface(meta::type_declaration& t) -> void
+inline auto interface(meta::type_declaration& t) -> void
 {
     auto has_dtor {false}; 
 
@@ -912,7 +912,7 @@ auto interface(meta::type_declaration& t) -> void
 }
 
 #line 471 "reflect.h2"
-auto polymorphic_base(meta::type_declaration& t) -> void
+inline auto polymorphic_base(meta::type_declaration& t) -> void
 {
     auto has_dtor {false}; 
 
@@ -937,7 +937,7 @@ auto polymorphic_base(meta::type_declaration& t) -> void
 }
 
 #line 516 "reflect.h2"
-auto ordered_impl(
+inline auto ordered_impl(
     meta::type_declaration& t, 
     cpp2::in<std::string_view> ordering
 ) -> void
@@ -963,25 +963,25 @@ auto ordered_impl(
 }
 
 #line 546 "reflect.h2"
-auto ordered(meta::type_declaration& t) -> void
+inline auto ordered(meta::type_declaration& t) -> void
 {
     ordered_impl(t, "strong_ordering");
 }
 
 #line 554 "reflect.h2"
-auto weakly_ordered(meta::type_declaration& t) -> void
+inline auto weakly_ordered(meta::type_declaration& t) -> void
 {
     ordered_impl(t, "weak_ordering");
 }
 
 #line 562 "reflect.h2"
-auto partially_ordered(meta::type_declaration& t) -> void
+inline auto partially_ordered(meta::type_declaration& t) -> void
 {
     ordered_impl(t, "partial_ordering");
 }
 
 #line 584 "reflect.h2"
-auto copyable(meta::type_declaration& t) -> void
+inline auto copyable(meta::type_declaration& t) -> void
 {
     //  If the user explicitly wrote any of the copy/move functions,
     //  they must also have written the most general one - we can't
@@ -1004,7 +1004,7 @@ auto copyable(meta::type_declaration& t) -> void
 }
 
 #line 613 "reflect.h2"
-auto basic_value(meta::type_declaration& t) -> void
+inline auto basic_value(meta::type_declaration& t) -> void
 {
     copyable(t);
 
@@ -1024,26 +1024,26 @@ auto basic_value(meta::type_declaration& t) -> void
 }
 
 #line 641 "reflect.h2"
-auto value(meta::type_declaration& t) -> void
+inline auto value(meta::type_declaration& t) -> void
 {
     ordered(t);
     basic_value(t);
 }
 
-auto weakly_ordered_value(meta::type_declaration& t) -> void
+inline auto weakly_ordered_value(meta::type_declaration& t) -> void
 {
     weakly_ordered(t);
     basic_value(t);
 }
 
-auto partially_ordered_value(meta::type_declaration& t) -> void
+inline auto partially_ordered_value(meta::type_declaration& t) -> void
 {
     partially_ordered(t);
     basic_value(t);
 }
 
 #line 685 "reflect.h2"
-auto cpp2_struct(meta::type_declaration& t) -> void
+inline auto cpp2_struct(meta::type_declaration& t) -> void
 {
     for ( auto& m : CPP2_UFCS_0(get_members, t) ) 
     {

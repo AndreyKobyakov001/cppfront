@@ -293,7 +293,7 @@ struct error_entry
 //G binary-digit:
 //G     one of '0' '1'
 //G
-auto is_binary_digit(char c)
+inline auto is_binary_digit(char c)
     -> bool
 {
     return
@@ -306,7 +306,7 @@ auto is_binary_digit(char c)
 //G     binary-digit
 //G     one of '2' '3' '4' '5' '6' '7' '8' '9'
 //G
-auto is_digit(char c)
+inline auto is_digit(char c)
     -> bool
 {
     return isdigit(c);
@@ -316,7 +316,7 @@ auto is_digit(char c)
 //G     digit
 //G     one of 'A' 'B' 'C' 'D' 'E' 'F'
 //G
-auto is_hexadecimal_digit(char c)
+inline auto is_hexadecimal_digit(char c)
     -> bool
 {
     return isxdigit(c);
@@ -327,7 +327,7 @@ auto is_hexadecimal_digit(char c)
 //G     one of 'A'..'Z'
 //G     _
 //G
-auto is_nondigit(char c)
+inline auto is_nondigit(char c)
     -> bool
 {
     return
@@ -339,7 +339,7 @@ auto is_nondigit(char c)
 //G identifier-start:
 //G     nondigit
 //G
-auto is_identifier_start(char c)
+inline auto is_identifier_start(char c)
     -> bool
 {
     return is_nondigit(c);
@@ -349,7 +349,7 @@ auto is_identifier_start(char c)
 //G     digit
 //G     nondigit
 //G
-auto is_identifier_continue(char c)
+inline auto is_identifier_continue(char c)
     -> bool
 {
     return
@@ -363,7 +363,7 @@ auto is_identifier_continue(char c)
 //G     identifier identifier-continue
 //G     'operator' operator
 //G
-auto starts_with_identifier(std::string_view s)
+inline auto starts_with_identifier(std::string_view s)
     -> int
 {
     if (is_identifier_start(s[0])) {
@@ -384,7 +384,7 @@ auto starts_with_identifier(std::string_view s)
 //  Helper to allow one of the above or a digit separator
 //  Example:    is_separator_or( is_binary_digit (c) )
 //
-auto is_separator_or(auto pred, char c)
+inline auto is_separator_or(auto pred, char c)
     -> bool
 {
     return
@@ -417,7 +417,7 @@ auto __as(auto x)
 
 //  String path prefix from filename
 //
-auto strip_path(std::string const& file)
+inline auto strip_path(std::string const& file)
     -> std::string
 {
     auto i = std::ssize(file)-1;
@@ -439,7 +439,7 @@ auto strip_path(std::string const& file)
 //
 //-----------------------------------------------------------------------
 //
-auto replace_all(std::string& s, std::string_view what, std::string_view with)
+inline auto replace_all(std::string& s, std::string_view what, std::string_view with)
 {
     for (
         std::string::size_type pos{};
@@ -453,7 +453,7 @@ auto replace_all(std::string& s, std::string_view what, std::string_view with)
 }
 
 
-auto to_upper(char c)
+inline auto to_upper(char c)
     -> char
 {
     //  C toupper is only not-UB in [0,127] and returns the wrong type,
@@ -465,7 +465,7 @@ auto to_upper(char c)
 }
 
 
-auto to_upper_and_underbar(std::string_view s)
+inline auto to_upper_and_underbar(std::string_view s)
     -> std::string
 {
     auto ret = std::string{s};
@@ -477,7 +477,7 @@ auto to_upper_and_underbar(std::string_view s)
 }
 
 
-auto starts_with(
+inline auto starts_with(
     std::string const& s,
     std::string_view   sv
 )
@@ -487,7 +487,7 @@ auto starts_with(
 }
 
 
-auto contains(
+inline auto contains(
     auto const& range,
     auto const& value
 )
@@ -786,18 +786,7 @@ public:
 
 cmdline_processor& cmdline();
 
-cmdline_processor::register_flag::register_flag(
-    int              group,
-    std::string_view name,
-    std::string_view description,
-    callback0        handler0,
-    callback1        handler1,
-    std::string_view synonym,
-    bool             opt_out
-)
-{
-    cmdline().add_flag( group, name, description, handler0, handler1, synonym, opt_out );
-}
+
 
 static cmdline_processor::register_flag cmd_help   (
     0,

@@ -102,7 +102,7 @@ enum class lexeme : std::int8_t {
     None = 127
 };
 
-auto is_literal(lexeme l) -> bool {
+inline auto is_literal(lexeme l) -> bool {
     switch (l) {
     break;case lexeme::FloatLiteral:
           case lexeme::BinaryLiteral:
@@ -114,7 +114,7 @@ auto is_literal(lexeme l) -> bool {
     }
 }
 
-auto close_paren_type(lexeme l)
+inline auto close_paren_type(lexeme l)
     -> lexeme
 {
     switch (l) {
@@ -202,7 +202,7 @@ auto __as(lexeme l)
 };
 
 
-auto is_operator(lexeme l)
+inline auto is_operator(lexeme l)
     -> bool
 {
     return l <= lexeme::Not;
@@ -320,7 +320,7 @@ private:
 static_assert (CHAR_BIT == 8);
 
 
-auto labelized_position(token const* t)
+inline auto labelized_position(token const* t)
     -> std::string
 {
     auto ret = std::string{};
@@ -338,7 +338,7 @@ auto labelized_position(token const* t)
 //
 //  A StringLiteral could include captures
 //
-auto expand_string_literal(
+inline auto expand_string_literal(
     std::string_view          text,
     std::vector<error_entry>& errors,
     source_position           src_pos
@@ -447,7 +447,7 @@ auto expand_string_literal(
     return parts.generate();
 }
 
-auto expand_raw_string_literal(
+inline auto expand_raw_string_literal(
     const std::string&           opening_seq,
     const std::string&           closing_seq,
     string_parts::adds_sequences closing_strategy,
@@ -537,7 +537,7 @@ static auto generated_lines = std::deque<std::vector<source_line>>{};
 
 static auto multiline_raw_strings = std::deque<multiline_raw_string>{};
 
-auto lex_line(
+inline auto lex_line(
     std::string&               mutable_line,
     int const                  lineno,
     bool&                      in_comment,

@@ -62,7 +62,7 @@ auto move_next(
 //
 //  line    current line being processed
 //
-auto peek_first_non_whitespace(std::string const& line)
+inline auto peek_first_non_whitespace(std::string const& line)
     -> char
 {
     auto i = 0;
@@ -87,7 +87,7 @@ struct is_preprocessor_ret {
     bool is_preprocessor;
     bool has_continuation;
 };
-auto is_preprocessor(
+inline auto is_preprocessor(
     std::string const& line,
     bool               first_line
 )
@@ -112,7 +112,7 @@ auto is_preprocessor(
 //
 //  line    current line being processed
 //
-auto starts_with_import(std::string const& line)
+inline auto starts_with_import(std::string const& line)
     -> bool
 {
     const auto ws = std::regex("\\s+"); // whitespace
@@ -133,7 +133,7 @@ auto starts_with_import(std::string const& line)
 //
 //  line    current line being processed
 //
-auto starts_with_whitespace_slash_slash(std::string const& line)
+inline auto starts_with_whitespace_slash_slash(std::string const& line)
     -> bool
 {
     auto i = 0;
@@ -156,7 +156,7 @@ auto starts_with_whitespace_slash_slash(std::string const& line)
 //
 //  line    current line being processed
 //
-auto starts_with_whitespace_slash_star_and_no_star_slash(std::string const& line)
+inline auto starts_with_whitespace_slash_star_and_no_star_slash(std::string const& line)
     -> bool
 {
     auto i = 0;
@@ -186,7 +186,7 @@ auto starts_with_whitespace_slash_star_and_no_star_slash(std::string const& line
 //
 //  line    current line being processed
 //
-auto starts_with_operator(std::string_view s)
+inline auto starts_with_operator(std::string_view s)
     -> int
 {
     if (s.starts_with("operator"))
@@ -269,7 +269,7 @@ auto starts_with_operator(std::string_view s)
 //
 //  line    current line being processed
 //
-auto starts_with_identifier_colon(std::string const& line)
+inline auto starts_with_identifier_colon(std::string const& line)
     -> bool
 {
     auto i = 0;
@@ -478,7 +478,7 @@ public:
 enum class preprocessor_conditional {
     none = 0, pre_if, pre_else, pre_endif
 };
-auto starts_with_preprocessor_if_else_endif(
+inline auto starts_with_preprocessor_if_else_endif(
     std::string const& line
 )
     -> preprocessor_conditional
@@ -528,7 +528,7 @@ struct process_line_ret {
     bool empty_line;
     bool all_rawstring_line;
 };
-auto process_cpp_line(
+inline auto process_cpp_line(
     std::string const&  line,
     bool&               in_comment,
     bool&               in_string_literal,
@@ -681,7 +681,7 @@ auto process_cpp_line(
 //
 //  Returns:    whether additional lines should be inspected
 //
-auto process_cpp2_line(
+inline auto process_cpp2_line(
     std::string const&        line,
     bool&                     in_comment,
     braces_tracker&           braces,
@@ -810,7 +810,10 @@ public:
         if (!in.is_open()) {
             return false;
         }
-
+        return load(in); 
+    }
+    
+    auto load(std::istream& in) -> bool {
         auto in_comment            = false;
         auto in_string_literal     = false;
         auto in_raw_string_literal = false;
