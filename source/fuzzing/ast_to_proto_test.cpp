@@ -10,6 +10,8 @@
 namespace cpp2 { 
 namespace {
 
+//make a header out of equalsproto and maketoken 
+
 bool EqualsProto(const google::protobuf::Message& actual, const std::string &expected) {
     std::unique_ptr<google::protobuf::Message> expected_proto(actual.New());
     if (!google::protobuf::TextFormat::ParseFromString(expected, expected_proto.get())) {

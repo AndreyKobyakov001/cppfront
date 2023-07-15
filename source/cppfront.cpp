@@ -35,5 +35,4 @@ auto cmdline_processor::print(std::string_view s, int width)
     std::cout << s;
 }
 
-
 } //namespace cpp2

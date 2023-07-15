@@ -943,7 +943,6 @@ public:
             emit_target_stack.pop_back();
         }
     }
-
 };
 
 
@@ -1118,40 +1117,34 @@ public:
 
         else
         {
-            //  Tokenize
-            //
-            tokens.lex(source.get_lines());
-
-            //  Parse
-            //
-            try
-            {
-                for (auto const& [line, entry] : tokens.get_map()) {
-                    if (!parser.parse(entry, tokens.get_generated())) {
-                        errors.emplace_back(
-                            source_position(line, 0),
-                            "parse failed for section starting here",
-                            false,
-                            true    // a noisy fallback error message
-                        );
-                    }
-                }
-
-                //  Sema
-                parser.visit(sema);
-                if (!sema.apply_local_rules()) {
-                    violates_initialization_safety = true;
-                }
-            }
-            catch (std::runtime_error& e) {
-                errors.emplace_back(
-                    source_position(-1, -1),
-                    e.what()
-                );
-            }
+           analyze();
         }
     }
 
+    cppfront(std::string const& filename, std::istream& file)
+        : sourcefile{ filename }
+        , source    { errors }
+        , tokens    { errors }
+        , parser    { errors }
+        , sema      { errors }
+    {
+        //  Load the program file into memory
+        if (!source.load(file))
+        //make it a pretty
+        {
+            if (errors.empty()) {
+                errors.emplace_back(
+                    source_position(-1, -1),
+                    "file not found: " + sourcefile
+                );
+            }
+            source_loaded = false;
+        }     
+        else
+        {
+           analyze();
+        }
+    }
 
     //-----------------------------------------------------------------------
     //  lower_to_cpp1
@@ -5803,6 +5796,50 @@ public:
         -> bool
     {
         return source.has_cpp2();
+    }
+
+    const auto& get_parse_tree() const { 
+        return parser.get_parse_tree(); 
+    }
+
+    void parser_debug_print(std::ostream& o) { 
+        parser.debug_print(o);
+    }
+    
+
+private:
+    void analyze() { 
+        //  Tokenize
+        //
+        tokens.lex(source.get_lines());
+
+        //  Parse
+        //
+        try
+        {
+            for (auto const& [line, entry] : tokens.get_map()) {
+                if (!parser.parse(entry, tokens.get_generated())) {
+                    errors.emplace_back(
+                        source_position(line, 0),
+                        "parse failed for section starting here",
+                        false,
+                        true    // a noisy fallback error message
+                    );
+                }
+            }
+
+            //  Sema
+            parser.visit(sema);
+            if (!sema.apply_local_rules()) {
+                violates_initialization_safety = true;
+            }
+        }
+        catch (std::runtime_error& e) {
+            errors.emplace_back(
+                source_position(-1, -1),
+                e.what()
+            );
+        }
     }
 };
 

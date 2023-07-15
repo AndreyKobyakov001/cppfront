@@ -21,6 +21,16 @@ cc_library(
     # visibility = ["//visibility:public"],
 )
 
+cc_test(
+  name = "round_trip_test",
+  size = "small",
+  srcs = ["round_trip_test.cpp"],
+  deps = ["@com_google_googletest//:gtest_main", 
+          ":ast_to_proto",
+          ":proto_to_cpp2",
+          "//source:cppfront_lib", 
+          ":cpp2_cc_proto"],
+)
 cc_library(
     name = "proto_to_cpp2",
     srcs = ["proto_to_cpp2.cpp"],
