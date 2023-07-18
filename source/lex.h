@@ -308,7 +308,8 @@ public:
         v.start(*this, depth);
     }
 
-private:
+public:
+//private:
     //  Store (char*,count) because it's smaller than a string_view
     //
     char const*     start;

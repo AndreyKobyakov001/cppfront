@@ -364,6 +364,8 @@ auto PostfixExpressionToProto(const postfix_expression_node& postfix_expression)
 
 auto UnqualifiedIdToProto(const unqualified_id_node& unqualified_id) -> fuzzing::unqualified_id_node {
     fuzzing::unqualified_id_node unqualified_id_proto;
+    assert(unqualified_id.identifier != nullptr); 
+    // std::cout << unqualified_id.identifier->start << "\n" << std::flush;
     *unqualified_id_proto.mutable_identifier() = TokenToProto(*unqualified_id.identifier);
     for (const auto& term : unqualified_id.template_args) {
         auto term_proto = unqualified_id_proto.add_template_args();
@@ -371,9 +373,13 @@ auto UnqualifiedIdToProto(const unqualified_id_node& unqualified_id) -> fuzzing:
             //I have NO idea as to what this does. Please read up on it. :)
             using T = std::decay_t<decltype(arg)>;
             if constexpr (std::is_same_v<T, expression_node>) {
-                *term_proto->mutable_expression() = ExpressionToProto(arg);
+                // *term_proto->mutable_expression() = ExpressionToProto(arg);
+                if (std::holds_alternative<expression_node>(term.arg))
+                    *term_proto->mutable_expression() = ExpressionToProto(std::get<expression_node>(term.arg));
             } else if constexpr (std::is_same_v<T, type_id_node>) {
-                *term_proto->mutable_type_id() = TypeIdToProto(arg);
+                if (std::holds_alternative<type_id_node>(term.arg))
+                    *term_proto->mutable_type_id() = TypeIdToProto(std::get<type_id_node>(term.arg));
+                // *term_proto->mutable_type_id() = TypeIdToProto(arg);
             }
         }, term.arg);
     }
@@ -607,7 +613,12 @@ auto ParameterDeclarationListToProto(const parameter_declaration_list_node& para
 
 auto FunctionTypeToProto(const function_type_node& function_type) -> fuzzing::function_type_node {
     fuzzing::function_type_node function_type_proto;
-    *function_type_proto.mutable_my_decl() = DeclarationToProto(*function_type.my_decl);
+    if (!function_type.my_decl) {
+        std::cerr << "Error: function_type.my_decl is nullptr!" << std::endl;
+    }
+    // if (function_type.my_decl) {
+    //     *function_type_proto.mutable_my_decl() = DeclarationToProto(*function_type.my_decl);
+    // }
     *function_type_proto.mutable_parameters() = ParameterDeclarationListToProto(*function_type.parameters);
     function_type_proto.set_throws(function_type.throws);
     
@@ -620,9 +631,12 @@ auto FunctionTypeToProto(const function_type_node& function_type) -> fuzzing::fu
             //hello :)
         }
         void operator()(const function_type_node::single_type_id& e) { 
-        // does not name a type
-          *s->mutable_id()->mutable_type() = TypeIdToProto(*e.type);
-          s->mutable_id()->set_pass(PassingStyleToProto(e.pass));
+            if (e.type) {
+                if(e.type != nullptr) {
+                s->mutable_id()->mutable_type()->CopyFrom(TypeIdToProto(*e.type));
+                }
+                s->mutable_id()->set_pass(PassingStyleToProto(e.pass));
+            } 
         }
         void operator()(const std::unique_ptr<parameter_declaration_list_node>& e) { 
             *s->mutable_list() = ParameterDeclarationListToProto(*e);
@@ -649,12 +663,15 @@ auto AliasToProto(const alias_node& alias) -> fuzzing::alias_node {
         explicit converter(fuzzing::alias_node& s_param): s(&s_param) {}
         
         void operator()(const std::unique_ptr<type_id_node>& e) { 
-          *s->mutable_a_type() = TypeIdToProto(*e);
+            assert(e != nullptr);
+            *s->mutable_a_type() = TypeIdToProto(*e);
         }
         void operator()(const std::unique_ptr<id_expression_node>& e) { 
+            assert(e != nullptr);
             *s->mutable_a_namespace() = IdExpressionToProto(*e);
         } 
         void operator()(const std::unique_ptr<expression_node>& e) { 
+            assert(e != nullptr);
             *s->mutable_an_object() = ExpressionToProto(*e);
         }
     };
@@ -667,6 +684,7 @@ auto AliasToProto(const alias_node& alias) -> fuzzing::alias_node {
 auto DeclarationToProto(const declaration_node& declaration) -> fuzzing::declaration_node {
     fuzzing::declaration_node declaration_proto;
     *declaration_proto.mutable_captures() = CaptureGroupToProto(declaration.captures);
+    assert(declaration.identifier != nullptr); 
     *declaration_proto.mutable_identifier() = UnqualifiedIdToProto(*declaration.identifier);
 
     // const auto& e = declaration_proto.type;
@@ -676,18 +694,23 @@ auto DeclarationToProto(const declaration_node& declaration) -> fuzzing::declara
         explicit converter(fuzzing::declaration_node& s_param): s(&s_param) {}
         
         void operator()(const std::unique_ptr<function_type_node>& e) { 
-          *s->mutable_a_function() = FunctionTypeToProto(*e);
+            assert(e != nullptr);
+            *s->mutable_a_function() = FunctionTypeToProto(*e);
         }
         void operator()(const std::unique_ptr<type_id_node>& e) { 
+            assert(e != nullptr);
             *s->mutable_an_object() = TypeIdToProto(*e);
         } 
         void operator()(const std::unique_ptr<type_node>& e) { 
+            assert(e != nullptr);
             *s->mutable_a_type() = TypeToProto(*e);
         }
         void operator()(const std::unique_ptr<namespace_node>& e) { 
+            assert(e != nullptr);
             *s->mutable_a_namespace() = NamespaceToProto(*e);
         } 
         void operator()(const std::unique_ptr<alias_node>& e) { 
+            assert(e != nullptr);
             *s->mutable_an_alias() = AliasToProto(*e);
         } 
        
