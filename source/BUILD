@@ -17,8 +17,3 @@ cc_binary(
     # visibility = ["//visibility:public"], 
 )
 
-filegroup(
-    name = "cpp2_files",
-    srcs = glob(["regression-tests/**/*.cpp2"]),
-    visibility = ["//visibility:public"],
-)

@@ -431,7 +431,6 @@ message declaration_node {
     optional expression_node requires_clause_expression = 12;
     // optional source_position equal_sign = 13;
     optional statement_node initializer = 14;
-    optional declaration_node parent_declaration = 15;
 }
 
 message translation_unit_node { 

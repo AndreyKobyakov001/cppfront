@@ -64,6 +64,14 @@ TEST(RoundTripTest, Roundtrip) {
           c2.print_errors();
           ADD_FAILURE() << "Parse error ";
       }
+
+      // if (c2.had_no_errors()) {
+      //   ASSERT_EQ(translation_unit_to_string(c), translation_unit_to_string(c2));
+      //   } 
+      // //   else {
+      // //     c2.print_errors();
+      // //     ADD_FAILURE() << "Parse error ";
+      // // }
     }
   }
   // Makes sure files were actually processed.

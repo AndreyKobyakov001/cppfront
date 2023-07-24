@@ -513,7 +513,6 @@ void DeclarationToCpp2(const fuzzing::declaration_node& declaration, std::ostrea
     ParameterDeclarationListToCpp2(declaration.template_parameters(), out); 
     ExpressionToCpp2(declaration.requires_clause_expression(), out);
     StatementToCpp2(declaration.initializer(), out); 
-    DeclarationToCpp2(declaration.parent_declaration(), out); 
 }
 
 void TranslationUnitToCpp2(const fuzzing::translation_unit_node& translation_unit, std::ostream& out) { 
