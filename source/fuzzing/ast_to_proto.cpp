@@ -31,9 +31,10 @@ auto TokenToProto(const token& token) -> fuzzing::token {
 
     if (token.start != nullptr && token.count > 0) {
         token_proto.set_value(std::string{token.start, static_cast<unsigned>(token.count)});
-    } else {
-        token_proto.set_value("0");
-    }
+    } 
+    // else {
+    //     token_proto.set_value("0");
+    // }
 
     return token_proto;
 }
@@ -727,6 +728,7 @@ auto ModifierToProto(const parameter_declaration_node::modifier mod) {
 
 auto ParameterDeclarationToProto(const parameter_declaration_node& parameter_declaration) -> fuzzing::parameter_declaration_node {
     fuzzing::parameter_declaration_node parameter_declaration_proto;
+    //proto2cpp2 not working for this one. 
     parameter_declaration_proto.set_mod(ModifierToProto(parameter_declaration.mod));
     *parameter_declaration_proto.mutable_declaration() = DeclarationToProto(*parameter_declaration.declaration);
     return parameter_declaration_proto;

@@ -5801,7 +5801,7 @@ private:
 
     inline auto apply_type_meta_functions( declaration_node& decl )
         -> bool;
-
+//the compiler believes this to be unused. perhaps it is right.
 
     //G unnamed-declaration:
     //G     ':' meta-functions-list? template-parameter-declaration-list? function-type requires-clause? '=' statement
@@ -6926,8 +6926,8 @@ public:
 
     auto start(declaration_node const& n, int indent) -> void
     {
-        o << pre(indent) << "declaration [" << &n << "]\n";
-        o << pre(indent+1) << "parent: [" << n.parent_declaration << "]\n";
+        o << pre(indent) << "declaration [" /*<< &n << */"]\n";
+        o << pre(indent+1) << "parent: [" /*<< n.parent_declaration <<*/ "]\n";
         switch (n.type.index()) {
         break;case declaration_node::a_function:
             o << pre(indent+1) << "function\n";
@@ -7011,9 +7011,9 @@ inline auto parser::debug_print(std::ostream& o)
 
     o << "\n\n--- Function body extents\n";
 
-    for (auto const& f : function_body_extents) {
-        o << "    " << f.first << "-" << f.last << "\n";
-    }
+    // for (auto const& f : function_body_extents) {
+    //     o << "    " << f.first << "-" << f.last << "\n";
+    // } -- TODO: write own function to print parse tree without this mess. 
 }
 
 

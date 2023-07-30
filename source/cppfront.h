@@ -1142,7 +1142,7 @@ public:
         }     
         else
         {
-           analyze();
+            analyze();
         }
     }
 
@@ -5811,6 +5811,8 @@ private:
     void analyze() { 
         //  Tokenize
         //
+        std::cout << "Analyzing. \n";
+        source.debug_print(std::cout);
         tokens.lex(source.get_lines());
 
         //  Parse

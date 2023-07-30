@@ -1,0 +1,307 @@
+//G prefix-operator:
+//G     one of  '!' '-' '+'
+//GT     parameter-direction
+//G
+//G postfix-operator:
+//G     one of  '++' '--' '*' '&' '~' '$'
+//G
+//G assignment-operator:
+//G     one of  '=' '*=' '/=' '%=' '+=' '-=' '>>=' '<<=' '&=' '^=' '|='
+//G
+    //G primary-expression:
+    //G     inspect-expression
+    //G     id-expression
+    //G     literal
+    //G     '(' expression-list ')'
+    //G     '{' expression-list '}'
+    //G     unnamed-declaration
+    //G
+    //G postfix-expression:
+    //G     primary-expression
+    //G     postfix-expression postfix-operator     [Note: without whitespace before the operator]
+    //G     postfix-expression '[' expression-list ']'
+    //G     postfix-expression '(' expression-list? ')'
+    //G     postfix-expression '.' id-expression
+    //G
+    //G prefix-expression:
+    //G     postfix-expression
+    //G     prefix-operator prefix-expression
+    //GTODO     await-expression
+    //GTODO     'sizeof' '(' type-id ')'
+    //GTODO     'sizeof' '...' ( identifier ')'
+    //GTODO     'alignof' '(' type-id ')'
+    //GTODO     throws-expression
+    //G
+    //G multiplicative-expression:
+    //G     is-as-expression
+    //G     multiplicative-expression '*' is-as-expression
+    //G     multiplicative-expression '/' is-as-expression
+    //G     multiplicative-expression '%' is-as-expression
+    //G
+    //G additive-expression:
+    //G     multiplicative-expression
+    //G     additive-expression '+' multiplicative-expression
+    //G     additive-expression '-' multiplicative-expression
+    //G
+    //G shift-expression:
+    //G     additive-expression
+    //G     shift-expression '<<' additive-expression
+    //G     shift-expression '>>' additive-expression
+    //G
+    //G compare-expression:
+    //G     shift-expression
+    //G     compare-expression '<=>' shift-expression
+    //G
+    //G relational-expression:
+    //G     compare-expression
+    //G     relational-expression '<'  compare-expression
+    //G     relational-expression '>'  compare-expression
+    //G     relational-expression '<=' compare-expression
+    //G     relational-expression '>=' compare-expression
+    //G
+    //G equality-expression:
+    //G     relational-expression
+    //G     equality-expression '==' relational-expression
+    //G     equality-expression '!=' relational-expression
+    //G
+    //G bit-and-expression:
+    //G     equality-expression
+    //G     bit-and-expression '&' equality-expression
+    //G
+    //G bit-xor-expression:
+    //G     bit-and-expression
+    //G     bit-xor-expression '^' bit-and-expression
+    //G
+    //G bit-or-expression:
+    //G     bit-xor-expression
+    //G     bit-or-expression '|' bit-xor-expression
+    //G
+    //G logical-and-expression:
+    //G     bit-or-expression
+    //G     logical-and-expression '&&' bit-or-expression
+    //G
+    //G logical-or-expression:
+    //G     logical-and-expression
+    //G     logical-or-expression '||' logical-and-expression
+    //G
+    //G assignment-expression:
+    //G     logical-or-expression
+    //G     assignment-expression assignment-operator logical-or-expression
+    //G
+    //G  expression:                // eliminated condition: - use expression:
+    //G     assignment-expression
+    //GTODO    try expression
+    //G
+    //G expression-list:
+    //G     parameter-direction? expression
+    //G     expression-list ',' parameter-direction? expression
+    //G
+    //G type-id:
+    //G     type-qualifier-seq? qualified-id
+    //G     type-qualifier-seq? unqualified-id
+    //G
+    //G type-qualifier-seq:
+    //G     type-qualifier
+    //G     type-qualifier-seq type-qualifier
+    //G
+    //G type-qualifier:
+    //G     'const'
+    //G     '*'
+    //G
+    //G is-as-expression:
+    //G     prefix-expression
+    //G     is-as-expression is-type-constraint
+    //G     is-as-expression is-value-constraint
+    //G     is-as-expression as-type-cast
+    //GTODO     type-id is-type-constraint
+    //G
+    //G is-type-constraint
+    //G     'is' type-id
+    //G
+    //G is-value-constraint
+    //G     'is' expression
+    //G
+    //G as-type-cast
+    //G     'as' type-id
+    //G
+    //G unqualified-id:
+    //G     identifier
+    //G     template-id
+    //GTODO     operator-function-id
+    //G
+    //G template-id:
+    //G     identifier '<' template-argument-list? '>'
+    //G
+    //G template-argument-list:
+    //G     template-argument-list ',' template-argument
+    //G
+    //G template-argument:
+    //G     # note: < > << >> are not allowed in expressions until new ( is opened
+    //G     expression
+    //G     type-id
+    //G
+    //G qualified-id:
+    //G     nested-name-specifier unqualified-id
+    //G     member-name-specifier unqualified-id
+    //G
+    //G nested-name-specifier:
+    //G     '::'
+    //G     unqualified-id '::'
+    //G
+    //G member-name-specifier:
+    //G     unqualified-id '.'
+    //G
+    //G id-expression
+    //G     qualified-id
+    //G     unqualified-id
+    //G
+    //G literal:
+    //G     integer-literal ud-suffix?
+    //G     character-literal ud-suffix?
+    //G     floating-point-literal ud-suffix?
+    //G     string-literal ud-suffix?
+    //G     boolean-literal ud-suffix?
+    //G     pointer-literal ud-suffix?
+    //G     user-defined-literal ud-suffix?
+    //G
+    //G expression-statement:
+    //G     expression ';'
+    //G     expression
+    //G
+    //G selection-statement:
+    //G     'if' 'constexpr'? logical-or-expression compound-statement
+    //G     'if' 'constexpr'? logical-or-expression compound-statement 'else' compound-statement
+    //G
+    //G return-statement:
+    //G     return expression? ';'
+    //G
+    //G iteration-statement:
+    //G     label? 'while' logical-or-expression next-clause? compound-statement
+    //G     label? 'do' compound-statement 'while' logical-or-expression next-clause? ';'
+    //G     label? 'for' expression next-clause? 'do' unnamed-declaration
+    //G
+    //G label:
+    //G     identifier ':'
+    //G
+    //G next-clause:
+    //G     'next' assignment-expression
+    //G
+    //G alternative:
+    //G     alt-name? is-type-constraint '=' statement
+    //G     alt-name? is-value-constraint '=' statement
+    //G     alt-name? as-type-cast '=' statement
+    //G
+    //G alt-name:
+    //G     unqualified-id :
+    //G
+    //G inspect-expression:
+    //G     'inspect' 'constexpr'? expression '{' alternative-seq? '}'
+    //G     'inspect' 'constexpr'? expression '->' type-id '{' alternative-seq? '}'
+    //G
+    //G alternative-seq:
+    //G     alternative
+    //G     alternative-seq alternative
+    //G
+    //G jump-statement:
+    //G     'break' identifier? ';'
+    //G     'continue' identifier? ';'
+    //G
+    //G statement:
+    //G     selection-statement
+    //G     inspect-expression
+    //G     return-statement
+    //G     jump-statement
+    //G     iteration-statement
+    //G     compound-statement
+    //G     declaration
+    //G     expression-statement
+    //G     contract
+    //GTODO     try-block
+    //G
+    //G compound-statement:
+    //G     '{' statement-seq? '}'
+    //G
+    //G statement-seq:
+    //G     statement
+    //G     statement-seq statement
+    //G
+    //G parameter-declaration:
+    //G     this-specifier? parameter-direction? declaration
+    //G
+    //G parameter-direction: one of
+    //G     'in' 'copy' 'inout' 'out' 'move' 'forward'
+    //G
+    //G this-specifier:
+    //G     'implicit'
+    //G     'virtual'
+    //G     'override'
+    //G     'final'
+    //G
+    //G parameter-declaration-list
+    //G     '(' parameter-declaration-seq? ')'
+    //G
+    //G parameter-declaration-seq:
+    //G     parameter-declaration
+    //G     parameter-declaration-seq ',' parameter-declaration
+    //G
+    //G contract:
+    //G     '[' '[' contract-kind id-expression? ':' logical-or-expression ']' ']'
+    //G     '[' '[' contract-kind id-expression? ':' logical-or-expression ',' string-literal ']' ']'
+    //G
+    //G contract-kind: one of
+    //G     'pre' 'post' 'assert'
+    //G
+    //G function-type:
+    //G     parameter-declaration-list throws-specifier? return-list? contract-seq?
+    //G
+    //G throws-specifier:
+    //G     'throws'
+    //G
+    //G return-list:
+    //G     '->' type-id
+    //G     '->' parameter_declaration_list
+    //G
+    //G contract-seq:
+    //G     contract
+    //G     contract-seq contract
+    //G
+    //G unnamed-declaration:
+    //G     ':' meta-functions-list? template-parameter-declaration-list? function-type requires-clause? '=' statement
+    //G     ':' meta-functions-list? template-parameter-declaration-list? type-id? requires-clause? '=' statement
+    //G     ':' meta-functions-list? template-parameter-declaration-list? type-id
+    //G     ':' meta-functions-list? template-parameter-declaration-list? 'final'? 'type' requires-clause? '=' statement
+    //G     ':' 'namespace' '=' statement
+    //G
+    //G meta-functions-list:
+    //G     '@' id-expression
+    //G     meta-functions-list '@' id-expression
+    //G
+    //G requires-clause:
+    //G     'requires' expression
+    //G
+    //G template-parameter-declaration-list
+    //G     '<' parameter-declaration-seq '>'
+    //G
+    //G alias
+    //G     ':' template-parameter-declaration-list? 'type' '==' type-id ';'
+    //G     ':' 'namespace' '==' qualified-id ';'
+    //G     ':' template-parameter-declaration-list? '_'? '==' expression ';'
+    //G
+    //GT     ':' function-type '==' expression ';'
+    //GT        # See commit 63efa6ed21c4d4f4f136a7a73e9f6b2c110c81d7 comment
+    //GT        # for why I don't see a need to enable this yet
+    //G declaration:
+    //G     access-specifier? identifier unnamed-declaration
+    //G     access-specifier? identifier alias
+    //G
+    //G access-specifier:
+    //G     public
+    //G     protected
+    //G     private
+    //G
+    //G declaration-seq:
+    //G     declaration
+    //G     declaration-seq declaration
+    //G
+    //G translation-unit:
+    //G     declaration-seq?

@@ -32,6 +32,7 @@ auto translation_unit_to_string(cppfront& c) {
 
 TEST(RoundTripTest, Roundtrip) {
   int parsed_ok_count = 0;
+  int correct_count = 0; 
   std::cout << "Hello world\n" << std::flush;
   std::cout << "Size:" << cpp2_files->size() << "\n" << std::flush;
   for (const std::string_view filename : *cpp2_files) {
@@ -39,14 +40,23 @@ TEST(RoundTripTest, Roundtrip) {
     std::string f(filename);
     cppfront c(f); 
     std::cout << "Created CPP2 File \n" << std::flush;
-    if (c.had_no_errors()) {
-      ++parsed_ok_count;
+    if (!c.had_no_errors()) {
+      c.print_errors();
+      ADD_FAILURE() << "Parse error ";
+    } else {
+      parsed_ok_count++; //move ++ to the start for efficiency and all that (much good it'll do you)
       const std::unique_ptr<translation_unit_node>& parse_tree = c.get_parse_tree(); 
       std::cout << "Parse tree time:" << parse_tree.get() << "\n" << std::flush;
       const fuzzing::translation_unit_node translation_unit_proto = 
           TranslationUnitToProto(*parse_tree); //this line breaks
           //check if not null
-      std::cout << "Generated proto from CPP2 \n" << std::flush;
+
+
+      //DEBUGGING PURPOSES
+      std::cout << "Generated proto from CPP2: \n" << translation_unit_proto.DebugString() << "\n" <<  std::flush;
+      // std::cout << "Translation Unit:\n" << translation_unit_to_string(c) << "\n"; 
+     
+     
       std::stringstream out;
       TranslationUnitToCpp2(translation_unit_proto, out); 
       std::cout << "Generate CPP2 from proto \n" << std::flush;
@@ -57,10 +67,17 @@ TEST(RoundTripTest, Roundtrip) {
       //rename the out variable :)-|<
       std::istringstream source_from_proto(out.str());
       cppfront c2(f, source_from_proto); 
+      std::cout << "Errors: \n";
+      c2.print_errors();
       //rename this to not be retarded
       if (c2.had_no_errors()) {
         EXPECT_EQ(translation_unit_to_string(c), translation_unit_to_string(c2));
-        } else {
+        const bool same = translation_unit_to_string(c) == translation_unit_to_string(c2);
+        if(same) { 
+          correct_count++; 
+        } 
+        // EXPECT_TRUE(same);
+      } else {
           c2.print_errors();
           ADD_FAILURE() << "Parse error ";
       }
@@ -74,6 +91,7 @@ TEST(RoundTripTest, Roundtrip) {
       // // }
     }
   }
+  std::cout << "Correct File Parsing: " << correct_count << " out of " << parsed_ok_count << " :) \n"; 
   // Makes sure files were actually processed.
   EXPECT_GT(parsed_ok_count, 0);
 }

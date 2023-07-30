@@ -11,6 +11,9 @@ namespace cpp2 {
 // fuzzing::translation_unit_node;
 auto TokenToProto(const token& t) -> fuzzing::token;
 
+// auto PassingStyleToProto(passing_style style) -> fuzzing::passing_style::en 
+//Does this need to exist? ^
+
 auto LiteralToProto(const literal_node& lit) -> fuzzing::literal_node; 
 
 auto TypeToProto(const type_node& type) -> fuzzing::type_node;

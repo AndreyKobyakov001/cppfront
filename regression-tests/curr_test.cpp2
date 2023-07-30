@@ -1,0 +1,11 @@
+
+main: () -> int = {
+    v: std::vector<int> = (1, 2, 3, 4, 5);
+
+    for v do (i)
+        std::cout << i << "\n";
+}
+
+#include <vector>
+#include <span>
+#include <iostream>

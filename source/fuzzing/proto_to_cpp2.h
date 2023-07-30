@@ -6,6 +6,8 @@
 
 namespace cpp2 {
 
+auto ProtoToPassingStyle(fuzzing::passing_style::en style_proto) -> std::string_view; 
+
 void TokenToCpp2(const fuzzing::token &t, std::ostream& out);
 
 void LiteralToCpp2(const fuzzing::literal_node &lit, std::ostream& out);
