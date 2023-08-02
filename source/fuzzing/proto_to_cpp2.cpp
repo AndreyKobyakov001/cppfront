@@ -73,11 +73,11 @@ void PrefixExpressionToCpp2(const fuzzing::prefix_expression_node& prefix_expres
         TokenToCpp2(op, out);
     }
     
-    PostfixExpressionToCpp2(prefix_expression.expr(), out);
+    PostfixExpressionToCpp2(prefix_expression.expr_prefix(), out);
 }
 
 void IsAsExpressionToCpp2(const fuzzing::is_as_expression_node& is_as_expression, std::ostream& out) {
-    PrefixExpressionToCpp2(is_as_expression.expr(), out);
+    PrefixExpressionToCpp2(is_as_expression.expr_is_as(), out);
     for (const auto& term : is_as_expression.ops()) {
         if (term.has_op()) {
             out << " ";
@@ -95,7 +95,7 @@ void IsAsExpressionToCpp2(const fuzzing::is_as_expression_node& is_as_expression
 
 
 void MultiplicativeExpressionToCpp2(const fuzzing::multiplicative_expression_node& multiplicative_expression, std::ostream& out) { 
-    IsAsExpressionToCpp2(multiplicative_expression.expr(), out);
+    IsAsExpressionToCpp2(multiplicative_expression.expr_multiplicative(), out);
     
     for (const auto& term : multiplicative_expression.terms()) {
         if (term.has_op()) {
@@ -109,7 +109,7 @@ void MultiplicativeExpressionToCpp2(const fuzzing::multiplicative_expression_nod
 
 
 void AdditiveExpressionToCpp2(const fuzzing::additive_expression_node& additive_expression, std::ostream& out) { 
-    MultiplicativeExpressionToCpp2(additive_expression.expr(), out);
+    MultiplicativeExpressionToCpp2(additive_expression.expr_additive(), out);
     
     for (const auto& term : additive_expression.terms()) {
         if (term.has_op()) {
@@ -122,7 +122,7 @@ void AdditiveExpressionToCpp2(const fuzzing::additive_expression_node& additive_
 }
 
 void ShiftExpressionToCpp2(const fuzzing::shift_expression_node& shift_expression, std::ostream& out) { 
-    AdditiveExpressionToCpp2(shift_expression.expr(), out);
+    AdditiveExpressionToCpp2(shift_expression.expr_shift(), out);
     
     for (const auto& term : shift_expression.terms()) {
         if (term.has_op()) {
@@ -135,7 +135,7 @@ void ShiftExpressionToCpp2(const fuzzing::shift_expression_node& shift_expressio
 }
 
 void CompareExpressionToCpp2(const fuzzing::compare_expression_node& compare_expression, std::ostream& out) { 
-    ShiftExpressionToCpp2(compare_expression.expr(), out);
+    ShiftExpressionToCpp2(compare_expression.expr_compare(), out);
     
     for (const auto& term : compare_expression.terms()) {
         if (term.has_op()) {
@@ -148,7 +148,7 @@ void CompareExpressionToCpp2(const fuzzing::compare_expression_node& compare_exp
 }
 
 void RelationalExpressionToCpp2(const fuzzing::relational_expression_node& relational_expression, std::ostream& out) { 
-    CompareExpressionToCpp2(relational_expression.expr(), out);
+    CompareExpressionToCpp2(relational_expression.expr_relational(), out);
     
     for (const auto& term : relational_expression.terms()) {
         if (term.has_op()) {
@@ -161,7 +161,7 @@ void RelationalExpressionToCpp2(const fuzzing::relational_expression_node& relat
 }
 
 void EqualityExpressionToCpp2(const fuzzing::equality_expression_node& equality_expression, std::ostream& out) { 
-    RelationalExpressionToCpp2(equality_expression.expr(), out);
+    RelationalExpressionToCpp2(equality_expression.expr_equality(), out);
     
     for (const auto& term : equality_expression.terms()) {
         if (term.has_op()) {
@@ -174,7 +174,7 @@ void EqualityExpressionToCpp2(const fuzzing::equality_expression_node& equality_
 }
 
 void BitAndExpressionToCpp2(const fuzzing::bit_and_expression_node& bit_and_expression, std::ostream& out) { 
-    EqualityExpressionToCpp2(bit_and_expression.expr(), out);
+    EqualityExpressionToCpp2(bit_and_expression.expr_bit_and(), out);
     
     for (const auto& term : bit_and_expression.terms()) {
         if (term.has_op()) {
@@ -187,7 +187,7 @@ void BitAndExpressionToCpp2(const fuzzing::bit_and_expression_node& bit_and_expr
 }
 
 void BitXorExpressionToCpp2(const fuzzing::bit_xor_expression_node& bit_xor_expression, std::ostream& out) { 
-    BitAndExpressionToCpp2(bit_xor_expression.expr(), out);
+    BitAndExpressionToCpp2(bit_xor_expression.expr_bit_xor(), out);
     
     for (const auto& term : bit_xor_expression.terms()) {
         if (term.has_op()) {
@@ -200,7 +200,7 @@ void BitXorExpressionToCpp2(const fuzzing::bit_xor_expression_node& bit_xor_expr
 }
 
 void BitOrExpressionToCpp2(const fuzzing::bit_or_expression_node& bit_or_expression, std::ostream& out) { 
-    BitXorExpressionToCpp2(bit_or_expression.expr(), out);
+    BitXorExpressionToCpp2(bit_or_expression.expr_bit_or(), out);
     
     for (const auto& term : bit_or_expression.terms()) {
         if (term.has_op()) {
@@ -213,7 +213,7 @@ void BitOrExpressionToCpp2(const fuzzing::bit_or_expression_node& bit_or_express
 }
 
 void LogicalAndExpressionToCpp2(const fuzzing::logical_and_expression_node& logical_and_expression, std::ostream& out) { 
-    BitOrExpressionToCpp2(logical_and_expression.expr(), out);
+    BitOrExpressionToCpp2(logical_and_expression.expr_logical_and(), out);
     
     for (const auto& term : logical_and_expression.terms()) {
         if (term.has_op()) {
@@ -226,7 +226,7 @@ void LogicalAndExpressionToCpp2(const fuzzing::logical_and_expression_node& logi
 }
 
 void LogicalOrExpressionToCpp2(const fuzzing::logical_or_expression_node& logical_or_expression, std::ostream& out) { 
-    LogicalAndExpressionToCpp2(logical_or_expression.expr(), out);
+    LogicalAndExpressionToCpp2(logical_or_expression.expr_logical_or(), out);
     
     for (const auto& term : logical_or_expression.terms()) {
         if (term.has_op()) {
@@ -239,12 +239,14 @@ void LogicalOrExpressionToCpp2(const fuzzing::logical_or_expression_node& logica
 }
 
 void AssignmentExpressionToCpp2(const fuzzing::assignment_expression_node& assignment_expression, std::ostream& out) { 
-    LogicalOrExpressionToCpp2(assignment_expression.expr(), out);
+    LogicalOrExpressionToCpp2(assignment_expression.expr_assignment(), out);
     
     for (const auto& term : assignment_expression.terms()) {
         if (term.has_op()) {
             TokenToCpp2(term.op(), out);
+            // out << "\n";
         }
+        // out << "\n";
         if (term.has_expr()) {
             LogicalOrExpressionToCpp2(term.expr(), out);
         }
@@ -253,7 +255,9 @@ void AssignmentExpressionToCpp2(const fuzzing::assignment_expression_node& assig
 
 void ExpressionToCpp2(const fuzzing::expression_node& expression, std::ostream& out) { 
     
-    AssignmentExpressionToCpp2(expression.expr(), out);
+    AssignmentExpressionToCpp2(expression.expr_expression(), out);
+    out << " ";
+    //out << "\n"; here instead? 
 }
 
 auto ProtoToPassingStyle(fuzzing::passing_style::en style_proto) -> std::string_view {
@@ -316,7 +320,8 @@ void ExpressionListToCpp2(const fuzzing::expression_list_node& expression_list, 
 
 void ExpressionStatementToCpp2(const fuzzing::expression_statement_node& expression_statement, std::ostream& out) { 
     // out << "(";
-    ExpressionToCpp2(expression_statement.expr(), out);
+    ExpressionToCpp2(expression_statement.expr_statement(), out);
+    // out << " "; 
     //REVIEW
     // out << ")"; 
     bool has_semicolon = expression_statement.has_semicolon();
@@ -341,7 +346,7 @@ void CaptureGroupToCpp2(const fuzzing::capture_group& capture_group, std::ostrea
 }
 
 void PostfixExpressionToCpp2(const fuzzing::postfix_expression_node& postfix_expression, std::ostream& out) { 
-    PrimaryExpressionToCpp2(postfix_expression.expr(), out); 
+    PrimaryExpressionToCpp2(postfix_expression.expr_postfix(), out); 
     for (const auto& op : postfix_expression.ops()) {
         if (op.has_op()) {
             // out << " "; 
@@ -443,6 +448,7 @@ void SelectionStatementToCpp2(const fuzzing::selection_statement_node& selection
     //     out << is_constexpr;
     // }
     TokenToCpp2(selection_statement.identifier(), out);
+    out << " "; 
     LogicalOrExpressionToCpp2(selection_statement.expression(), out); 
     CompoundStatementToCpp2(selection_statement.true_branch(), out);
     CompoundStatementToCpp2(selection_statement.false_branch(), out);
@@ -459,9 +465,11 @@ void IterationStatementToCpp2(const fuzzing::iteration_statement_node& iteration
     if(iteration_statement.identifier().value() == "for") { 
         out << "for "; 
         ExpressionToCpp2(iteration_statement.range(), out); 
+        // out << "\n";
         if(iteration_statement.has_next_expression()) { 
             out << "next "; 
             AssignmentExpressionToCpp2(iteration_statement.next_expression(), out); 
+            out << "\n";
         }
         out << " do (";
         ParameterDeclarationNodeToCpp2(iteration_statement.parameter(), out); 
@@ -469,17 +477,26 @@ void IterationStatementToCpp2(const fuzzing::iteration_statement_node& iteration
         StatementToCpp2(iteration_statement.body(), out); 
         out << "}\n";
     }
-    else{ 
-    //TODO: finish logic for while/do
-       TokenToCpp2(iteration_statement.label(), out); 
-        TokenToCpp2(iteration_statement.identifier(), out); 
-        AssignmentExpressionToCpp2(iteration_statement.next_expression(), out); 
-        LogicalOrExpressionToCpp2(iteration_statement.condition(), out); 
-        CompoundStatementToCpp2(iteration_statement.statements(), out); 
-        ExpressionToCpp2(iteration_statement.range(), out); 
-        ParameterDeclarationNodeToCpp2(iteration_statement.parameter(), out); 
-        StatementToCpp2(iteration_statement.body(), out); 
+    else if(iteration_statement.identifier().value() == "while") { 
+        out << "while ";
+
     }
+
+    else if(iteration_statement.identifier().value() == "do") { 
+        out << "do"; 
+
+    }
+    // else{ 
+    // //TODO: finish logic for while/do
+    //    TokenToCpp2(iteration_statement.label(), out); 
+    //     TokenToCpp2(iteration_statement.identifier(), out); 
+    //     AssignmentExpressionToCpp2(iteration_statement.next_expression(), out); 
+    //     LogicalOrExpressionToCpp2(iteration_statement.condition(), out); 
+    //     CompoundStatementToCpp2(iteration_statement.statements(), out); 
+    //     ExpressionToCpp2(iteration_statement.range(), out); 
+    //     ParameterDeclarationNodeToCpp2(iteration_statement.parameter(), out); 
+    //     StatementToCpp2(iteration_statement.body(), out); 
+    // }
     // bool for_with_in = iteration_statement.for_with_in(); 
     // if(for_with_in) { 
     //     out << for_with_in; 
@@ -512,6 +529,7 @@ void InspectExpressionToCpp2(const fuzzing::inspect_expression_node& inspect_exp
     }
     TokenToCpp2(inspect_expression.identifier(), out);
     ExpressionToCpp2(inspect_expression.expression(), out); 
+    // out << " ";
     TypeIdToCpp2(inspect_expression.result_type(), out); 
 
     for (const auto& alternative : inspect_expression.alternatives()) {
@@ -536,10 +554,12 @@ void StatementToCpp2(const fuzzing::statement_node& statement, std::ostream& out
     ParameterDeclarationListToCpp2(statement.parameters(), out);
     if (statement.has_expression()) {
         ExpressionStatementToCpp2(statement.expression(), out);
+        // out << " "; 
     } else if (statement.has_compound()) {
         CompoundStatementToCpp2(statement.compound(), out);
     } else if (statement.has_selection()) {
         SelectionStatementToCpp2(statement.selection(), out);
+        // out << " "; 
     } else if (statement.has_declaration()) {
         DeclarationToCpp2(statement.declaration(), out);
     } else if (statement.has_return_()) {
@@ -547,7 +567,9 @@ void StatementToCpp2(const fuzzing::statement_node& statement, std::ostream& out
     } else if (statement.has_iteration()) {
         IterationStatementToCpp2(statement.iteration(), out);
     } else if (statement.has_contract()) {
+        out << "[[";
         ContractToCpp2(statement.contract(), out);
+        out << "]]";//2 sets of square braces good? 
     } else if (statement.has_inspect()) {
         InspectExpressionToCpp2(statement.inspect(), out);
     } else if (statement.has_jump()) {

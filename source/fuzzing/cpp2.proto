@@ -28,14 +28,14 @@ message literal_node {
     optional token literal = 1;
     optional token suffix = 2;
 }
-//TODO: rename all exprs here and then in proto2cpp2. 
+ 
 message prefix_expression_node { 
     repeated token ops = 1;
-    optional postfix_expression_node expr = 2;
+    optional postfix_expression_node expr_prefix = 2;
 }
 
 message is_as_expression_node {
-    optional prefix_expression_node expr = 1;
+    optional prefix_expression_node expr_is_as = 1;
     
     message term { 
         optional token op = 1;
@@ -46,7 +46,7 @@ message is_as_expression_node {
 }
 
 message multiplicative_expression_node {
-    optional is_as_expression_node expr = 1;
+    optional is_as_expression_node expr_multiplicative = 1;
     
     message term { 
         optional token op = 1;
@@ -56,7 +56,7 @@ message multiplicative_expression_node {
 }
 
 message additive_expression_node { 
-    optional multiplicative_expression_node expr = 1;
+    optional multiplicative_expression_node expr_additive = 1;
     
     message term { 
         optional token op = 1;
@@ -66,7 +66,7 @@ message additive_expression_node {
 }
 
 message shift_expression_node {
-    optional additive_expression_node expr = 1;
+    optional additive_expression_node expr_shift = 1;
     
     message term { 
         optional token op = 1;
@@ -76,7 +76,7 @@ message shift_expression_node {
 }
 
 message compare_expression_node {
-    optional shift_expression_node expr = 1;
+    optional shift_expression_node expr_compare = 1;
     
     message term { 
         optional token op = 1;
@@ -86,7 +86,7 @@ message compare_expression_node {
 }
 
 message relational_expression_node {
-    optional compare_expression_node expr = 1;
+    optional compare_expression_node expr_relational = 1;
     
     message term { 
         optional token op = 1;
@@ -96,7 +96,7 @@ message relational_expression_node {
 }
 
 message equality_expression_node {
-    optional relational_expression_node expr = 1;
+    optional relational_expression_node expr_equality = 1;
     
     message term { 
         optional token op = 1;
@@ -106,7 +106,7 @@ message equality_expression_node {
 }
 
 message bit_and_expression_node {
-    optional equality_expression_node expr = 1;
+    optional equality_expression_node expr_bit_and = 1;
     
     message term { 
         optional token op = 1;
@@ -116,7 +116,7 @@ message bit_and_expression_node {
 }
 
 message bit_xor_expression_node {
-    optional bit_and_expression_node expr = 1;
+    optional bit_and_expression_node expr_bit_xor = 1;
     
     message term { 
         optional token op = 1;
@@ -126,7 +126,7 @@ message bit_xor_expression_node {
 }
 
 message bit_or_expression_node {
-    optional bit_xor_expression_node expr = 1;
+    optional bit_xor_expression_node expr_bit_or = 1;
     
     message term { 
         optional token op = 1;
@@ -136,7 +136,7 @@ message bit_or_expression_node {
 }
 
 message logical_and_expression_node {
-    optional bit_or_expression_node expr = 1;
+    optional bit_or_expression_node expr_logical_and = 1;
     
     message term { 
         optional token op = 1;
@@ -146,7 +146,7 @@ message logical_and_expression_node {
 }
 
 message logical_or_expression_node {
-    optional logical_and_expression_node expr = 1;
+    optional logical_and_expression_node expr_logical_or = 1;
     
     message term { 
         optional token op = 1;
@@ -156,7 +156,7 @@ message logical_or_expression_node {
 }
 
 message assignment_expression_node {
-    optional logical_or_expression_node expr = 1;
+    optional logical_or_expression_node expr_assignment = 1;
     
     message term { 
         optional token op = 1;
@@ -166,7 +166,7 @@ message assignment_expression_node {
 }
 
 message expression_node { 
-    optional assignment_expression_node expr = 1;
+    optional assignment_expression_node expr_expression = 1;
 }
 
 message expression_list_node {
@@ -183,7 +183,7 @@ message expression_list_node {
 //25/5/2023
 
 message expression_statement_node { 
-    optional expression_node expr = 1;
+    optional expression_node expr_statement = 1;
     optional bool has_semicolon = 2; 
 }
 
@@ -199,7 +199,7 @@ message capture_group {
 }
 
 message postfix_expression_node { 
-    optional primary_expression_node expr = 1;
+    optional primary_expression_node expr_postfix = 1;
     message term {
         optional token op = 1;
         optional id_expression_node id_expr = 2;
