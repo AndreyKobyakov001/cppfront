@@ -242,7 +242,6 @@ message type_id_node {
     optional token address_of = 3;
     optional token dereference_of = 4;
     optional int32 dereference_cnt = 5;
-    optional token suspicious_initialization = 6;
     oneof id { 
         qualified_id_node qualified = 7;
         unqualified_id_node unqualified = 8;
@@ -282,7 +281,6 @@ message selection_statement_node {
     optional logical_or_expression_node expression = 4;
     optional compound_statement_node true_branch = 5;
     optional compound_statement_node false_branch = 6;
-    optional bool has_source_false_branch = 7;
 }
 
 // message parameter_declaration_node {

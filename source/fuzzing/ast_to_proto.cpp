@@ -135,14 +135,7 @@ auto MultiplicativeExpressionToProto(const multiplicative_expression_node& multi
     }
     
     for (const auto& term : multiplicative_expression.terms) {
-        // auto& op_proto = *multiplicative_expression.add_ops();
-        // auto& op_proto = TokenToProto(*multiplicative_expression.ops);
-        // *op_proto.mutable_op() = TokenToProto(*term.op);
-        // *op_proto.mutable_expr() = IsAsExpressionToProto(*term.type);
-        // *term.mutable_op() = TokenToProto(*term.op);
-        // *term.mutable_expr() = IsAsExpressionToProto(*term.type);
-        // *multiplicative_expression.mutable_op() = TokenToProto(*term.op);
-        // *multiplicative_expression.mutable_expr() = IsAsExpressionToProto(*term.type);
+        //TODO: add null checks here. 
         auto term_proto = multiplicative_expression_proto.add_terms();
         *term_proto->mutable_op() = TokenToProto(*term.op);
         *term_proto->mutable_expr() = IsAsExpressionToProto(*term.expr);
@@ -400,25 +393,42 @@ auto UnqualifiedIdToProto(const unqualified_id_node& unqualified_id) -> fuzzing:
     if (unqualified_id.identifier != nullptr) {
         *unqualified_id_proto.mutable_identifier() = TokenToProto(*unqualified_id.identifier);
     }
+    // std::cout << "Reached For Loop\n";
+    // for (const auto& term : unqualified_id.template_args) {
+    //     // std::cout << "Reached Args Bit\n"; 
+    //     struct converter { 
+    //         fuzzing::unqualified_id_node::term* s;
+    //         explicit converter(fuzzing::unqualified_id_node::term& s_param): s(&s_param) {}
+    //         void operator() (const std::monostate&) { }
+    //         void operator() (const std::unique_ptr<expression_node>& e) { 
+    //             if (e != nullptr) {
+    //                 *s->mutable_expression() = ExpressionToProto(*e);
+    //             }
+    //         }
+    //         void operator() (const std::unique_ptr<type_id_node>& e) { 
+    //             if (e != nullptr) {
+    //                 *s->mutable_type_id() = TypeIdToProto(*e);
+    //             }
+    //         }    
+    //     };
+    //     // std::visit(converter(*unqualified_id_proto.add_template_args()), term.arg);
+    //     std::visit(converter{*unqualified_id_proto.add_template_args()}, term.arg);
+    // }
     for (const auto& term : unqualified_id.template_args) {
-        
-        struct converter { 
-            fuzzing::unqualified_id_node::term* s;
-            explicit converter(fuzzing::unqualified_id_node::term& s_param): s(&s_param) {}
-            void operator() (const std::monostate&) { }
-            void operator() (const std::unique_ptr<expression_node>& e) { 
-                if (e != nullptr) {
-                    *s->mutable_expression() = ExpressionToProto(*e);
-                }
+        // std::cout << "For\n";    
+        if (std::holds_alternative<std::unique_ptr<expression_node>>(term.arg)) {
+            const std::unique_ptr<expression_node>& e = std::get<std::unique_ptr<expression_node>>(term.arg);
+            if (e != nullptr) {
+                *unqualified_id_proto.add_template_args()->mutable_expression() = ExpressionToProto(*e);
             }
-            void operator() (const std::unique_ptr<type_id_node>& e) { 
-                if (e != nullptr) {
-                    *s->mutable_type_id() = TypeIdToProto(*e);
-                }
-            }    
-        };
-        std::visit(converter(*unqualified_id_proto.add_template_args()), term.arg);
+        } else if (std::holds_alternative<std::unique_ptr<type_id_node>>(term.arg)) {
+            const std::unique_ptr<type_id_node>& t = std::get<std::unique_ptr<type_id_node>>(term.arg);
+            if (t != nullptr) {
+                *unqualified_id_proto.add_template_args()->mutable_type_id() = TypeIdToProto(*t);
+            }
+        }
     }
+    // std::cout << "Finished\n"; 
     return unqualified_id_proto;
 }
 
@@ -449,10 +459,6 @@ auto TypeIdToProto(const type_id_node& type_id) -> fuzzing::type_id_node {
     }
     type_id_proto.set_dereference_cnt(type_id.dereference_cnt); 
     
-
-    if(type_id.suspicious_initialization != nullptr) {
-    *type_id_proto.mutable_suspicious_initialization() = TokenToProto(*type_id.suspicious_initialization);
-    }
     // const auto& e = type_id.id;
     struct converter {
         fuzzing::type_id_node* s;
@@ -523,11 +529,18 @@ auto CompoundStatementToProto(const compound_statement_node& compound_statement)
 auto SelectionStatementToProto(const selection_statement_node& selection_statement) -> fuzzing::selection_statement_node {
     fuzzing::selection_statement_node selection_statement_proto;
     selection_statement_proto.set_is_constexpr(selection_statement.is_constexpr);
-    *selection_statement_proto.mutable_identifier() = TokenToProto(*selection_statement.identifier);
-    *selection_statement_proto.mutable_expression() = LogicalOrExpressionToProto(*selection_statement.expression);
-    *selection_statement_proto.mutable_true_branch() = CompoundStatementToProto(*selection_statement.true_branch);
-    *selection_statement_proto.mutable_false_branch() = CompoundStatementToProto(*selection_statement.false_branch);
-    selection_statement_proto.set_has_source_false_branch(selection_statement.has_source_false_branch);
+    if(selection_statement.identifier != nullptr) { 
+        *selection_statement_proto.mutable_identifier() = TokenToProto(*selection_statement.identifier);
+    } 
+    if(selection_statement.expression != nullptr) { 
+        *selection_statement_proto.mutable_expression() = LogicalOrExpressionToProto(*selection_statement.expression);
+    } 
+    if(selection_statement.true_branch != nullptr) { 
+        *selection_statement_proto.mutable_true_branch() = CompoundStatementToProto(*selection_statement.true_branch);
+    } 
+    if(selection_statement.has_source_false_branch && selection_statement.false_branch != nullptr) { 
+        *selection_statement_proto.mutable_false_branch() = CompoundStatementToProto(*selection_statement.false_branch);
+    }
     return selection_statement_proto;
 }
 
@@ -728,6 +741,7 @@ auto ModifierToProto(const parameter_declaration_node::modifier mod) {
 
 auto ParameterDeclarationToProto(const parameter_declaration_node& parameter_declaration) -> fuzzing::parameter_declaration_node {
     fuzzing::parameter_declaration_node parameter_declaration_proto;
+    parameter_declaration_proto.set_pass(PassingStyleToProto(parameter_declaration.pass));
     //proto2cpp2 not working for this one. 
     parameter_declaration_proto.set_mod(ModifierToProto(parameter_declaration.mod));
     *parameter_declaration_proto.mutable_declaration() = DeclarationToProto(*parameter_declaration.declaration);

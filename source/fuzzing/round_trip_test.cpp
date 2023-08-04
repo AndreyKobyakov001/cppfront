@@ -30,55 +30,88 @@ auto translation_unit_to_string(cppfront& c) {
     return out.str(); 
 }
 
+auto write_to_file(const std::string_view filename, const std::string_view contents) { 
+  std::ofstream f;
+  f.open(filename.data());
+  f << contents; 
+  f.close(); 
+}
+
 TEST(RoundTripTest, Roundtrip) {
   int parsed_ok_count = 0;
   int correct_count = 0; 
-  std::cout << "Hello world\n" << std::flush;
+  // bool debug = false; 
+  bool debug = true;
+  // std::cout << "Hello world\n" << std::flush;
   std::cout << "Size:" << cpp2_files->size() << "\n" << std::flush;
   for (const std::string_view filename : *cpp2_files) {
-    std::cout << "Filename:" << filename << "\n" << std::flush;
+    // std::cout << "Filename: " << filename << "\n" << std::flush;
     std::string f(filename);
     cppfront c(f); 
-    std::cout << "Created CPP2 File \n" << std::flush;
     if (!c.had_no_errors()) {
       c.print_errors();
       ADD_FAILURE() << "Parse error ";
     } else {
       parsed_ok_count++; //move ++ to the start for efficiency and all that (much good it'll do you)
       const std::unique_ptr<translation_unit_node>& parse_tree = c.get_parse_tree(); 
-      std::cout << "Parse tree time:" << parse_tree.get() << "\n" << std::flush;
+      if (1 == 0) {
+        std::cout << "Parse tree time:" << parse_tree.get() << "\n" << std::flush;
+      }
       const fuzzing::translation_unit_node translation_unit_proto = 
-          TranslationUnitToProto(*parse_tree); //this line breaks
-          //check if not null
+          TranslationUnitToProto(*parse_tree); //TODO: check if not null
 
 
       //DEBUGGING PURPOSES
-      std::cout << "Generated proto from CPP2: \n" << translation_unit_proto.DebugString() << "\n" <<  std::flush;
+      // if (debug) { 
+      //   std::cout << "Generated proto from CPP2: \n" << translation_unit_proto.DebugString() << "\n" <<  std::flush;      
+      // }
       // std::cout << "Translation Unit:\n" << translation_unit_to_string(c) << "\n"; 
      
      
       std::stringstream out;
       TranslationUnitToCpp2(translation_unit_proto, out); 
-      std::cout << "Generate CPP2 from proto \n" << std::flush;
+      write_to_file("/tmp/c2.cpp2", out.str());
+      // if (debug) { 
+      //   std::cout << "Generate CPP2 from proto \n" << std::flush;
+      // }
 
-      SCOPED_TRACE(testing::Message()
+      if(debug) { 
+        SCOPED_TRACE(testing::Message()
                     << "Cpp2 file: " << filename << ", source from proto:\n"
                     << out.str());
+      }
       //rename the out variable :)-|<
+      
       std::istringstream source_from_proto(out.str());
+      
       cppfront c2(f, source_from_proto); 
-      std::cout << "Errors: \n";
-      c2.print_errors();
+      if(debug) { 
+        // std::cout << "Errors: \n";
+        c2.print_errors();
+      }
       //rename this to not be retarded
       if (c2.had_no_errors()) {
-        EXPECT_EQ(translation_unit_to_string(c), translation_unit_to_string(c2));
-        const bool same = translation_unit_to_string(c) == translation_unit_to_string(c2);
+        const auto c_contents = translation_unit_to_string(c);
+        const auto c2_contents = translation_unit_to_string(c2);
+        if (debug) {  
+          EXPECT_EQ(c_contents, c2_contents);
+        }
+        write_to_file("/tmp/c_contents", c_contents);
+        write_to_file("/tmp/c2_contents", c2_contents);
+        write_to_file("/tmp/proto_tree", translation_unit_proto.DebugString());
+        
+        const bool same = c_contents == c2_contents;
         if(same) { 
           correct_count++; 
-        } 
-        // EXPECT_TRUE(same);
+        } else { 
+          std::cout << parsed_ok_count << ". " << filename << " Different\n";
+        }
+        EXPECT_TRUE(same); 
       } else {
-          c2.print_errors();
+          if (debug) { 
+            c2.print_errors();
+          }
+          std::cout << parsed_ok_count << ". " << filename << " HAS ERRORS" << "\n";
           ADD_FAILURE() << "Parse error ";
       }
 

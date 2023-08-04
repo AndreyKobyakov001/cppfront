@@ -21,8 +21,35 @@ public:
   }
 };
 
+// void TokenToCpp2(const fuzzing::token& token, std::ostream& out) {
+//     out << token.value();
+// }
+
+// void TokenToCpp2(const fuzzing::token& token, std::ostream& out) {
+//     const std::string& value = token.value();
+//     if (value == ", " || value == ": " || value == ";") {
+//         out << value;
+//     } else {
+//         out << token.value();
+//     }
+// }
+
+bool IsLogicalOperator(const std::string& value) {
+    return value == "&&" || value == "||";
+}
+
+bool IsMathOperator(const std::string& value) {
+    return value == "<=" || value == ">=" || value == "==" || value == "!=" ||
+           value == "+" || value == "-" || value == "*" || value == "/";
+}
+
 void TokenToCpp2(const fuzzing::token& token, std::ostream& out) {
-    out << token.value();
+    const std::string& value = token.value();
+    if (IsLogicalOperator(value) || IsMathOperator(value)) {
+        out << " " << value << " ";
+    } else {
+        out << token.value();
+    }
 }
 
 void LiteralToCpp2(const fuzzing::literal_node& lit, std::ostream& out) { 
@@ -77,8 +104,12 @@ void PrefixExpressionToCpp2(const fuzzing::prefix_expression_node& prefix_expres
 }
 
 void IsAsExpressionToCpp2(const fuzzing::is_as_expression_node& is_as_expression, std::ostream& out) {
+    // if (is_as_expression.has_expr_is_as()) {
+    //     PrefixExpressionToCpp2(is_as_expression.expr_is_as(), out);
+    // }
     PrefixExpressionToCpp2(is_as_expression.expr_is_as(), out);
     for (const auto& term : is_as_expression.ops()) {
+        //TODO: make into switch case. 
         if (term.has_op()) {
             out << " ";
             TokenToCpp2(term.op(), out);//these have been left as if-statements for a bootleg switch-case-like thing, but they could be removed *probably*. 
@@ -113,7 +144,9 @@ void AdditiveExpressionToCpp2(const fuzzing::additive_expression_node& additive_
     
     for (const auto& term : additive_expression.terms()) {
         if (term.has_op()) {
+            out << " ";
             TokenToCpp2(term.op(), out);
+            out << " ";
         }
         if (term.has_expr()) {
             MultiplicativeExpressionToCpp2(term.expr(), out);
@@ -240,7 +273,6 @@ void LogicalOrExpressionToCpp2(const fuzzing::logical_or_expression_node& logica
 
 void AssignmentExpressionToCpp2(const fuzzing::assignment_expression_node& assignment_expression, std::ostream& out) { 
     LogicalOrExpressionToCpp2(assignment_expression.expr_assignment(), out);
-    
     for (const auto& term : assignment_expression.terms()) {
         if (term.has_op()) {
             TokenToCpp2(term.op(), out);
@@ -256,31 +288,34 @@ void AssignmentExpressionToCpp2(const fuzzing::assignment_expression_node& assig
 void ExpressionToCpp2(const fuzzing::expression_node& expression, std::ostream& out) { 
     
     AssignmentExpressionToCpp2(expression.expr_expression(), out);
-    out << " ";
+    // out << " ";
     //out << "\n"; here instead? 
 }
 
-auto ProtoToPassingStyle(fuzzing::passing_style::en style_proto) -> std::string_view {
-    //TODO: Review this mess. 
+auto ProtoToPassingStyle(fuzzing::passing_style::en style_proto, 
+    fuzzing::passing_style::en default_passing_style = fuzzing::passing_style::in) -> std::string_view {
+    //TODO: Review this mess.
+    if (style_proto == default_passing_style) { 
+        return ""; 
+    } 
     switch (style_proto) {
         case fuzzing::passing_style::in:
-            // out <<  "in";
-            return "";
+            return "in";
             
         case fuzzing::passing_style::copy:
-            return "copy "; 
+            return "copy"; 
 
         case fuzzing::passing_style::inout:
-            return "inout "; 
+            return "inout"; 
 
         case fuzzing::passing_style::out:
-            return "out "; 
+            return "out"; 
 
         case fuzzing::passing_style::move:
-            return "move "; 
+            return "move"; 
 
         case fuzzing::passing_style::forward:
-            return "forward ";
+            return "forward";
 
         case fuzzing::passing_style::invalid:            
         default: 
@@ -296,21 +331,18 @@ void ExpressionListToCpp2(const fuzzing::expression_list_node& expression_list, 
         // out << "(";
         // TokenToCpp2(expression_list.open_paren(), out); 
         ListSeparator sep; 
-        for (const auto& expression : expression_list.expressions()) {\
+        for (const auto& expression : expression_list.expressions()) {
             out << sep; 
-            const auto passing_style = ProtoToPassingStyle(expression.pass());
+            const auto passing_style = ProtoToPassingStyle(expression.pass(), fuzzing::passing_style::in);
             if(!passing_style.empty()) {
-                // ProtoToPassingStyle(expression.pass(), out);
-                out << "(";
-                out << passing_style; 
-                // ProtoToPassingStyle(expression.pass(), out);
-                //REVIEW
+                // out << "(";
+                out << passing_style << " "; 
             }
             if (expression.has_expr()) {
                 ExpressionToCpp2(expression.expr(), out);
             }
             if(!passing_style.empty()) { 
-                out << ")";
+                // out << ")";
             }
         }
         // out << ")";
@@ -368,6 +400,7 @@ void PostfixExpressionToCpp2(const fuzzing::postfix_expression_node& postfix_exp
 
 void UnqualifiedIdToCpp2(const fuzzing::unqualified_id_node& unqualified_id, std::ostream& out) { 
     TokenToCpp2(unqualified_id.identifier(), out); 
+    // out << ":";
     if(!unqualified_id.template_args().empty()) {
         out << "<";
         ListSeparator sep; 
@@ -382,6 +415,7 @@ void UnqualifiedIdToCpp2(const fuzzing::unqualified_id_node& unqualified_id, std
         }
         out << ">";
     }
+
 }
 
 void QualifiedIdToCpp2(const fuzzing::qualified_id_node& qualified_id, std::ostream& out) { 
@@ -390,6 +424,7 @@ void QualifiedIdToCpp2(const fuzzing::qualified_id_node& qualified_id, std::ostr
             TokenToCpp2(id.scope_op(), out);
         }
         if (id.has_id()) {
+            // out << ": ";
             UnqualifiedIdToCpp2(id.id(), out);
         }
     }
@@ -401,13 +436,11 @@ void TypeIdToCpp2(const fuzzing::type_id_node& type_id, std::ostream& out) {
     }
     TokenToCpp2(type_id.address_of(), out);
     TokenToCpp2(type_id.dereference_of(), out);
-    // int32_t dereference_cnt = type_id.dereference_cnt();
-    // if(dereference_cnt) {
-    //     out << dereference_cnt; 
-    // }
-    //REVIEW
-    // optional int32_tdereference_cnt = 5;
-    TokenToCpp2(type_id.suspicious_initialization(), out);
+    if (type_id.has_dereference_cnt()) {
+        // out << ":=";
+        //fuck off
+        // TokenToCpp2(type_id.dereference_cnt, out);
+    }
 
    if (type_id.has_qualified()) {
         QualifiedIdToCpp2(type_id.qualified(), out);
@@ -451,7 +484,9 @@ void SelectionStatementToCpp2(const fuzzing::selection_statement_node& selection
     out << " "; 
     LogicalOrExpressionToCpp2(selection_statement.expression(), out); 
     CompoundStatementToCpp2(selection_statement.true_branch(), out);
-    CompoundStatementToCpp2(selection_statement.false_branch(), out);
+    if (selection_statement.has_false_branch()) { 
+        CompoundStatementToCpp2(selection_statement.false_branch(), out);
+    }
     // bool has_source_false_branch = selection_statement.has_source_false_branch(); 
     // if(has_source_false_branch) { 
     //     out << has_source_false_branch; 
@@ -467,23 +502,28 @@ void IterationStatementToCpp2(const fuzzing::iteration_statement_node& iteration
         ExpressionToCpp2(iteration_statement.range(), out); 
         // out << "\n";
         if(iteration_statement.has_next_expression()) { 
-            out << "next "; 
+            out << "\nnext "; 
             AssignmentExpressionToCpp2(iteration_statement.next_expression(), out); 
             out << "\n";
         }
         out << " do (";
         ParameterDeclarationNodeToCpp2(iteration_statement.parameter(), out); 
-        out << ") {\n";
+        out << ") \n";
+        // out << ") {\n";
         StatementToCpp2(iteration_statement.body(), out); 
-        out << "}\n";
-    }
-    else if(iteration_statement.identifier().value() == "while") { 
+        // out << "}\n";
+    } else if(iteration_statement.identifier().value() == "while") { 
         out << "while ";
+        ExpressionToCpp2(iteration_statement.range(), out);
 
-    }
-
-    else if(iteration_statement.identifier().value() == "do") { 
+    } else if(iteration_statement.identifier().value() == "do") { 
         out << "do"; 
+        ParameterDeclarationNodeToCpp2(iteration_statement.parameter(), out);
+        LogicalOrExpressionToCpp2(iteration_statement.condition(), out); 
+        CompoundStatementToCpp2(iteration_statement.statements(), out);  
+        out << ") \n";
+        // out << ") {\n";
+        // out << "}\n";
 
     }
     // else{ 
@@ -540,7 +580,9 @@ void InspectExpressionToCpp2(const fuzzing::inspect_expression_node& inspect_exp
 void ContractToCpp2(const fuzzing::contract_node& contract, std::ostream& out) { 
     CaptureGroupToCpp2(contract.captures(), out); 
     TokenToCpp2(contract.kind(), out); 
+    out << " "; 
     IdExpressionToCpp2(contract.group(), out); 
+    out << ": "; 
     LogicalOrExpressionToCpp2(contract.condition(), out); 
     TokenToCpp2(contract.message(), out); 
 }
@@ -582,52 +624,25 @@ void StatementToCpp2(const fuzzing::statement_node& statement, std::ostream& out
     // optional bool emitted = 11; REVIEW
 }
 
-//UNDER REVIEW ALSO
-// auto ModifierToProto(const fuzzing::parameter_declaration_node::modifier mod) -> parameter_declaration_node::modifier { 
-// // parameter_declaration_node::modifier ModifierToProto(const fuzzing::parameter_declaration_node::modifier mod) { 
-//     switch (mod) {
-//         case fuzzing::parameter_declaration_node::none:
-//             return parameter_declaration_node::none;
-//         case fuzzing::parameter_declaration_node::implicit:
-//             return parameter_declaration_node::implicit;
-//         case fuzzing::parameter_declaration_node::virtual_:
-//             return parameter_declaration_node::virtual_;
-//         case fuzzing::parameter_declaration_node::override_:
-//             return parameter_declaration_node::override_;
-//         case fuzzing::parameter_declaration_node::final_:
-//             return parameter_declaration_node::final_;
-//     }
-//     return parameter_declaration_node::none; // Fallback, should not reach this point normally
-// }
-// auto ModifierToProto(const parameter_declaration_node::modifier mod) { 
-//     switch (mod) {
-//         case fuzzing::parameter_declaration_node::modifier::none:
-//             return parameter_declaration_node::none;
-//         case fuzzing::parameter_declaration_node::modifier::implicit:
-//             return parameter_declaration_node::implicit;
-//         case fuzzing::parameter_declaration_node::modifier::virtual_:
-//             return parameter_declaration_node::virtual_;
-//         case fuzzing::parameter_declaration_node::modifier::override_:
-//             return parameter_declaration_node::override_;
-//         case fuzzing::parameter_declaration_node::modifier::final_:
-//             return parameter_declaration_node::final_;
-//     }
-//     return parameter_declaration_node::none;
-// }
+auto ProtoToModifier(const fuzzing::parameter_declaration_node::modifier mod) -> std::string_view {
+    switch (mod) {
+        case fuzzing::parameter_declaration_node::none:
+            return "";
+        case fuzzing::parameter_declaration_node::implicit:
+            return "implicit";
+        case fuzzing::parameter_declaration_node::virtual_:
+            return "virtual";
+        case fuzzing::parameter_declaration_node::override_:
+            return "override";
+        case fuzzing::parameter_declaration_node::final_:
+            return "final";
+        default:
+            return ""; 
+    }
+    // return "";
+}
 
 void ParameterDeclarationNodeToCpp2(const fuzzing::parameter_declaration_node& parameter_declaration, std::ostream& out) { 
-    //I HAVE NO IDEA HOW TO DO THIS; REVIEW
-    // optional passing_style.en pass = 2;
-    
-    //make passing style
-
-    // enum modifier { 
-    //     none = 0;
-    //     implicit = 1;
-    //     virtual_ = 2;
-    //     override_ = 3;
-    //     final_ = 4;
-    // }
     // optional modifier mod = 3;
     // modifier mod = parameter_declaration.mod();
     // if(mod) { 
@@ -635,40 +650,52 @@ void ParameterDeclarationNodeToCpp2(const fuzzing::parameter_declaration_node& p
     // }
     //make enum work, probably with ChadGPT
     // ModifierToProto(parameter_declaration.mod(), out); 
+    const auto passing_style = ProtoToPassingStyle(parameter_declaration.pass(), fuzzing::passing_style::in);
+    if(!passing_style.empty()) {
+        out << passing_style << " "; 
+    }
     DeclarationToCpp2(parameter_declaration.declaration(), out); 
 }
 
 void ParameterDeclarationListToCpp2(const fuzzing::parameter_declaration_list_node& parameter_declaration_list, std::ostream& out) { 
     TokenToCpp2(parameter_declaration_list.open_paren(), out); 
-    TokenToCpp2(parameter_declaration_list.close_paren(), out); 
      
+    ListSeparator sep; 
     for (const auto& parameter : parameter_declaration_list.parameters()) {
+        out << sep; 
         ParameterDeclarationNodeToCpp2(parameter, out);
     }
+    TokenToCpp2(parameter_declaration_list.close_paren(), out);
 }
 
 void FunctionTypeToCpp2(const fuzzing::function_type_node& function_type, std::ostream& out) { 
     // std::cout << "***FunctionTypeToCpp2***\n";
     // DeclarationToCpp2(function_type.my_decl(), out); 
     ParameterDeclarationListToCpp2(function_type.parameters(), out); 
-    out << " -> ";
+    
     // optional bool throws = 3;
 
     //make passing_style to cpp2
     
     switch (function_type.returns_case()) {
-        case fuzzing::function_type_node::kId:
+        case fuzzing::function_type_node::kId:{
+            out << " -> ";
             TypeIdToCpp2(function_type.id().type(), out); 
+            const auto passing_style = ProtoToPassingStyle(function_type.id().pass(), fuzzing::passing_style::move);
+            if(!passing_style.empty()) {
+                out << passing_style << " "; 
+            }
             // optional passing_style.en pass = 2;
-            break;
+        } break;
         case fuzzing::function_type_node::kList:
+            out << " -> ";
             ParameterDeclarationListToCpp2(function_type.list(), out);
             break;
         case fuzzing::function_type_node::RETURNS_NOT_SET: 
             //FIGURE SOMETHING OUT
             break;
     }
-
+    // out << " = ";
     for (const auto& contract : function_type.contracts()) {
         ContractToCpp2(contract, out);
     }
@@ -691,7 +718,7 @@ void DeclarationToCpp2(const fuzzing::declaration_node& declaration, std::ostrea
     CaptureGroupToCpp2(declaration.captures(), out); 
     // std::cout << "***DeclarationToCpp2 - Identifier: " << declaration.identifier() << "*** \n";
     UnqualifiedIdToCpp2(declaration.identifier(), out); 
-    out << ": ";
+    out << ":";//move
 
     if (declaration.has_a_function()) {
         FunctionTypeToCpp2(declaration.a_function(), out);
@@ -711,13 +738,17 @@ void DeclarationToCpp2(const fuzzing::declaration_node& declaration, std::ostrea
 
     ParameterDeclarationListToCpp2(declaration.template_parameters(), out); 
     ExpressionToCpp2(declaration.requires_clause_expression(), out);
-    out << " = ";
-    StatementToCpp2(declaration.initializer(), out); 
+    if (declaration.has_initializer()) { 
+        out << " = ";
+        StatementToCpp2(declaration.initializer(), out); 
+    }
 }
 
 void TranslationUnitToCpp2(const fuzzing::translation_unit_node& translation_unit, std::ostream& out) { 
+    // ListSeparator sep; 
     for (const auto& declaration : translation_unit.declarations()) {
         DeclarationToCpp2(declaration, out);
+        // out << sep;
     }
 }
 

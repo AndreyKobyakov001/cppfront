@@ -1,0 +1,67 @@
+ ops {
+                                                                                      op {
+                                                                                        value: "("
+                                                                                      }
+                                                                                      expr_list {
+                                                                                        open_paren {
+                                                                                          value: "("
+                                                                                        }
+                                                                                        close_paren {
+                                                                                          value: ")"
+                                                                                        }
+                                                                                        expressions {
+                                                                                          pass: in
+                                                                                          expr {
+                                                                                            expr_expression {
+                                                                                              expr_assignment {
+                                                                                                expr_logical_or {
+                                                                                                  expr_logical_and {
+                                                                                                    expr_bit_or {
+                                                                                                      expr_bit_xor {
+                                                                                                        expr_bit_and {
+                                                                                                          expr_equality {
+                                                                                                            expr_relational {
+                                                                                                              expr_compare {
+                                                                                                                expr_shift {
+                                                                                                                  expr_additive {
+                                                                                                                    expr_multiplicative {
+                                                                                                                      expr_is_as {
+                                                                                                                        expr_prefix {
+                                                                                                                          expr_postfix {
+                                                                                                                            id_expression {
+                                                                                                                              unqualified {
+                                                                                                                                identifier {
+                                                                                                                                  value: "v"
+                                                                                                                                }
+                                                                                                                              }
+                                                                                                                            }
+                                                                                                                          }
+                                                                                                                        }
+                                                                                                                      }
+                                                                                                                      ops {
+                                                                                                                        op {
+                                                                                                                          value: "as"
+                                                                                                                        }
+                                                                                                                        type {
+                                                                                                                          dereference_cnt: 0
+                                                                                                                          unqualified {
+                                                                                                                            identifier {
+                                                                                                                              value: "X"
+                                                                                                                            }
+                                                                                                                            template_args {
+                                                                                                                              expression {
+                                                                                                                                expr_expression {
+                                                                                                                                  expr_assignment {
+                                                                                                                                    expr_logical_or {
+                                                                                                                                      expr_logical_and {
+                                                                                                                                        expr_bit_or {
+                                                                                                                                          expr_bit_xor {
+                                                                                                                                            expr_bit_and {
+                                                                                                                                              expr_equality {
+                                                                                                                                                expr_relational {
+                                                                                                                                                  expr_compare {
+                                                                                                                                                    expr_shift {
+                                                                                                                                                      expr_additive {
+                                                                                                                                                        expr_multiplicative {
+                                                                                                                                                          expr_is_as {
+                                                                                                                                                            expr_prefix {
