@@ -80,10 +80,14 @@ void PrimaryExpressionToCpp2(const fuzzing::primary_expression_node& primary_exp
     } else if (primary_expression.has_expression_list()) {
         if(!primary_expression.expression_list().expressions().empty()) { 
             TokenToCpp2(primary_expression.expression_list().open_paren(), out); 
+            // out << "(";
             ExpressionListToCpp2(primary_expression.expression_list(), out);
             TokenToCpp2(primary_expression.expression_list().close_paren(), out);
+            // out << ")";
         }
-    
+        else { 
+            out << "()"; //This should be correct
+        } 
     } else if (primary_expression.has_id_expression()) {
         IdExpressionToCpp2(primary_expression.id_expression(), out);
     } else if (primary_expression.has_declaration()) {
@@ -352,13 +356,15 @@ void ExpressionListToCpp2(const fuzzing::expression_list_node& expression_list, 
 
 void ExpressionStatementToCpp2(const fuzzing::expression_statement_node& expression_statement, std::ostream& out) { 
     // out << "(";
-    ExpressionToCpp2(expression_statement.expr_statement(), out);
-    // out << " "; 
+    
+    if(expression_statement.has_expr_statement()) { 
+        ExpressionToCpp2(expression_statement.expr_statement(), out);
+    }// out << " "; 
     //REVIEW
     // out << ")"; 
     bool has_semicolon = expression_statement.has_semicolon();
     if (has_semicolon) {
-        out << ";";  
+        out << ";\n";  
     }
 }
 
@@ -433,12 +439,12 @@ void QualifiedIdToCpp2(const fuzzing::qualified_id_node& qualified_id, std::ostr
 void TypeIdToCpp2(const fuzzing::type_id_node& type_id, std::ostream& out) { 
     for (const auto& pc_qualifier : type_id.pc_qualifiers()) {
         TokenToCpp2(pc_qualifier, out); 
+        out << " ";
     }
     TokenToCpp2(type_id.address_of(), out);
     TokenToCpp2(type_id.dereference_of(), out);
     if (type_id.has_dereference_cnt()) {
         // out << ":=";
-        //fuck off
         // TokenToCpp2(type_id.dereference_cnt, out);
     }
 
@@ -483,15 +489,12 @@ void SelectionStatementToCpp2(const fuzzing::selection_statement_node& selection
     TokenToCpp2(selection_statement.identifier(), out);
     out << " "; 
     LogicalOrExpressionToCpp2(selection_statement.expression(), out); 
+    // out << ")";
     CompoundStatementToCpp2(selection_statement.true_branch(), out);
     if (selection_statement.has_false_branch()) { 
+        out << " else "; 
         CompoundStatementToCpp2(selection_statement.false_branch(), out);
-    }
-    // bool has_source_false_branch = selection_statement.has_source_false_branch(); 
-    // if(has_source_false_branch) { 
-    //     out << has_source_false_branch; 
-    // }
-    // optional bool has_source_false_branch = 7;
+    } 
 }
 
 void IterationStatementToCpp2(const fuzzing::iteration_statement_node& iteration_statement, std::ostream& out) { 
@@ -604,6 +607,7 @@ void StatementToCpp2(const fuzzing::statement_node& statement, std::ostream& out
         // out << " "; 
     } else if (statement.has_declaration()) {
         DeclarationToCpp2(statement.declaration(), out);
+        // out << ";"; 
     } else if (statement.has_return_()) {
         ReturnStatementToCpp2(statement.return_(), out);
     } else if (statement.has_iteration()) {
@@ -719,11 +723,16 @@ void DeclarationToCpp2(const fuzzing::declaration_node& declaration, std::ostrea
     // std::cout << "***DeclarationToCpp2 - Identifier: " << declaration.identifier() << "*** \n";
     UnqualifiedIdToCpp2(declaration.identifier(), out); 
     out << ":";//move
-
+    for (const auto& meta_function : declaration.meta_functions()) {
+        out << "@";
+        IdExpressionToCpp2(meta_function, out);
+        out << " "; 
+    }
     if (declaration.has_a_function()) {
         FunctionTypeToCpp2(declaration.a_function(), out);
     } else if (declaration.has_an_object()) {
         TypeIdToCpp2(declaration.an_object(), out);
+        
     } else if (declaration.has_a_type()) {
         TypeToCpp2(declaration.a_type(), out);
     } else if (declaration.has_a_namespace()) {
@@ -731,10 +740,6 @@ void DeclarationToCpp2(const fuzzing::declaration_node& declaration, std::ostrea
     } else if (declaration.has_an_alias()) {
         AliasToCpp2(declaration.an_alias(), out);
     } 
-
-    for (const auto& meta_function : declaration.meta_functions()) {
-        IdExpressionToCpp2(meta_function, out);
-    }
 
     ParameterDeclarationListToCpp2(declaration.template_parameters(), out); 
     ExpressionToCpp2(declaration.requires_clause_expression(), out);

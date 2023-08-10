@@ -71,6 +71,7 @@ TEST(RoundTripTest, Roundtrip) {
       std::stringstream out;
       TranslationUnitToCpp2(translation_unit_proto, out); 
       write_to_file("/tmp/c2.cpp2", out.str());
+      std::cout << out.str(); 
       // if (debug) { 
       //   std::cout << "Generate CPP2 from proto \n" << std::flush;
       // }
@@ -89,16 +90,18 @@ TEST(RoundTripTest, Roundtrip) {
         // std::cout << "Errors: \n";
         c2.print_errors();
       }
+      const auto c_contents = translation_unit_to_string(c);
+      const auto c2_contents = translation_unit_to_string(c2);
+      write_to_file("/tmp/c_contents", c_contents);
+      write_to_file("/tmp/c2_contents", c2_contents);
+      write_to_file("/tmp/proto_tree", translation_unit_proto.DebugString());
       //rename this to not be retarded
       if (c2.had_no_errors()) {
-        const auto c_contents = translation_unit_to_string(c);
-        const auto c2_contents = translation_unit_to_string(c2);
+        
         if (debug) {  
           EXPECT_EQ(c_contents, c2_contents);
         }
-        write_to_file("/tmp/c_contents", c_contents);
-        write_to_file("/tmp/c2_contents", c2_contents);
-        write_to_file("/tmp/proto_tree", translation_unit_proto.DebugString());
+        
         
         const bool same = c_contents == c2_contents;
         if(same) { 
