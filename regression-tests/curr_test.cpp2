@@ -1,29 +1,12 @@
-#include <iostream>
 
-struct X {
-    X(int) { }
-};
-auto operator<<(std::ostream& o, X const&) -> std::ostream& {
-    o << "exxxx";
-    return o;
+myclass : type = {
+
+    operator=: (out this) = { }
+
+    operator=: (out this, that) = {
+        name = that.name;
+        addr = that.addr;
+    }
+
+   
 }
-
-f: (out x: _) = {
-    x = 42;
-}
-
-main: ()->int = {
-    a: int;
-    f(out a);
-    std::cout << a << "\n";
-
-    b: X;
-    f(out b);
-    std::cout << b << "\n";
-}
-
-
-
-//a:int
-//b:X
-//MISSING SEMICOLONS

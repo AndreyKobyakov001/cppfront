@@ -354,20 +354,6 @@ void ExpressionListToCpp2(const fuzzing::expression_list_node& expression_list, 
     }
 }
 
-void ExpressionStatementToCpp2(const fuzzing::expression_statement_node& expression_statement, std::ostream& out) { 
-    // out << "(";
-    
-    if(expression_statement.has_expr_statement()) { 
-        ExpressionToCpp2(expression_statement.expr_statement(), out);
-    }// out << " "; 
-    //REVIEW
-    // out << ")"; 
-    bool has_semicolon = expression_statement.has_semicolon();
-    if (has_semicolon) {
-        out << ";\n";  
-    }
-}
-
 void CaptureToCpp2(const fuzzing::capture& capture, std::ostream& out) { 
     PostfixExpressionToCpp2(capture.capture_expr(), out);
     // The following is not in ast2proto, but perhaps it should be; REVIEW 
@@ -436,48 +422,12 @@ void QualifiedIdToCpp2(const fuzzing::qualified_id_node& qualified_id, std::ostr
     }
 }
 
-void TypeIdToCpp2(const fuzzing::type_id_node& type_id, std::ostream& out) { 
-    for (const auto& pc_qualifier : type_id.pc_qualifiers()) {
-        TokenToCpp2(pc_qualifier, out); 
-        out << " ";
-    }
-    TokenToCpp2(type_id.address_of(), out);
-    TokenToCpp2(type_id.dereference_of(), out);
-    if (type_id.has_dereference_cnt()) {
-        // out << ":=";
-        // TokenToCpp2(type_id.dereference_cnt, out);
-    }
-
-   if (type_id.has_qualified()) {
-        QualifiedIdToCpp2(type_id.qualified(), out);
-    } else if (type_id.has_unqualified()) {
-        UnqualifiedIdToCpp2(type_id.unqualified(), out);
-    } else if (type_id.has_keyword()) {
-        TokenToCpp2(type_id.keyword(), out);
-    } 
-}
-
 void IdExpressionToCpp2(const fuzzing::id_expression_node& id_expression, std::ostream& out) { 
     if (id_expression.has_qualified()) {
         QualifiedIdToCpp2(id_expression.qualified(), out);
     } else if (id_expression.has_unqualified()) {
         UnqualifiedIdToCpp2(id_expression.unqualified(), out);
     }
-}
-
-void CompoundStatementToCpp2(const fuzzing::compound_statement_node& compound_statement, std::ostream& out) { 
-    out << "{\n";
-    for (const auto& statement : compound_statement.statements()) {
-        StatementToCpp2(statement, out);
-        out << "\n"; 
-    }
-    out << "}\n";
-    //REVIEW
-    // int32_t body_indent = compound_statement.body_indent();
-    // if(body_indent) { 
-    //     out << body_indent; 
-    // }
-    // optional int32_tbody_indent - basic set conversion? 
 }
 
 void SelectionStatementToCpp2(const fuzzing::selection_statement_node& selection_statement, std::ostream& out) { 
@@ -548,14 +498,6 @@ void IterationStatementToCpp2(const fuzzing::iteration_statement_node& iteration
     // again with the set function or something of the sort :)
 }
 
-void ReturnStatementToCpp2(const fuzzing::return_statement_node& return_statement, std::ostream& out) { 
-    TokenToCpp2(return_statement.identifier(), out);
-    out << " "; 
-    ExpressionToCpp2(return_statement.expression(), out); 
-    out << ";\n";
-    // ><>
-}
-
 void AlternativeToCpp2(const fuzzing::alternative_node& alternative, std::ostream& out) { 
     UnqualifiedIdToCpp2(alternative.name(), out);
     TokenToCpp2(alternative.is_as_keyword(), out); 
@@ -593,39 +535,6 @@ void ContractToCpp2(const fuzzing::contract_node& contract, std::ostream& out) {
 void JumpToCpp2(const fuzzing::jump_statement_node& jump_statement, std::ostream& out) { 
     TokenToCpp2(jump_statement.keyword(), out);
     TokenToCpp2(jump_statement.label(), out);
-}
-
-void StatementToCpp2(const fuzzing::statement_node& statement, std::ostream& out) { 
-    ParameterDeclarationListToCpp2(statement.parameters(), out);
-    if (statement.has_expression()) {
-        ExpressionStatementToCpp2(statement.expression(), out);
-        // out << " "; 
-    } else if (statement.has_compound()) {
-        CompoundStatementToCpp2(statement.compound(), out);
-    } else if (statement.has_selection()) {
-        SelectionStatementToCpp2(statement.selection(), out);
-        // out << " "; 
-    } else if (statement.has_declaration()) {
-        DeclarationToCpp2(statement.declaration(), out);
-        // out << ";"; 
-    } else if (statement.has_return_()) {
-        ReturnStatementToCpp2(statement.return_(), out);
-    } else if (statement.has_iteration()) {
-        IterationStatementToCpp2(statement.iteration(), out);
-    } else if (statement.has_contract()) {
-        out << "[[";
-        ContractToCpp2(statement.contract(), out);
-        out << "]]";//2 sets of square braces good? 
-    } else if (statement.has_inspect()) {
-        InspectExpressionToCpp2(statement.inspect(), out);
-    } else if (statement.has_jump()) {
-        JumpToCpp2(statement.jump(), out);
-    }
-    bool emitted = statement.emitted();
-    if(emitted) { 
-        out << emitted; 
-    }
-    // optional bool emitted = 11; REVIEW
 }
 
 auto ProtoToModifier(const fuzzing::parameter_declaration_node::modifier mod) -> std::string_view {
@@ -721,25 +630,30 @@ void AliasToCpp2(const fuzzing::alias_node& alias, std::ostream& out) {
 void DeclarationToCpp2(const fuzzing::declaration_node& declaration, std::ostream& out) { 
     CaptureGroupToCpp2(declaration.captures(), out); 
     // std::cout << "***DeclarationToCpp2 - Identifier: " << declaration.identifier() << "*** \n";
+    
     UnqualifiedIdToCpp2(declaration.identifier(), out); 
-    out << ":";//move
-    for (const auto& meta_function : declaration.meta_functions()) {
-        out << "@";
-        IdExpressionToCpp2(meta_function, out);
-        out << " "; 
+    if (declaration.identifier().identifier().value() != "this" &&  
+        declaration.identifier().identifier().value() != "that") { 
+        out << ":";//move
+        for (const auto& meta_function : declaration.meta_functions()) {
+            out << "@";
+            IdExpressionToCpp2(meta_function, out);
+            out << " "; 
+        } 
+        if (declaration.has_a_function()) {
+            FunctionTypeToCpp2(declaration.a_function(), out);
+        } else if (declaration.has_an_object()) {
+            TypeIdToCpp2(declaration.an_object(), out);
+        } else if (declaration.has_a_type()) {
+            TypeToCpp2(declaration.a_type(), out);
+        } else if (declaration.has_a_namespace()) {
+            NameToCpp2(declaration.a_namespace(), out);
+        } else if (declaration.has_an_alias()) {
+            AliasToCpp2(declaration.an_alias(), out);
+        } 
     }
-    if (declaration.has_a_function()) {
-        FunctionTypeToCpp2(declaration.a_function(), out);
-    } else if (declaration.has_an_object()) {
-        TypeIdToCpp2(declaration.an_object(), out);
-        
-    } else if (declaration.has_a_type()) {
-        TypeToCpp2(declaration.a_type(), out);
-    } else if (declaration.has_a_namespace()) {
-        NameToCpp2(declaration.a_namespace(), out);
-    } else if (declaration.has_an_alias()) {
-        AliasToCpp2(declaration.an_alias(), out);
-    } 
+    
+    
 
     ParameterDeclarationListToCpp2(declaration.template_parameters(), out); 
     ExpressionToCpp2(declaration.requires_clause_expression(), out);
@@ -754,6 +668,98 @@ void TranslationUnitToCpp2(const fuzzing::translation_unit_node& translation_uni
     for (const auto& declaration : translation_unit.declarations()) {
         DeclarationToCpp2(declaration, out);
         // out << sep;
+    }
+}
+
+void ExpressionStatementToCpp2(const fuzzing::expression_statement_node& expression_statement, std::ostream& out) { 
+    // out << "(";
+    
+    if(expression_statement.has_expr_statement()) { 
+        ExpressionToCpp2(expression_statement.expr_statement(), out);
+    }// out << " "; 
+    //REVIEW
+    // out << ")"; 
+    bool has_semicolon = expression_statement.has_semicolon();
+    if (has_semicolon) {
+        // out << "***\n";  
+        out << ";\n";  //REMOVED
+    }
+}
+
+void StatementToCpp2(const fuzzing::statement_node& statement, std::ostream& out) { 
+    ParameterDeclarationListToCpp2(statement.parameters(), out);
+    if (statement.has_expression()) {
+        ExpressionStatementToCpp2(statement.expression(), out);
+        // out << ";\n "; 
+    } else if (statement.has_compound()) {
+        CompoundStatementToCpp2(statement.compound(), out);
+    } else if (statement.has_selection()) {
+        SelectionStatementToCpp2(statement.selection(), out);
+        // out << " "; 
+    } else if (statement.has_declaration()) {
+        DeclarationToCpp2(statement.declaration(), out);
+        // out << ";"; 
+    } else if (statement.has_return_()) {
+        ReturnStatementToCpp2(statement.return_(), out);
+    } else if (statement.has_iteration()) {
+        IterationStatementToCpp2(statement.iteration(), out);
+    } else if (statement.has_contract()) {
+        out << "[[";
+        ContractToCpp2(statement.contract(), out);
+        out << "]]";//2 sets of square braces good? 
+    } else if (statement.has_inspect()) {
+        InspectExpressionToCpp2(statement.inspect(), out);
+    } else if (statement.has_jump()) {
+        JumpToCpp2(statement.jump(), out);
+    }
+    bool emitted = statement.emitted();
+    if(emitted) { 
+        out << emitted; 
+    }
+    // optional bool emitted = 11; REVIEW
+}
+
+void ReturnStatementToCpp2(const fuzzing::return_statement_node& return_statement, std::ostream& out) { 
+    TokenToCpp2(return_statement.identifier(), out);
+    out << " "; 
+    ExpressionToCpp2(return_statement.expression(), out); 
+    out << ";\n"; //REMOVED
+    // ><>
+}
+
+void TypeIdToCpp2(const fuzzing::type_id_node& type_id, std::ostream& out) { 
+    for (const auto& pc_qualifier : type_id.pc_qualifiers()) {
+        TokenToCpp2(pc_qualifier, out); 
+        out << " ";
+    }
+    TokenToCpp2(type_id.address_of(), out);
+    TokenToCpp2(type_id.dereference_of(), out);
+    if (type_id.has_dereference_cnt()) {
+        // out << ":=";
+        // TokenToCpp2(type_id.dereference_cnt, out);
+    }
+
+   if (type_id.has_qualified()) {
+        QualifiedIdToCpp2(type_id.qualified(), out);
+    } else if (type_id.has_unqualified()) {
+        UnqualifiedIdToCpp2(type_id.unqualified(), out);
+        // out << ";\n";
+    } else if (type_id.has_keyword()) {
+        TokenToCpp2(type_id.keyword(), out);
+    } 
+}
+
+void CompoundStatementToCpp2(const fuzzing::compound_statement_node& compound_statement, std::ostream& out) { 
+    out << "{\n";
+    for (const auto& statement : compound_statement.statements()) {
+        StatementToCpp2(statement, out);
+        // out << ";\n"; 
+    }
+    out << "}\n";
+    //Is this necessary? 
+    int32_t body_indent = compound_statement.body_indent();
+    for (int i = 0; i <= body_indent; i++) { 
+        // out << "  ";
     }
 }
 

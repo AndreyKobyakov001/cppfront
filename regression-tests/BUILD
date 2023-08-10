@@ -1,3 +1,8 @@
+# filegroup(
+#     name = "cpp2_file",
+#     srcs = glob(["**/curr_test.cpp2"]),
+#     visibility = ["//visibility:public"],
+# )
 
 filegroup(
     name = "cpp2_files",
