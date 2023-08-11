@@ -418,6 +418,7 @@ void QualifiedIdToCpp2(const fuzzing::qualified_id_node& qualified_id, std::ostr
         if (id.has_id()) {
             // out << ": ";
             UnqualifiedIdToCpp2(id.id(), out);
+            // out << " { ";
         }
     }
 }
@@ -501,7 +502,9 @@ void IterationStatementToCpp2(const fuzzing::iteration_statement_node& iteration
 void AlternativeToCpp2(const fuzzing::alternative_node& alternative, std::ostream& out) { 
     UnqualifiedIdToCpp2(alternative.name(), out);
     TokenToCpp2(alternative.is_as_keyword(), out); 
+    out << " "; 
     TypeIdToCpp2(alternative.type_id(), out); 
+    out << " = "; 
     PostfixExpressionToCpp2(alternative.value(), out);
     StatementToCpp2(alternative.statement(), out); 
 }
@@ -517,13 +520,14 @@ void InspectExpressionToCpp2(const fuzzing::inspect_expression_node& inspect_exp
     ExpressionToCpp2(inspect_expression.expression(), out); 
     out << " -> ";
     TypeIdToCpp2(inspect_expression.result_type(), out); 
-    out << " = ";
     ListSeparator sep; 
+    out << " {"; 
     for (const auto& alternative : inspect_expression.alternatives()) {
         AlternativeToCpp2(alternative, out);
         // out << sep; 
         out << " "; 
     }
+    out << "}"; 
 }
 
 void ContractToCpp2(const fuzzing::contract_node& contract, std::ostream& out) { 

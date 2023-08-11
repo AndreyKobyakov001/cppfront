@@ -19,6 +19,6 @@ print_an_int: ( x: _ ) = {
 
 
 
-//inspect x -> std::string{is int //=// 
-//curr_test.cpp2(7,93): error: expected = at start of inspect alternative body (at 'std')
-
+//<<inspect x -> std::string is int = std::to_string(x as int);
+ //is_"not an int";
+// <<"\n";
