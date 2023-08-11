@@ -513,12 +513,16 @@ void InspectExpressionToCpp2(const fuzzing::inspect_expression_node& inspect_exp
         out << is_constexpr; 
     }
     TokenToCpp2(inspect_expression.identifier(), out);
+    out << " "; 
     ExpressionToCpp2(inspect_expression.expression(), out); 
-    // out << " ";
+    out << " -> ";
     TypeIdToCpp2(inspect_expression.result_type(), out); 
-
+    out << " = ";
+    ListSeparator sep; 
     for (const auto& alternative : inspect_expression.alternatives()) {
         AlternativeToCpp2(alternative, out);
+        // out << sep; 
+        out << " "; 
     }
 }
 

@@ -1,12 +1,24 @@
-
-myclass : type = {
-
-    operator=: (out this) = { }
-
-    operator=: (out this, that) = {
-        name = that.name;
-        addr = that.addr;
-    }
-
-   
+main: () -> int = {
+    print_an_int("syzygy");
+    print_an_int(1);
+    print_an_int(1.1);
 }
+
+print_an_int: ( x: _ ) = {
+    std::cout
+        << std::setw(30) << cpp2::to_string(x)
+        << " value is "
+        << inspect x -> std::string {
+            is int = std::to_string(x as int);
+            is _   = "not an int";
+        }
+        << "\n";
+}
+
+
+
+
+
+//inspect x -> std::string{is int //=// 
+//curr_test.cpp2(7,93): error: expected = at start of inspect alternative body (at 'std')
+

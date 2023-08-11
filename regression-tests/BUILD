@@ -17,7 +17,7 @@ filegroup(
 #  - missing semicolons at end of if declarations for no reason: 
      # - regression-tests\mixed-initialization-safety-3.cpp2 & others. Also missing ; in L6.
     #  Specifically in cases of if { ... or SOMECODE = { ... .  - see L6099 in parse.h
-#  - 
+#  - mixed-lifetime-safety-and-null-contracts: auto null_from_cpp1() -> int* { return nullptr; } the null thing is not recognized at all. 
 #  - 
 #  - 
 #  - 
