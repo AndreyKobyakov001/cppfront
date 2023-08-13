@@ -18,7 +18,8 @@ filegroup(
      # - regression-tests\mixed-initialization-safety-3.cpp2 & others. Also missing ; in L6.
     #  Specifically in cases of if { ... or SOMECODE = { ... .  - see L6099 in parse.h
 #  - mixed-lifetime-safety-and-null-contracts: auto null_from_cpp1() -> int* { return nullptr; } the null thing is not recognized at all. 
-#  - 
+#  - mixed-type-safety1.cpp2: print("\ns* is Shape?  ", s* is Shape  ); breaks over  unexpected text 
+# - ( is not properly matched by ) (at 'Shape') atL3798 in parse.h. 
 #  - 
 #  - 
 #  - 

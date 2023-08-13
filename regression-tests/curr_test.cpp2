@@ -1,24 +1,15 @@
+
+first: (forward rng) -> forward _
+  [[pre Bounds: !std::empty(rng)]]
+=
+    std::begin(rng)*;
+
+global: const int = 42;
+f: () -> forward const int = { return global; }
+
 main: () -> int = {
-    print_an_int("syzygy");
-    print_an_int(1);
-    print_an_int(1.1);
+    v : std::vector = (1,2,3);
+    first(v) = 4;
+    std::cout << first(v) << std::endl; // prints: 4
+    std::cout << f() << std::endl; // prints: 42
 }
-
-print_an_int: ( x: _ ) = {
-    std::cout
-        << std::setw(30) << cpp2::to_string(x)
-        << " value is "
-        << inspect x -> std::string {
-            is int = std::to_string(x as int);
-            is _   = "not an int";
-        }
-        << "\n";
-}
-
-
-
-
-
-//<<inspect x -> std::string is int = std::to_string(x as int);
- //is_"not an int";
-// <<"\n";
