@@ -41,7 +41,7 @@ bool IsLogicalOperator(const std::string& value) {
 bool IsMathOperator(const std::string& value) {
     return value == "<=" || value == ">=" || value == "==" || value == "!=" ||
            value == "+" || value == "-" || value == "/";
-        //    || value == "*" MAKES PROBLEMS WITH POINTERS
+        //    || value == "*" MAKES PROBLEMS WITH POINTERS - what to do with multiplication? 
 }
 
 void TokenToCpp2(const fuzzing::token& token, std::ostream& out) {
@@ -135,7 +135,9 @@ void MultiplicativeExpressionToCpp2(const fuzzing::multiplicative_expression_nod
     
     for (const auto& term : multiplicative_expression.terms()) {
         if (term.has_op()) {
+            out << " "; 
             TokenToCpp2(term.op(), out);
+            out << " "; 
         }
         if (term.has_expr()) {
             IsAsExpressionToCpp2(term.expr(), out);
@@ -353,7 +355,8 @@ void ExpressionListToCpp2(const fuzzing::expression_list_node& expression_list, 
 }
 
 void CaptureToCpp2(const fuzzing::capture& capture, std::ostream& out) { 
-    PostfixExpressionToCpp2(capture.capture_expr(), out);
+    // PostfixExpressionToCpp2(capture.capture_expr(), out);
+    //THIS HAS BEEN COMMENTED OUT FOR THE TIME BEING, PERHAPS INCORRECTLY - TODO: REVIEW!!!
     // The following is not in ast2proto, but perhaps it should be; REVIEW 
     // optional string cap_sym = 2;
     // optional string str = 3;
@@ -601,7 +604,7 @@ void FunctionTypeToCpp2(const fuzzing::function_type_node& function_type, std::o
             //FIGURE SOMETHING OUT
             break;
     }
-    out << "\n";
+    // out << "\n";
     for (const auto& contract : function_type.contracts()) {
         out << "[[";
         ContractToCpp2(contract, out);
@@ -671,16 +674,20 @@ void ExpressionStatementToCpp2(const fuzzing::expression_statement_node& express
     if(expression_statement.has_expr_statement()) { 
         ExpressionToCpp2(expression_statement.expr_statement(), out);
     } 
-    bool has_semicolon = expression_statement.has_semicolon();
-    if (has_semicolon) {
-        out << ";\n";   
-    }
+    // bool has_semicolon = expression_statement.has_semicolon();
+    // if (has_semicolon) {
+    //     out << ";\n";   
+    // }
 }
 
 void StatementToCpp2(const fuzzing::statement_node& statement, std::ostream& out) { 
     ParameterDeclarationListToCpp2(statement.parameters(), out);
     if (statement.has_expression()) {
         ExpressionStatementToCpp2(statement.expression(), out);
+        bool has_semicolon = statement.expression().has_semicolon();
+        if (has_semicolon) {//moved to experiment with avoiding double semicolons as in mised-function-expression-and-std-for-each. 
+            out << ";\n";   
+        }
     } else if (statement.has_compound()) {
         CompoundStatementToCpp2(statement.compound(), out);
     } else if (statement.has_selection()) {

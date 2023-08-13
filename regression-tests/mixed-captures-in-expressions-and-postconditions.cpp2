@@ -1,24 +1,30 @@
-
-#include <algorithm>
 #include <vector>
+#include <string>
+#include <span>
+#include <algorithm>
+#include <iostream>
 
 main: () -> int = {
     vec: std::vector<std::string>
             = ("hello", "2022");
+    view: std::span = vec;
 
-    y: std::string = "\n";
-    callback := :(x:_) = { std::cout << x << y&$*; };
+    //  Passing a function expression
+    std::for_each(
+        view.begin(),
+        view.end(),
+        :(inout x:_) = x += "-ish";
+    );
 
-    std::ranges::for_each( vec, callback );
-    y = "-ish\n";
-    std::ranges::for_each( vec, callback );
-}
+    //  Initializing from a function expression
+    callback := :(inout x:_) = x += " maybe";
+    std::for_each(
+        view.begin(),
+        view.end(),
+        callback
+    );
 
-vec: std::vector<int> = ();
-
-insert_at: (where: int, val: int)
-    [[pre:  0 <= where && where <= vec.ssize()]]
-    [[post: vec.ssize() == vec.ssize()$ + 1]]
-= {
-    vec.insert( vec.begin()+where, val );
+    for view do (str) {
+        std::cout << str << "\n";
+    }
 }
