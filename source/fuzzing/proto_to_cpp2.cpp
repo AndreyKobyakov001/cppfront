@@ -34,6 +34,20 @@ public:
 //     }
 // }
 
+bool IsAssignmentOperator(const std::string& value) { 
+    return value == "=" || value == "*="  || value == "/="  || value == "%="  || 
+    value == "+=" || value ==  "-=" || value ==  ">>=" || value ==  "<<=" || value ==  "&=" || 
+    value ==  "^="  || value == "|=";
+}
+
+bool IsPostfixOperator(const std::string& value) { 
+    return value == "++" || value == "--" || value == "*" || value == "&" || value == "~" || value == "$";
+}
+
+bool IsPrefixOperator(const std::string& value) { 
+    return value == "!" || value == "-" || value == "+";
+}
+
 bool IsLogicalOperator(const std::string& value) {
     return value == "&&" || value == "||";
 }
@@ -500,8 +514,9 @@ void AlternativeToCpp2(const fuzzing::alternative_node& alternative, std::ostrea
     TokenToCpp2(alternative.is_as_keyword(), out); 
     out << " "; 
     TypeIdToCpp2(alternative.type_id(), out); 
-    out << " = "; 
     PostfixExpressionToCpp2(alternative.value(), out);
+    out << " = "; 
+
     StatementToCpp2(alternative.statement(), out); 
 }
 

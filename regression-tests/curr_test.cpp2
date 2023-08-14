@@ -1,33 +1,26 @@
-#include <random>
-#include <string>
+
+#include <iostream>
 #include <vector>
+#include <string>
 
 main: () -> int = {
-    x: std::string;         // note: uninitialized!
-
-    if flip_a_coin() {
-        x = "xyzzy";
-    } else {
-        fill( out x, "plugh", 40 ); // note: constructs x!
-    }
-    print_decorated(x);
+    cpp2::Null.set_handler(call_my_framework&);
+    try_pointer_stuff();
+    std::cout << "done\n";
 }
 
-fill: (
-    out x: std::string,
-    value: std::string,
-    count: int
-    )
-    [[pre: value.ssize() >= count, "fill: value must contain at least count elements"]]
-= {
-    x = value.substr(0, count);
+//  Calling Cpp1 is the easiest way to create a null...
+auto null_from_cpp1() -> int* { return nullptr; }
+
+try_pointer_stuff: () = {
+    p: *int = null_from_cpp1();
+    p* = 42;    // deliberate null dereference
+                // to show -n
 }
 
-print_decorated: (x:_) = std::cout << ">> [" << x << "]\n";
-
-// for test determinism, force "fill" branch
-bool flip_a_coin() {
-    // Change std::mt19937 to std::random_device for non-deterministic PRNG
-    static std::mt19937 rand;
-    return rand() % 2 == 1;
+call_my_framework: (msg: * const char) = {
+    std::cout
+        << "sending error to my framework... ["
+        << msg << "]\n";
+    exit(0);
 }
