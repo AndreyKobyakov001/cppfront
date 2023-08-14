@@ -40,9 +40,8 @@ Failed -> 2 semicolon
 Parse error
 25. regression-tests/mixed-lifetime-safety-and-null-contracts.cpp2 Different
 source/fuzzing/round_trip_test.cpp:112: Failure
-Value of: same
-  Actual: false
-Expected: true
+*= reading as multiplicative instead of pointer; unequal protos
+
 mixed-lifetime-safety-pointer-init-1-error.cpp2(17,25): error: local variable p is used before it was initialized
   ==> program violates initialization safety guarantee - see previous errors
 source/fuzzing/round_trip_test.cpp:53: Failure
@@ -223,3 +222,17 @@ Failed
 Parse error
 81. regression-tests/pure2-types-value-types-via-meta-functions.cpp2
 source/fuzzing/round_trip_test.cpp:118: Failure
+
+bool IsAssignmentOperator(const std::string& value) { 
+    return value == "=" || value == "*="  || value == "/="  || value == "%="  || 
+    value == "+=" || value ==  "-=" || value ==  ">>=" || value ==  "<<=" || value ==  "&=" || 
+    value ==  "^="  || value == "|=";
+}
+
+bool IsPostfixOperator(const std::string& value) { 
+    return value == "++" || value == "--" || value == "*" || value == "&" || value == "~" || value == "$";
+}
+
+bool IsPrefixOperator(const std::string& value) { 
+    return value == "!" || value == "-" || value == "+";
+}

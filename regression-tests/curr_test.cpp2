@@ -1,26 +1,30 @@
-
-#include <iostream>
-#include <vector>
+#include <random>
 #include <string>
+#include <vector>
 
 main: () -> int = {
-    cpp2::Null.set_handler(call_my_framework&);
-    try_pointer_stuff();
-    std::cout << "done\n";
+    x: std::string;         // note: uninitialized!
+
+    if flip_a_coin() {
+        x = "xyzzy";
+    } else {
+        fill( out x, "plugh", 40 ); // note: constructs x!
+    }
+    print_decorated(x);
 }
 
-//  Calling Cpp1 is the easiest way to create a null...
-auto null_from_cpp1() -> int* { return nullptr; }
-
-try_pointer_stuff: () = {
-    p: *int = null_from_cpp1();
-    p* = 42;    // deliberate null dereference
-                // to show -n
+fill: (
+    out x: std::string,
+    value: std::string,
+    count: int
+    )
+    [[pre: value.ssize() >= count, "fill: value must contain at least count elements"]]
+= {
+    x = value.substr(0, count);
 }
 
-call_my_framework: (msg: * const char) = {
-    std::cout
-        << "sending error to my framework... ["
-        << msg << "]\n";
-    exit(0);
-}
+print_decorated: (x:_) = std::cout << ">> [" << x << "]\n";
+
+// for test determinism, force "xyzzy" branch
+// the standard mandates that std::mt19937()() == 3499211612
+flip_a_coin: () -> bool = std::mt19937()() % 2 == 0;

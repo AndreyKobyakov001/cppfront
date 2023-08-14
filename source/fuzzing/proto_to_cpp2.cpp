@@ -34,6 +34,9 @@ public:
 //     }
 // }
 
+bool debug_colon = true;
+// bool debug_colon = false;
+
 bool IsAssignmentOperator(const std::string& value) { 
     return value == "=" || value == "*="  || value == "/="  || value == "%="  || 
     value == "+=" || value ==  "-=" || value ==  ">>=" || value ==  "<<=" || value ==  "&=" || 
@@ -534,6 +537,7 @@ void InspectExpressionToCpp2(const fuzzing::inspect_expression_node& inspect_exp
     ListSeparator sep; 
     out << " {"; 
     for (const auto& alternative : inspect_expression.alternatives()) {
+        out << "    "; //indent may be unnecessary, but who knows? 
         AlternativeToCpp2(alternative, out);
         // out << sep; 
         out << " "; 
@@ -548,12 +552,17 @@ void ContractToCpp2(const fuzzing::contract_node& contract, std::ostream& out) {
     IdExpressionToCpp2(contract.group(), out); 
     out << ": "; 
     LogicalOrExpressionToCpp2(contract.condition(), out); 
+    if(contract.has_message()) {
+    out << ", ";//this might be wrong. 
     TokenToCpp2(contract.message(), out); 
+    }    
 }
+    
 
 void JumpToCpp2(const fuzzing::jump_statement_node& jump_statement, std::ostream& out) { 
     TokenToCpp2(jump_statement.keyword(), out);
     TokenToCpp2(jump_statement.label(), out);
+    //semicolons pls
 }
 
 auto ProtoToModifier(const fuzzing::parameter_declaration_node::modifier mod) -> std::string_view {
@@ -602,6 +611,9 @@ void ParameterDeclarationListToCpp2(const fuzzing::parameter_declaration_list_no
 
 void FunctionTypeToCpp2(const fuzzing::function_type_node& function_type, std::ostream& out) { 
     ParameterDeclarationListToCpp2(function_type.parameters(), out); 
+    if(function_type.throws()) { 
+        out << " throws"; 
+    }
     switch (function_type.returns_case()) {
         case fuzzing::function_type_node::kId:{
             out << " -> ";
@@ -643,7 +655,7 @@ void AliasToCpp2(const fuzzing::alias_node& alias, std::ostream& out) {
 void DeclarationToCpp2(const fuzzing::declaration_node& declaration, std::ostream& out) { 
     CaptureGroupToCpp2(declaration.captures(), out); 
     // std::cout << "***DeclarationToCpp2 - Identifier: " << declaration.identifier() << "*** \n";
-    
+    bool colon = true; 
     UnqualifiedIdToCpp2(declaration.identifier(), out); 
     if (declaration.identifier().identifier().value() != "this" &&  
         declaration.identifier().identifier().value() != "that") { 
@@ -655,9 +667,10 @@ void DeclarationToCpp2(const fuzzing::declaration_node& declaration, std::ostrea
         } 
         if (declaration.has_a_function()) {
             FunctionTypeToCpp2(declaration.a_function(), out);
+            colon = false;
         } else if (declaration.has_an_object()) {
             TypeIdToCpp2(declaration.an_object(), out);
-            // out << ";\n";
+            // colon = false;
         } else if (declaration.has_a_type()) {
             TypeToCpp2(declaration.a_type(), out);
         } else if (declaration.has_a_namespace()) {
@@ -666,14 +679,20 @@ void DeclarationToCpp2(const fuzzing::declaration_node& declaration, std::ostrea
             AliasToCpp2(declaration.an_alias(), out);
         } 
     }
-    
-    
-
     ParameterDeclarationListToCpp2(declaration.template_parameters(), out); 
     ExpressionToCpp2(declaration.requires_clause_expression(), out);
     if (declaration.has_initializer()) { 
         out << " = ";
+        colon = false; 
         StatementToCpp2(declaration.initializer(), out); 
+    } 
+    if (colon) { 
+        if (debug_colon) { 
+            out << ";//DECLARATION\n";
+        }
+        else { 
+            out << ";\n";
+        }
     }
 }
 
@@ -689,20 +708,25 @@ void ExpressionStatementToCpp2(const fuzzing::expression_statement_node& express
     if(expression_statement.has_expr_statement()) { 
         ExpressionToCpp2(expression_statement.expr_statement(), out);
     } 
-    // bool has_semicolon = expression_statement.has_semicolon();
-    // if (has_semicolon) {
-    //     out << ";\n";   
-    // }
+    bool has_semicolon = expression_statement.has_semicolon();
+    if (has_semicolon) {
+        if (debug_colon) { 
+            out << ";//EXPRESSIONSTATEMENT\n";     
+        }      
+        else{
+            out << ";\n"; 
+        }
+    }
 }
 
 void StatementToCpp2(const fuzzing::statement_node& statement, std::ostream& out) { 
     ParameterDeclarationListToCpp2(statement.parameters(), out);
     if (statement.has_expression()) {
         ExpressionStatementToCpp2(statement.expression(), out);
-        bool has_semicolon = statement.expression().has_semicolon();
-        if (has_semicolon) {//moved to experiment with avoiding double semicolons as in mised-function-expression-and-std-for-each. 
-            out << ";\n";   
-        }
+        // bool has_semicolon = statement.expression().has_semicolon();
+        // if (has_semicolon) {//moved to experiment with avoiding double semicolons as in mised-function-expression-and-std-for-each. 
+        //     out << ";//EXPRESSIONSTATEMENT\n";   
+        // }
     } else if (statement.has_compound()) {
         CompoundStatementToCpp2(statement.compound(), out);
     } else if (statement.has_selection()) {
@@ -732,7 +756,12 @@ void ReturnStatementToCpp2(const fuzzing::return_statement_node& return_statemen
     TokenToCpp2(return_statement.identifier(), out);
     out << " "; 
     ExpressionToCpp2(return_statement.expression(), out); 
-    out << ";\n";  
+    if (debug_colon) {
+        out << ";//RETURN\n";
+    }// 
+    else { 
+        out << ";\n";  
+    }
     // ><> fish (very important)
 }
 
@@ -765,6 +794,7 @@ void TypeIdToCpp2(const fuzzing::type_id_node& type_id, std::ostream& out) {
 void CompoundStatementToCpp2(const fuzzing::compound_statement_node& compound_statement, std::ostream& out) { 
     out << "{\n";
     for (const auto& statement : compound_statement.statements()) {
+        out << "    "; //indent may be unnecessary, but who knows? 
         StatementToCpp2(statement, out);
     }
     out << "}\n";
