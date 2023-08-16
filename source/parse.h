@@ -4630,14 +4630,16 @@ private:
                 //  it doesn't destabilize any regression tests
             )
         {
+            // std::cout << "SEMICOLON_REQUIRED" << curr().position().to_string() << "\n";
             return {};
         }
         if (
             !done()
-            && curr().type() == lexeme::Semicolon
+            && curr().type() == lexeme::Semicolon 
             )
         {
             n->has_semicolon = true;
+            // std::cout << "HAS_SEMICOLON!" << curr().position().to_string() << "\n";
             next();
         }
         return n;

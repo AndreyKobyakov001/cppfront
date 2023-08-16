@@ -30,3 +30,4 @@ main: () = {
     myfunc2 :== myfunc;
     myfunc2();
 }
+pmr_vec:type == std::vector<T, std::pmr::polymorphic_allocator<T>><T:type;//DECLARATION

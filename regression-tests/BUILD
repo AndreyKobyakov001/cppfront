@@ -11,13 +11,10 @@ filegroup(
     visibility = ["//visibility:public"],
 )
 # //CURRENT FAILS: 
-#  -bunch of tests have double semicolons - See L4626 in parse.h
-#  - missing semicolons at end of if declarations for no reason: 
-     # -  missing Specifically in cases of uninitialized things like points. 
-#  - mixed-type-safety1.cpp2: print("\ns* is Shape?  ", s* is Shape  ); breaks over  unexpected text 
-# - ( is not properly matched by ) (at 'Shape') atL3798 in parse.h. 
-#  - uninitialized things have no semicolon, per x:std::string//;// in 
-# mixed-initialization-safety-3-contract-violation. Perhaps it should fail - who knows? 
-#  - mixed-lifetime-safety-and-null-contracts: *= dereference pointer reading as multiplicative
-#   resulting in unequal proto trees
+#  - mixed-lifetime-safety-and-null-contracts: *= pointer parsed as multiplicative identity
+#  - mixed-lifetime-safety-pointer-init: no semicolon before if statement due to false an-object bool
+#  - mixed-multiple-return-values: unexpected end of source file -> no final semicolon due to false object bool
+#  - bunch of tests having problems with an-object declaration semicolon, as above. 
+#  - 
+#  - 
 #  - 

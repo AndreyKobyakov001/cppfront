@@ -88,7 +88,7 @@ TEST(RoundTripTest, Roundtrip) {
       cppfront c2(f, source_from_proto); 
       if(debug) { 
         // std::cout << "Errors: \n";
-        c2.print_errors();
+        // c2.print_errors();
       }
       const auto c_contents = translation_unit_to_string(c);
       const auto c2_contents = translation_unit_to_string(c2);

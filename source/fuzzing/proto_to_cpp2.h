@@ -50,7 +50,7 @@ void ExpressionToCpp2(const fuzzing::expression_node& expression, std::ostream& 
 
 void ExpressionListToCpp2(const fuzzing::expression_list_node& expression_list, std::ostream& out);
 
-void ExpressionStatementToCpp2(const fuzzing::expression_statement_node& expression_statement, std::ostream& out);
+void ExpressionStatementToCpp2(const fuzzing::expression_statement_node& expression_statement, bool is_function_initializer, std::ostream& out);
 
 void CaptureToCpp2(const fuzzing::capture& capture, std::ostream& out);
 
@@ -82,7 +82,7 @@ void ContractToCpp2(const fuzzing::contract_node& contract, std::ostream& out);
 
 void JumpToCpp2(const fuzzing::jump_statement_node& jump_statement, std::ostream& out);
 
-void StatementToCpp2(const fuzzing::statement_node& statement, std::ostream& out);
+void StatementToCpp2(const fuzzing::statement_node& statement, bool is_function_initializer, std::ostream& out);
 
 void ParameterDeclarationNodeToCpp2(const fuzzing::parameter_declaration_node& parameter_declaration, std::ostream& out);
 
@@ -92,7 +92,7 @@ void FunctionTypeToCpp2(const fuzzing::function_type_node& function_type, std::o
 
 void AliasToCpp2(const fuzzing::alias_node& alias, std::ostream& out);
 
-void DeclarationToCpp2(const fuzzing::declaration_node& declaration, std::ostream& out);
+void DeclarationToCpp2(const fuzzing::declaration_node& declaration, bool is_parameter, std::ostream& out);
 
 void TranslationUnitToCpp2(const fuzzing::translation_unit_node& translation_unit, std::ostream& out);
 
