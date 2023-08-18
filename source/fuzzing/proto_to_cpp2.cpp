@@ -274,7 +274,9 @@ void LogicalAndExpressionToCpp2(const fuzzing::logical_and_expression_node& logi
     
     for (const auto& term : logical_and_expression.terms()) {
         if (term.has_op()) {
+            out << " "; 
             TokenToCpp2(term.op(), out);
+            out << " "; 
         }
         if (term.has_expr()) {
             BitOrExpressionToCpp2(term.expr(), out);
@@ -453,7 +455,7 @@ void SelectionStatementToCpp2(const fuzzing::selection_statement_node& selection
     TokenToCpp2(selection_statement.identifier(), out);
     out << " "; 
     LogicalOrExpressionToCpp2(selection_statement.expression(), out); 
-    // out << ")";
+    out << " ";
     CompoundStatementToCpp2(selection_statement.true_branch(), out);
     if (selection_statement.has_false_branch()) { 
         out << " else "; 
@@ -701,6 +703,11 @@ void DeclarationToCpp2(const fuzzing::declaration_node& declaration, bool is_par
         colon = false; 
         StatementToCpp2(declaration.initializer(), declaration.has_a_function(), out); 
     } 
+    if (declaration.identifier().identifier().value() == "this" ||  
+        declaration.identifier().identifier().value() == "that" ||
+        declaration.identifier().identifier().value() == "_") { 
+            colon = false;
+        }
     if (colon) { 
         if (debug_colon) { 
             out << ";//DECLARATION\n";
@@ -725,7 +732,8 @@ void ExpressionStatementToCpp2(const fuzzing::expression_statement_node& express
         ExpressionToCpp2(expression_statement.expr_statement(), out);
     } 
     bool has_semicolon = expression_statement.has_semicolon();
-    if (has_semicolon && !is_function_initializer) {
+    // if (has_semicolon && !is_function_initializer) {
+    if (has_semicolon) {
         if (debug_colon) { 
             out << ";//EXPRESSIONSTATEMENT\n";     
         } else {
@@ -790,7 +798,7 @@ void ReturnStatementToCpp2(const fuzzing::return_statement_node& return_statemen
 void TypeIdToCpp2(const fuzzing::type_id_node& type_id, std::ostream& out) { 
     for (const auto& pc_qualifier : type_id.pc_qualifiers()) {
         TokenToCpp2(pc_qualifier, out); 
-        out << " ";
+        // out << " ";
     }
     TokenToCpp2(type_id.address_of(), out);
     TokenToCpp2(type_id.dereference_of(), out);

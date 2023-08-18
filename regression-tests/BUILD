@@ -12,7 +12,7 @@ filegroup(
 )
 # //CURRENT FAILS: 
 #  - mixed-lifetime-safety-and-null-contracts: *= pointer parsed as multiplicative identity
-#  - mixed-lifetime-safety-pointer-init: no semicolon before if statement due to false an-object bool
+#  - mixed-lifetime-safety-pointer-init: unexpected end of source file? 
 #  - mixed-multiple-return-values: unexpected end of source file -> no final semicolon due to false object bool
 #  - bunch of tests having problems with an-object declaration semicolon, as above. 
 #  - 
