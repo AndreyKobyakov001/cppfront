@@ -481,6 +481,7 @@ void IterationStatementToCpp2(const fuzzing::iteration_statement_node& iteration
         // out << ") {\n";
         StatementToCpp2(iteration_statement.body(), false, out); 
         // out << "}\n";
+
     } else if(iteration_statement.identifier().value() == "while") { 
         // label? 'while' logical-or-expression next-clause? compound-statement
         out << "while ";
@@ -496,32 +497,23 @@ void IterationStatementToCpp2(const fuzzing::iteration_statement_node& iteration
         out << "\n";
 
     } else if(iteration_statement.identifier().value() == "do") { 
+        //    label? 'do' compound-statement 'while' logical-or-expression next-clause? ';'
         out << "do"; 
-        ParameterDeclarationNodeToCpp2(iteration_statement.parameter(), out);
-        LogicalOrExpressionToCpp2(iteration_statement.condition(), out); 
+        ExpressionToCpp2(iteration_statement.range(), out);
+              
         CompoundStatementToCpp2(iteration_statement.statements(), out);  
-        out << ") \n";
+        out << "while ";
+        LogicalOrExpressionToCpp2(iteration_statement.condition(), out);
+        if(iteration_statement.has_next_expression()) { 
+            out << " next "; 
+            AssignmentExpressionToCpp2(iteration_statement.next_expression(), out); 
+            // out << "\n";
+        } 
+        out << ";\n";
         // out << ") {\n";
         // out << "}\n";
 
     }
-    // else{ 
-    // //TODO: finish logic for while/do
-    //    TokenToCpp2(iteration_statement.label(), out); 
-    //     TokenToCpp2(iteration_statement.identifier(), out); 
-    //     AssignmentExpressionToCpp2(iteration_statement.next_expression(), out); 
-    //     LogicalOrExpressionToCpp2(iteration_statement.condition(), out); 
-    //     CompoundStatementToCpp2(iteration_statement.statements(), out); 
-    //     ExpressionToCpp2(iteration_statement.range(), out); 
-    //     ParameterDeclarationNodeToCpp2(iteration_statement.parameter(), out); 
-    //     StatementToCpp2(iteration_statement.body(), out); 
-    // }
-    // bool for_with_in = iteration_statement.for_with_in(); 
-    // if(for_with_in) { 
-    //     out << for_with_in; 
-    // }
-    // optional bool for_with_in = 9; - REVIEW
-    // again with the set function or something of the sort :)
 }
 
 void AlternativeToCpp2(const fuzzing::alternative_node& alternative, std::ostream& out) { 
@@ -700,6 +692,7 @@ void DeclarationToCpp2(const fuzzing::declaration_node& declaration, bool is_par
     ExpressionToCpp2(declaration.requires_clause_expression(), out);
     if (declaration.has_initializer()) { 
         out << " = ";
+        //TO SOLVE ;; PROBLEM
         colon = false; 
         StatementToCpp2(declaration.initializer(), declaration.has_a_function(), out); 
     } 
@@ -728,10 +721,11 @@ void TranslationUnitToCpp2(const fuzzing::translation_unit_node& translation_uni
 
 void ExpressionStatementToCpp2(const fuzzing::expression_statement_node& expression_statement, 
     bool is_function_initializer, std::ostream& out) { 
+    bool has_semicolon = expression_statement.has_semicolon();
+    
     if(expression_statement.has_expr_statement()) { 
         ExpressionToCpp2(expression_statement.expr_statement(), out);
     } 
-    bool has_semicolon = expression_statement.has_semicolon();
     // if (has_semicolon && !is_function_initializer) {
     if (has_semicolon) {
         if (debug_colon) { 

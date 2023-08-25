@@ -6,13 +6,13 @@
 
 filegroup(
     name = "cpp2_files",
-    # srcs = glob(["**/curr_test.cpp2"]),
-    srcs = glob(["**/*.cpp2"]),
+    srcs = glob(["**/curr_test.cpp2"]),
+    # srcs = glob(["**/*.cpp2"]),
     visibility = ["//visibility:public"],
 )
 # //CURRENT FAILS: 
 #  - mixed-lifetime-safety-and-null-contracts: *= pointer parsed as multiplicative identity
-#  - mixed-lifetime-safety-pointer-init: unexpected end of source file? 
+#  - mixed-lifetime-safety-pointer-init: no semicolon before if statement due to false an-object bool
 #  - mixed-multiple-return-values: unexpected end of source file -> no final semicolon due to false object bool
 #  - bunch of tests having problems with an-object declaration semicolon, as above. 
 #  - 

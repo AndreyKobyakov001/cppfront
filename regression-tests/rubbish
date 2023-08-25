@@ -1,36 +1,58 @@
 7. regression-tests/mixed-captures-in-expressions-and-postconditions.cpp2
 source/fuzzing/round_trip_test.cpp:118: Failure
-2 semicolons. 
-
+Failed
+Parse error
 11. regression-tests/mixed-function-expression-and-std-for-each.cpp2
-source/fuzzing/round_trip_test.cpp:118: Failure
-2 semicolons.
-
-12. regression-tests/mixed-function-expression-and-std-ranges-for-each-with-capture.cpp2
-source/fuzzing/round_trip_test.cpp:118: Failure
-2 semicolons.
-
-13. regression-tests/mixed-function-expression-and-std-ranges-for-each.cpp2
-source/fuzzing/round_trip_test.cpp:118: Failure
-2 semicolons.
-
-14. regression-tests/mixed-function-expression-with-pointer-capture.cpp2
-source/fuzzing/round_trip_test.cpp:118: Failure
-2 semicolons.
-
-15. regression-tests/mixed-function-expression-with-repeated-capture.cpp2
-source/fuzzing/round_trip_test.cpp:118: Failure
-2 semicolons. 
-
-25. regression-tests/mixed-lifetime-safety-and-null-contracts.cpp2 Different
-source/fuzzing/round_trip_test.cpp:112: Failure
-Parses correctly; different protos -> *= pointer becomes *, = -> multiplication
-
-40. regression-tests/pure2-break-continue.cpp2
 source/fuzzing/round_trip_test.cpp:118: Failure
 Failed
 Parse error
-42. regression-tests/pure2-chained-comparisons.cpp2
+12. regression-tests/mixed-function-expression-and-std-ranges-for-each-with-capture.cpp2
+source/fuzzing/round_trip_test.cpp:118: Failure
+Failed
+Parse error
+13. regression-tests/mixed-function-expression-and-std-ranges-for-each.cpp2
+source/fuzzing/round_trip_test.cpp:118: Failure
+Failed
+Parse error
+14. regression-tests/mixed-function-expression-with-pointer-capture.cpp2
+source/fuzzing/round_trip_test.cpp:118: Failure
+Failed
+Parse error
+15. regression-tests/mixed-function-expression-with-repeated-capture.cpp2
+source/fuzzing/round_trip_test.cpp:118: Failure
+Failed
+Parse error
+
+ALL ABOVE HAS 2 SEMICOLONS. 
+
+mixed-initialization-safety-1-error.cpp2(30,21): error: local variable x is used before it was initialized
+  ==> program violates initialization safety guarantee - see previous errors
+mixed-initialization-safety-2-error.cpp2(21,5): error: local variable x must be initialized on both branches or neither branch
+mixed-initialization-safety-2-error.cpp2(23,5): error: "if" initializes x on:
+  branch starting at line 23
+but not on:
+  branch starting at line 26
+  ==> program violates initialization safety guarantee - see previous errors
+25. regression-tests/mixed-lifetime-safety-and-null-contracts.cpp2 Different
+source/fuzzing/round_trip_test.cpp:112: Failure
+Value of: same
+  Actual: false
+Expected: true
+mixed-lifetime-safety-pointer-init-1-error.cpp2(17,25): error: local variable p is used before it was initialized
+  ==> program violates initialization safety guarantee - see previous errors
+mixed-lifetime-safety-pointer-init-2-error.cpp2(7,5): error: local variable p must be initialized on both branches or neither branch
+mixed-lifetime-safety-pointer-init-2-error.cpp2(10,5): error: "if" initializes p on:
+  branch starting at line 13
+but not on:
+  branch starting at line 10
+  ==> program violates initialization safety guarantee - see previous errors
+37. regression-tests/mixed-type-safety-1.cpp2 Different
+source/fuzzing/round_trip_test.cpp:112: Failure
+Value of: same
+  Actual: false
+Expected: true
+pure2-bounds-safety-pointer-arithmetic-error.cpp2(15,13): error: 'delete' and owning raw pointers are not supported in Cpp2 - use unique.new<T>, shared.new<T>, or gc.new<T> instead (in that order)
+40. regression-tests/pure2-break-continue.cpp2
 source/fuzzing/round_trip_test.cpp:118: Failure
 Failed
 Parse error
@@ -77,10 +99,11 @@ Parse error
 source/fuzzing/round_trip_test.cpp:118: Failure
 Failed
 Parse error
-56. regression-tests/pure2-intro-example-three-loops.cpp2
-source/fuzzing/round_trip_test.cpp:118: Failure
-Failed
-Parse error
+46. regression-tests/pure2-forward-return.cpp2 Different
+source/fuzzing/round_trip_test.cpp:112: Failure
+Value of: same
+  Actual: false
+Expected: true
 pure2-lifetime-safety-pointer-init-1-error.cpp2(14,25): error: local variable p is used before it was initialized
   ==> program violates initialization safety guarantee - see previous errors
 pure2-lifetime-safety-reject-null-error.cpp2(10,15): error: pointer cannot be initialized to null or int - leave it uninitialized and then set it to a non-null value when you have one (at 'nullptr')
@@ -90,153 +113,45 @@ pure2-lifetime-safety-reject-null-error.cpp2: error: null initialization detecte
 source/fuzzing/round_trip_test.cpp:118: Failure
 Failed
 Parse error
-62. regression-tests/pure2-requires-clauses.cpp2
-source/fuzzing/round_trip_test.cpp:118: Failure
-Failed
-Parse error
+62. regression-tests/pure2-requires-clauses.cpp2 Different
+source/fuzzing/round_trip_test.cpp:112: Failure
+Value of: same
+  Actual: false
+Expected: true
 pure2-return-tuple-no-identifier-error.cpp2(1,11): error: expected identifier, not 'int'
 pure2-return-tuple-no-identifier-error.cpp2(1,16): error: expected identifier, not 'int'
   ==> program violates lifetime safety guarantee - see previous errors
 pure2-return-tuple-no-type-error.cpp2(1,11): error: return parameter 'a' must have a type
 pure2-return-tuple-no-type-error.cpp2(1,14): error: return parameter 'b' must have a type
   ==> program violates lifetime safety guarantee - see previous errors
-67. regression-tests/pure2-template-parameter-lists.cpp2
+67. regression-tests/pure2-template-parameter-lists.cpp2 Different
+source/fuzzing/round_trip_test.cpp:112: Failure
+Value of: same
+  Actual: false
+Expected: true
+pure2-type-and-namespace-aliases.cpp2(33,67): error: ';' expected at end of alias declaration
+  ==> program violates lifetime safety guarantee - see previous errors
+68. regression-tests/pure2-type-safety-1.cpp2 Different
+source/fuzzing/round_trip_test.cpp:112: Failure
+Value of: same
+  Actual: false
+Expected: true
+70. regression-tests/pure2-types-basics.cpp2
 source/fuzzing/round_trip_test.cpp:118: Failure
 Failed
 Parse error
-68. regression-tests/pure2-type-and-namespace-aliases.cpp2
+71. regression-tests/pure2-types-inheritance.cpp2
 source/fuzzing/round_trip_test.cpp:118: Failure
 Failed
 Parse error
-71. regression-tests/pure2-types-basics.cpp2
+72. regression-tests/pure2-types-order-independence-and-nesting.cpp2
 source/fuzzing/round_trip_test.cpp:118: Failure
 Failed
 Parse error
-72. regression-tests/pure2-types-inheritance.cpp2
+73. regression-tests/pure2-types-ordering-via-meta-functions.cpp2
 source/fuzzing/round_trip_test.cpp:118: Failure
 Failed
 Parse error
-73. regression-tests/pure2-types-order-independence-and-nesting.cpp2
+80. regression-tests/pure2-types-value-types-via-meta-functions.cpp2
 source/fuzzing/round_trip_test.cpp:118: Failure
 Failed
-Parse error
-74. regression-tests/pure2-types-ordering-via-meta-functions.cpp2
-source/fuzzing/round_trip_test.cpp:118: Failure
-Failed
-Parse error
-75. regression-tests/pure2-types-smf-and-that-1-provide-everything.cpp2
-source/fuzzing/round_trip_test.cpp:118: Failure
-Failed
-Parse error
-76. regression-tests/pure2-types-smf-and-that-2-provide-mvconstruct-and-cpassign.cpp2
-source/fuzzing/round_trip_test.cpp:118: Failure
-Failed
-Parse error
-77. regression-tests/pure2-types-smf-and-that-3-provide-mvconstruct-and-mvassign.cpp2
-source/fuzzing/round_trip_test.cpp:118: Failure
-Failed
-Parse error
-78. regression-tests/pure2-types-smf-and-that-4-provide-cpassign-and-mvassign.cpp2
-source/fuzzing/round_trip_test.cpp:118: Failure
-Failed
-Parse error
-79. regression-tests/pure2-types-smf-and-that-5-provide-nothing-but-general-case.cpp2
-source/fuzzing/round_trip_test.cpp:118: Failure
-Failed
-Parse error
-80. regression-tests/pure2-types-that-parameters.cpp2
-source/fuzzing/round_trip_test.cpp:118: Failure
-Failed
-Parse error
-81. regression-tests/pure2-types-value-types-via-meta-functions.cpp2
-source/fuzzing/round_trip_test.cpp:118: Failure
-Failed
-
-//pure2-type-and-namespace-aliases
-
-N: namespace = {
-    pmr_vec: <T> type == std::vector<T, std::pmr::polymorphic_allocator<T>>;
-}
-
-N1: namespace == N;
-
-myclass: type = {
-    //  Default to public
-    str: type == std::string;
-
-    private str2: type == std::string;
-}
-
-N3: namespace == ::std::literals;
-
-myfunc: () = {
-    v: N1::pmr_vec<myclass::str> = ("xyzzy", "plugh");
-
-    v2 :== v;
-
-    for v2 do (s)
-        std::cout << "(s)$\n";
-}
-
-main: () = {
-    view: type == std::string_view;
-    N4: namespace == std::literals;
-
-    myfunc2 :== myfunc;
-    myfunc2();
-}
-
-<T: type;//DECLARATION -- ??
->;//DECLARATION
-    v2:  ==  == v;//DECLARATION //2 equals 
-    for v2 do (s: _;//DECLARATION //fix do statement
-)
-std::cout<<cpp2::to_string(s) + "\n";//EXPRESSIONSTATEMENT
-}
-;//DECLARATION -- 2nd semicolon
-    myfunc2:  ==  == myfunc;//DECLARATION --2 equals
-
-
- parameters {
-        pass: out
-        mod: none
-        declaration {
-          captures {
-          }
-          identifier {
-            identifier {
-              value: "x"
-            }
-          }
-          an_object {
-            dereference_cnt: 0
-            unqualified {
-              identifier {
-                value: "_"
-              }
-            }
-          }
-        }
-      }
-      
-      
-      statements {
-        declaration {
-          captures {
-          }
-          identifier {
-            identifier {
-              value: "a"
-            }
-          }
-          an_object {
-            dereference_cnt: 0
-            unqualified {
-              identifier {
-                value: "int"
-              }
-            }
-          }
-        }
-        emitted: false
-      }

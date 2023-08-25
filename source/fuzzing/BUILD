@@ -38,6 +38,33 @@ cc_test(
     ],
 )
 
+cc_test(
+    name = "fuzz_test",
+    srcs = ["fuzz_test.cc"],
+    size = "small",
+    deps = [
+        "@com_google_googletest//:gtest",
+        ":ast_to_proto",
+        ":proto_to_cpp2",
+        "//source:cppfront_lib",
+        ":cpp2_cc_proto",
+        # "fuzz_test.cc",
+        "@com_google_fuzztest//fuzztest",
+        "@com_google_fuzztest//fuzztest:fuzztest_gtest_main",
+        # "@com_google_libprotobuf_mutator//:libprotobuf_mutator",
+    ],
+    args = [
+        "$(locations //regression-tests:cpp2_files)",
+    ],
+    data = [
+        "//regression-tests:cpp2_files",
+    ],
+    # corpus = glob(["fuzzer_corpus/*"]),
+    # shard_count = 8,
+    # tags = ["proto-fuzzer"],
+    # What? 
+)
+
 cc_library(
     name = "proto_to_cpp2",
     srcs = ["proto_to_cpp2.cpp"],

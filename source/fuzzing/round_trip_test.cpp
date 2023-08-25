@@ -2,6 +2,8 @@
 #include "source/fuzzing/proto_to_cpp2.h"
 #include "source/fuzzing/cpp2.pb.h" 
 
+// #include "parse.h"
+#include "source/cppfront.h"
 #include <gmock/gmock.h> //Doesn't bring in gMock 😎
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/util/message_differencer.h>
@@ -14,8 +16,6 @@
 #include <ostream>
 #include <sstream>
 
-// #include "parse.h"
-#include "source/cppfront.h"
 
 namespace cpp2 {
 namespace {

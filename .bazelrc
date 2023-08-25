@@ -1,2 +1,12 @@
 build --cxxopt="-std=c++20"
 test --experimental_ui_max_stdouterr_bytes=104857600
+
+# EVERYTHING BEYOND THIS POINT IS FOR FUZZING
+
+build --action_env=CC=clang
+build --action_env=CXX=clang++
+
+build --copt=-mcrc32
+
+test --test_output=streamed
+try-import %workspace%/fuzztest.bazelrc

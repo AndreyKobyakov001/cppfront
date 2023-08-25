@@ -1,23 +1,19 @@
-#include <iostream>
 
-struct X {
-    X(int) { }
-};
-auto operator<<(std::ostream& o, X const&) -> std::ostream& {
-    o << "exxxx";
-    return o;
+main: () -> int
+= {
+    words: std::vector<std::string> = ( "decorated", "hello", "world" );
+
+    s: std::span<std::string> = words;
+
+    i := 0;
+    while i < s.ssize() next i++ {
+        print_and_decorate( s[i] );
+    }
 }
 
-f: (out x: _) = {
-    x = 42;
-}
+print_and_decorate: (thing:_) =
+    std::cout << ">> " << thing << "\n";
 
-main: ()->int = {
-    a: int;
-    f(out a);
-    std::cout << a << "\n";
 
-    b: X;
-    f(out b);
-    std::cout << b << "\n";
-}
+  
+   // while } -> current 
