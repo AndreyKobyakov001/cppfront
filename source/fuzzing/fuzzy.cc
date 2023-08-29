@@ -36,12 +36,8 @@ auto write_to_file(const std::string_view filename, const std::string_view conte
   f.close(); 
 }
 
-std::vector<std::tuple<std::string>> ReadFilesFromDirectory(
-    std::string_view dir);
-
 // BASIC FUZZER - mostly useless
-void Cpp2(const fuzzing::translation_unit_node& c) {
-// void Cpp2Basic(const fuzzing::translation_unit_node& c) {
+void Cpp2Basic(const fuzzing::translation_unit_node& c) {
     std::stringstream out;
     TranslationUnitToCpp2(c, out); 
     std::cout << out.str();
@@ -53,14 +49,16 @@ void Cpp2(const fuzzing::translation_unit_node& c) {
     }
 }
 
-// auto Corpus()
 
-std::vector<std::tuple<std::string>> ReadFilesFromDirectory(
-    std::string_view *cpp2_files);
 
-FUZZ_TEST(RoundTripTest, Cpp2).WithDomains(
-  fuzztest::Arbitrary<fuzzing::translation_unit_node>());
-  // .WithSeeds());
+void Cpp2() { 
+  
+} 
+
+
+
+FUZZ_TEST(RoundTripTest, Cpp2Basic);
+// FUZZ_TEST(RoundTripTest, Cpp2);
 
 } //namespace
 } //namespace cpp2

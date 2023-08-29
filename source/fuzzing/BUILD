@@ -52,6 +52,7 @@ cc_test(
         "@com_google_fuzztest//fuzztest",
         "@com_google_fuzztest//fuzztest:fuzztest_gtest_main",
         # "@com_google_libprotobuf_mutator//:libprotobuf_mutator",
+        # ":mutator", 
     ],
     args = [
         "$(locations //regression-tests:cpp2_files)",
@@ -64,6 +65,15 @@ cc_test(
     # tags = ["proto-fuzzer"],
     # What? 
 )
+
+
+# cc_library(
+#     name = "mutator",
+#     srcs = ["mutator.cc"],
+#     hdrs = ["mutator.h"],
+#     deps = ["//source:cppfront_lib", 
+#             ":cpp2_cc_proto"]
+# )
 
 cc_library(
     name = "proto_to_cpp2",
