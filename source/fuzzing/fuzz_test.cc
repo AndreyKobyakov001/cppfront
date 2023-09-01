@@ -38,10 +38,10 @@ auto write_to_file(const std::string_view filename, const std::string_view conte
 }
 
 void Cpp2(const fuzzing::translation_unit_node& c) {
+    std::cerr << "Size: " << c.ByteSize() << "\n";
     std::stringstream out;
     TranslationUnitToCpp2(c, out); 
-    std::cout << out.str();
-    std::cout << "Size: " << c.ByteSize() << "\n";
+    // std::cout << out.str();
     cppfront parsed_c(out.str());
     // if (!parsed_c.had_no_errors()) {
     //   std::cout << "Parsed cpp2 code has errors\n";
@@ -69,6 +69,7 @@ std::vector<std::tuple<cpp2::fuzzing::translation_unit_node>> GenerateSeeds(std:
         }
     }
     // std::cout << "HELLO\n"; 
+    std::cerr << "Seed size: " << seeds.size() << "\n"; 
     return seeds;
 }
 
@@ -76,6 +77,7 @@ FUZZ_TEST(RoundTripTest, Cpp2).WithDomains(
   fuzztest::Arbitrary<fuzzing::translation_unit_node>())
     // .WithSeeds(seeds);
     .WithSeeds(GenerateSeeds("regression-tests"));
+    // ;
 
 } //namespace
 } //namespace cpp2
